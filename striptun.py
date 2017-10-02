@@ -227,7 +227,7 @@ class IdVdCurves(HemtCurves):
                                             get_x='get_vd_mV',
                                             get_y1='get_id_mA',
                                             get_y2='get_ig_muA',
-                                            x_label='$V_g$ [mV]',
+                                            x_label='$V_d$ [mV]',
                                             y1_label='$I_d$ [mA]',
                                             y2_label='$I_g$ [$\mu$A]',
                                             point_x=point_x,
