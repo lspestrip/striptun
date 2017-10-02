@@ -5,6 +5,17 @@ This repository contains a Python program which reads the data acquired with the
 Keithley machine used at the Bicocca labs and produces a report containing the
 tuning parameters of the six HEMTs used in Strip's polarimeters.
 
+Installation
+------------
+
+The program needs the following packages:
+
+- `NumPy <https://pypi.python.org/pypi/numpy>`_
+- `SciPy <https://pypi.python.org/pypi/scipy>`_
+- `Matplotlib <https://pypi.python.org/pypi/matplotlib>`_
+- `Markdown <https://pypi.python.org/pypi/Markdown>`_
+- `Xlrd <https://pypi.python.org/pypi/xlrd>`_
+
 The program does not need to be installed. Just run it with the following
 parameters::
 
