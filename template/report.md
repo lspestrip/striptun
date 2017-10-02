@@ -24,7 +24,7 @@ Q4/H5   | ${q4_id}    | ${q4_vd}    | ${q4_ig}   | ${q4_vg}   | ${q4_transconduc
 The product of the transconductances across the two legs is:
 
 1. ${leg1_transconductance} (Q1 → Q2 → Q3)
-1. ${leg1_transconductance} (Q6 → Q5 → Q4)
+1. ${leg2_transconductance} (Q6 → Q5 → Q4)
 
 
 ## Amplifier pair Q1/Q6
