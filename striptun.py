@@ -155,18 +155,19 @@ class IdVdCurves(HemtCurves):
     def __init__(self, metadata: Dict[str, Any], table: Dict[str, Any]):
         super(IdVdCurves, self).__init__(metadata, table, 'Gate')
 
-        # Compute the transconductance
+        # Compute the transconductance, in mA/V
         trans = []
         vg = []
         for curve_idx in range(self.num_of_curves - 1):
-            id0, id1 = [self.get_id_mA(curve_idx + i) for i in (0, 1)]
-            ig0, ig1 = [self.get_ig_muA(curve_idx + i) for i in (0, 1)]
-            vg0, vg1 = [self.get_vg_mV(curve_idx + i) for i in (0, 1)]
+            id0_mA, id1_mA = [self.get_id_mA(curve_idx + i) for i in (0, 1)]
+            ig0_muA, ig1_muA = [self.get_ig_muA(curve_idx + i) for i in (0, 1)]
+            vg0_mV, vg1_mV = [self.get_vg_mV(curve_idx + i) for i in (0, 1)]
 
-            delta_vg_V = 1e-3 * (vg1 - vg0 - 0.1 * (ig1 - ig0))
+            resistance = 10
+            delta_vg_mV = (vg1_mV - vg0_mV) - resistance * (ig1_muA - ig0_muA)
 
-            vg.append(0.5 * (vg0 + vg1))
-            trans.append((id1 - id0) / delta_vg_V)
+            vg.append(0.5 * (vg0_mV + vg1_mV))
+            trans.append(1e3 * (id1_mA - id0_mA) / delta_vg_mV)
 
         self._transconductance_fn = interp2d(x=self.get_vd_mV(0),
                                              y=vg,
