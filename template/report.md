@@ -23,7 +23,7 @@ Q5/H3   | ${q5_id}    | ${q5_vd}    | ${q5_ig}   | ${q5_vg}   | ${q5_transconduc
 Q3/H4   | ${q3_id}    | ${q3_vd}    | ${q3_ig}   | ${q3_vg}   | ${q3_transconductance}
 Q4/H5   | ${q4_id}    | ${q4_vd}    | ${q4_ig}   | ${q4_vg}   | ${q4_transconductance}
 
-The product of the transconductances across the two legs is:
+The product of the transconductances across the two legs for this tuning is:
 
 1. ${leg1_transconductance} (Q1 → Q2 → Q3)
 1. ${leg2_transconductance} (Q6 → Q5 → Q4)
@@ -33,10 +33,12 @@ in the optimization, ranked by their balance (the first is the best, and it is
 the one selected above). The «balance» is defined as the absolute value of the
 difference between the product of the two transconductances.
 
-Rank   | Q1 → Q2 → Q3 | Q6 → Q5 → Q4 | Balance
-:-----:| ------------:| ------------:| ---------:
+Rank   | Id1 (Q3) | Id2 (Q4) | Q1 → Q2 → Q3 | Q6 → Q5 → Q4 | Balance
+:-----:| ---:| ---:| ------------:| ------------:| ---------:
 % for cur_solution in solutions:
-${loop.index} | \
+${ loop.index + 1 } | \
+${ '{0:.2f}'.format(cur_solution.q3_point.id) } mA | \
+${ '{0:.2f}'.format(cur_solution.q4_point.id) } mA | \
 ${ '{0:.0f}'.format(cur_solution.leg1) } | \
 ${ '{0:.0f}'.format(cur_solution.leg2) } | \
 ${ '{0:.0f}'.format(cur_solution.balance) }
