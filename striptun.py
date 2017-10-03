@@ -558,7 +558,7 @@ def create_report(pol_name: str,
                  os.path.join(output_path, static_file_name))
 
     # Load the file containing the Markdown template in a string
-    template_file_name = os.path.join(template_path, 'report.md')
+    template_file_name = os.path.join(template_path, 'striptun.md')
     log.info('Reading report template from "%s"', template_file_name)
     report_template = Template(filename=template_file_name)
 
