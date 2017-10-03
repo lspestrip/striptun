@@ -48,23 +48,23 @@ How the program works
 
 The program runs the following steps:
 
-1. Plot Vd versus Id
-2. Compute TransHEMT (see below) and plot Vd versus TransHEMT
-3. Plot Vd versus Ig
-4. Plot Vg versus Id
-5. Set Vd to 0.9 V and find Id ~ 4 mA (Q1, Q6), Id ~ 7 mA (Q2, Q5)
-6. Find TransHEMT for the Vd and Id found in the previous step 
-7. Set Vd to 0.9 V and find Id ~ 6 mA for Q3
-8. TransHEMT_Q4 = TransHEMT_Q1 * TransHEMT_Q2 * TransHEMT_Q3 / (TransHEMT_Q6 * TransHEMT_Q5)
-9. From TransHEMT_Q4 and Vd = 0.9 V derive Id for Q4 
-10. Generate a report
+1. Read all the Excel files saved by Keithley
+1. From the Vd versus Id curve, compute TransHEMT (see below) and plot Vd versus TransHEMT
+1. Plot Vd versus Ig and Vg versus Id
+1. Set Vd to 0.9 V and find Id ~ 4 mA (Q1, Q6), Id ~ 7 mA (Q2, Q5)
+1. Find TransHEMT for the Vd and Id found in the previous step 
+1. Set Vd to 0.9 V and find Id ~ 6 mA for Q3
+1. TransHEMT_Q4 = TransHEMT_Q1 * TransHEMT_Q2 * TransHEMT_Q3 / (TransHEMT_Q6 * TransHEMT_Q5)
+1. From TransHEMT_Q4 and Vd = 0.9 V derive Id for Q4 
+1. Save all the plots
+1. Generate a Markdown report and an HTML report
 
 Transconductance
 ----------------
 
 The formula used to compute transconductance is the following::
 
-    TransHEMT = 1e3 * (Id2 - Id1) / ((Vg2 - 1e5 * Ig2) - (Vg1 - 1e5 * Ig1))
+    TransHEMT = 1e3 * (Id2 - Id1) / ((Vg2 - Vg1) - 1e5 * (Ig2 - Ig1))
 
 where pairs like ``(Id1, Id2)`` refer to two consecutive lines with different values of Vg.
-The presence of the factor 1e5 seems to be due to the partitor.
+The factor 1e5 is a resistance, and its presence seems to be due to the partitor.
