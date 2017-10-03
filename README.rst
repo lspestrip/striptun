@@ -10,10 +10,11 @@ Installation
 
 The program needs the following packages:
 
+- `Mako <https://pypi.python.org/pypi/mako>`_
+- `Markdown <https://pypi.python.org/pypi/Markdown>`_
+- `Matplotlib <https://pypi.python.org/pypi/matplotlib>`_
 - `NumPy <https://pypi.python.org/pypi/numpy>`_
 - `SciPy <https://pypi.python.org/pypi/scipy>`_
-- `Matplotlib <https://pypi.python.org/pypi/matplotlib>`_
-- `Markdown <https://pypi.python.org/pypi/Markdown>`_
 - `Xlrd <https://pypi.python.org/pypi/xlrd>`_
 
 The program does not need to be installed. Just run it with the following

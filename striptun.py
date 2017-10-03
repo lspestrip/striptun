@@ -11,7 +11,7 @@ import os.path
 from collections import namedtuple
 from datetime import datetime
 from shutil import copyfile
-from string import Template
+from mako.template import Template
 from typing import Any, Dict, List, Tuple
 
 import xlrd
@@ -423,12 +423,21 @@ def find_matching_vd_id(id_vd: IdVdCurves, ref_vd_mV: float, ref_id_mA: float):
     return curve_idx, datapoint_idx
 
 
+BalanceInformation = namedtuple('BalanceInformation', [
+    'leg1',
+    'leg2',
+    'q3_point',
+    'q4_point',
+    'balance'
+])
+
+
 def tune(hemt_dict: Dict[str, HemtProperties],
          ref_vd_mV=900.0,
          id_mA_q1_q6=4.5,
          id_mA_q2_q5=7.5,
          id_mA_q3_q4=6.0,
-         id_mA_tolerance=0.5):
+         id_mA_tolerance=0.5) -> List[BalanceInformation]:
     '''Tune the amplifiers in ``hemt_dict``.
 
     The result of the tuning is saved in ``hemt_dict`` itself.'''
@@ -500,25 +509,31 @@ def tune(hemt_dict: Dict[str, HemtProperties],
         log.error('No configurations found')
         return
 
-    balances = [(q3_point, q4_point, np.abs(leg1_partial_tr * q3_point.transconductance -
-                                            leg2_partial_tr * q4_point.transconductance))
+    balances = [BalanceInformation(leg1=leg1_partial_tr * q3_point.transconductance,
+                                   leg2=leg2_partial_tr * q4_point.transconductance,
+                                   q3_point=q3_point,
+                                   q4_point=q4_point,
+                                   balance=np.abs(leg1_partial_tr * q3_point.transconductance -
+                                                  leg2_partial_tr * q4_point.transconductance))
                 for q3_point in setpoints['q3']
                 for q4_point in setpoints['q4']]
 
     log.info('Range of balances: {0:.6e} - {1:.6e} ({2} configurations)'
-             .format(np.min([x[2] for x in balances]),
-                     np.max([x[2] for x in balances]),
+             .format(np.min([x.balance for x in balances]),
+                     np.max([x.balance for x in balances]),
                      len(balances)))
 
-    hemt_dict['q3'].tuning_point, \
-        hemt_dict['q4'].tuning_point, \
-        best_balance = balances[np.argmin([x[2] for x in balances])]
+    best_balance = balances[np.argmin([x.balance for x in balances])]
+    hemt_dict['q3'].tuning_point = best_balance.q3_point
+    hemt_dict['q4'].tuning_point = best_balance.q4_point
 
     log.info('Best configuration for Q3: {0}'.format(
         hemt_dict['q3'].tuning_point))
     log.info('Best configuration for Q4: {0}'.format(
         hemt_dict['q4'].tuning_point))
     log.info('Best balance: {0}'.format(best_balance))
+
+    return balances
 
 
 def create_plots(hemt_list: List[HemtProperties]):
@@ -528,6 +543,7 @@ def create_plots(hemt_list: List[HemtProperties]):
 
 def create_report(pol_name: str,
                   hemt_dict: Dict[str, HemtProperties],
+                  balances: List[BalanceInformation],
                   output_path: str):
     '''Saves a report of the tuning in the output path.
 
@@ -544,8 +560,7 @@ def create_report(pol_name: str,
     # Load the file containing the Markdown template in a string
     template_file_name = os.path.join(template_path, 'report.md')
     log.info('Reading report template from "%s"', template_file_name)
-    with open(template_file_name) as f:
-        report_template = Template(''.join(f.readlines()))
+    report_template = Template(filename=template_file_name)
 
     # Assemble all the parameters to substitute in the Markdown template into a
     # dictionary
@@ -561,6 +576,7 @@ def create_report(pol_name: str,
             np.prod([hemt_dict[x].tuning_point.transconductance
                      for x in ('q6', 'q5', 'q4')])
         ),
+        'solutions': balances,
     }
 
     for hemt_name in ('q1', 'q2', 'q3', 'q4', 'q5', 'q6'):
@@ -574,9 +590,9 @@ def create_report(pol_name: str,
             tuning_point.transconductance)
 
     # Fill the template and save the report in Markdown format
-    md_report = report_template.safe_substitute(params)
+    md_report = report_template.render_unicode(**params)
     md_report_path = os.path.join(output_path, 'index.md')
-    with open(md_report_path, 'wt') as f:
+    with open(md_report_path, 'wt', encoding='utf-8') as f:
         f.write(md_report)
     log.info('Markdown report saved to "%s"', md_report_path)
 
@@ -602,7 +618,7 @@ def create_report(pol_name: str,
     ))
 
     html_report_path = os.path.join(output_path, 'index.html')
-    with open(html_report_path, 'wt') as f:
+    with open(html_report_path, 'wt', encoding='utf-8') as f:
         f.write(html_report)
     log.info('HTML report saved to "%s"', html_report_path)
 
@@ -650,10 +666,11 @@ def main():
                                       output_path=args.output_path))
                       for q in (1, 2, 3, 4, 5, 6)])
 
-    tune(hemt_dict)
+    balances = tune(hemt_dict)
     create_plots(hemt_dict.values())
     create_report(pol_name=args.polarimeter_name,
                   hemt_dict=hemt_dict,
+                  balances=balances,
                   output_path=args.output_path)
 
 
