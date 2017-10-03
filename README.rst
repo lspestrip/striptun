@@ -43,6 +43,14 @@ At the end of the execution, the directory ``OUTPUT_PATH`` will contain a file n
 ``index.html``, which can be opened using any web browser (e.g., Firefox).
 
 
+Example
+-------
+
+The following is the beginning of an HTML report produced by the script ``striptun.py``:
+
+.. image:: report_example.png
+
+
 How the program works
 ---------------------
 
