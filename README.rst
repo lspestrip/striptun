@@ -63,11 +63,9 @@ The program runs the following steps:
 7. Find the configuration which maximizes the match between the product of the
    transconductances across the two legs (Q1→Q2→Q3 and Q6→Q5→Q4)
 
-8. From TransHEMT_Q4 and Vd = 0.9 V derive Id for Q4 
+8. Save all the plots
 
-9. Save all the plots
-
-10. Generate a Markdown report and an HTML report
+9. Generate a Markdown report and an HTML report
 
 
 Transconductance
