@@ -436,8 +436,8 @@ def tune(hemt_dict: Dict[str, HemtProperties],
          ref_vd_mV=900.0,
          id_mA_q1_q6=4.5,
          id_mA_q2_q5=7.5,
-         id_mA_q3_q4=6.0,
-         id_mA_tolerance=0.5) -> List[BalanceInformation]:
+         id_mA_q3_q4=6.5,
+         id_mA_tolerance=1.5) -> List[BalanceInformation]:
     '''Tune the amplifiers in ``hemt_dict``.
 
     The result of the tuning is saved in ``hemt_dict`` itself.'''
@@ -576,7 +576,7 @@ def create_report(pol_name: str,
             np.prod([hemt_dict[x].tuning_point.transconductance
                      for x in ('q6', 'q5', 'q4')])
         ),
-        'solutions': balances,
+        'solutions': sorted(balances, key=lambda x: x.balance),
     }
 
     for hemt_name in ('q1', 'q2', 'q3', 'q4', 'q5', 'q6'):
