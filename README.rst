@@ -50,23 +50,24 @@ The program runs the following steps:
 
 1. Read all the Excel files saved by Keithley
 
-1. From the Vd versus Id curve, compute TransHEMT (see below) and plot Vd versus TransHEMT
+2. From the Vd versus Id curve, compute TransHEMT (see below) and plot Vd versus TransHEMT
 
-1. Plot Vd versus Ig and Vg versus Id
+3. Plot Vd versus Ig and Vg versus Id
 
-1. Set Vd to 0.9 V and find Id ~ 4 mA (Q1, Q6), Id ~ 7 mA (Q2, Q5)
+4. Set Vd to 0.9 V and find Id ≈ 4 mA (Q1, Q6), Id ≈ 7 mA (Q2, Q5)
 
-1. Find TransHEMT for the Vd and Id found in the previous step 
+5. Find TransHEMT for the Vd and Id found in the previous step 
 
-1. Set Vd to 0.9 V and find Id ~ 6 mA for Q3
+6. Set Vd to 0.9 V and find Id ≈ 6 mA for Q3
 
-1. TransHEMT_Q4 = TransHEMT_Q1 * TransHEMT_Q2 * TransHEMT_Q3 / (TransHEMT_Q6 * TransHEMT_Q5)
+7. Find the configuration which maximizes the match between the product of the
+   transconductances across the two legs (Q1→Q2→Q3 and Q6→Q5→Q4)
 
-1. From TransHEMT_Q4 and Vd = 0.9 V derive Id for Q4 
+8. From TransHEMT_Q4 and Vd = 0.9 V derive Id for Q4 
 
-1. Save all the plots
+9. Save all the plots
 
-1. Generate a Markdown report and an HTML report
+10. Generate a Markdown report and an HTML report
 
 
 Transconductance
