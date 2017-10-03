@@ -56,8 +56,10 @@ parameters::
 The meaning of the parameters is the following:
 
 - ``POLARIMETER_NAME`` is a string identifying the polarimeter (e.g., ``STRIP07``)
+
 - ``INPUT_PATH`` is the name of the directory containing the files produced by
   Keithley (usually the name is ``prove_DC``, or something similar)
+
 - ``OUTPUT_PATH`` is the name of the directory that will contain the report (if the
   directory does not exist, it will be created silently)
 
@@ -125,8 +127,10 @@ parameters::
 The meaning of the parameters is the following:
 
 - ``POLARIMETER_NAME`` is a string identifying the polarimeter (e.g., ``STRIP07``)
+
 - ``INPUT_FILE_NAME`` is the name of the text file containing the raw data (in tabular
-format) acquired during the test.
+  format) acquired during the test.
+
 - ``OUTPUT_PATH`` is the name of the directory that will contain the report (if the
   directory does not exist, it will be created silently)
 
