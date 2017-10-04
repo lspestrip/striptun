@@ -72,7 +72,7 @@ Example
 
 The following is the beginning of an HTML report produced by the script ``striptun.py``:
 
-.. image:: report_example.png
+.. image:: striptun_report_example.png
 
 
 How the program works
