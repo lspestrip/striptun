@@ -63,8 +63,11 @@ The meaning of the parameters is the following:
 - ``OUTPUT_PATH`` is the name of the directory that will contain the report (if the
   directory does not exist, it will be created silently)
 
-At the end of the execution, the directory ``OUTPUT_PATH`` will contain a file named
-``index.html``, which can be opened using any web browser (e.g., Firefox).
+At the end of the execution, the directory ``OUTPUT_PATH`` will contain a
+Markdown file named ``striptun_report.md``, which can be converted to many other
+textual formats using `Pandoc <http://pandoc.org>`_, and an HTML file named
+``striptun_report.html``, which can be opened using any web browser (e.g.,
+Firefox).
 
 
 Example
@@ -134,5 +137,7 @@ The meaning of the parameters is the following:
 - ``OUTPUT_PATH`` is the name of the directory that will contain the report (if the
   directory does not exist, it will be created silently)
 
-At the end of the execution, the directory ``OUTPUT_PATH`` will contain a file named
-``index.html``, which can be opened using any web browser (e.g., Firefox).
+At the end of the execution, the directory ``OUTPUT_PATH`` will contain a
+Markdown file named ``tnoise_report.md`` and an HTML file named
+``tnoise_report.html``. The latter can be opened using any web browser (e.g.,
+Firefox).

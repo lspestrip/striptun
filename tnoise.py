@@ -7,16 +7,17 @@ from datetime import datetime
 import logging as log
 import os.path
 from shutil import copyfile
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
+from json_save import save_parameters_to_json
+from mako.template import Template
+from markdown import markdown
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pylab as plt
 from matplotlib.patches import Rectangle
 import matplotlib.transforms as transforms
-from mako.template import Template
-from markdown import markdown
 
 SAMPLING_FREQUENCY_HZ = 25.0
 
@@ -54,7 +55,8 @@ def find_blind_channel(slopes: List[List[SlopeInformation]]) -> Tuple[int, float
             [x.abs_slope_adu_s for x in slopes[cur_curve]])
         max_slope[cur_curve] = np.max(cur_slope_arr)
 
-    blind_idx = np.argmin(max_slope)
+    # We do not want a NumPy type here (it makes JSON serialization difficult)
+    blind_idx = int(np.argmin(max_slope))
     return blind_idx, max_slope[blind_idx]
 
 
@@ -202,12 +204,13 @@ RegionInformation = namedtuple('RegionInformation', [
 ])
 
 
-def assemble_region_info(time, value, regions: List[Region]):
+def assemble_region_info(time, value, regions: List[Region]) -> List[RegionInformation]:
     result = []
 
     for cur_r in regions:
-        index0 = np.argmin(np.abs(time - cur_r.time0_s))
-        index1 = np.argmin(np.abs(time - cur_r.time1_s))
+        # We do not want NumPy types here (they make JSON serialization difficult)
+        index0 = int(np.argmin(np.abs(time - cur_r.time0_s)))
+        index1 = int(np.argmin(np.abs(time - cur_r.time1_s)))
 
         result.append(RegionInformation(time0_s=cur_r.time0_s,
                                         time1_s=cur_r.time1_s,
@@ -220,11 +223,23 @@ def assemble_region_info(time, value, regions: List[Region]):
     return result
 
 
-def create_report(pol_name: str,
-                  blind_channel: int,
-                  time,  # Numpy array
-                  data,  # Numpy matrix
-                  regions: Dict[int, List[Region]],
+def build_dict_from_results(pol_name: str,
+                            blind_channel: int,
+                            time,
+                            data,
+                            regions: Dict[int, List[Region]]) -> Dict[str, Any]:
+    return {
+        'polarimeter': pol_name,
+        'title': 'Noise temperature analysis for polarimeter {0}'.format(pol_name),
+        'date': datetime.now().strftime('%d %b %Y, %H:%M:%S'),
+        'blind_channel': blind_channel,
+        'sampling_frequency': SAMPLING_FREQUENCY_HZ,
+        'regions': dict([(idx, assemble_region_info(time, data[:, idx], regions[idx]))
+                         for idx, region in regions.items()]),
+    }
+
+
+def create_report(params: Dict[str, Any],
                   output_path: str):
     '''Saves a report of the tuning in the output path.
 
@@ -243,21 +258,9 @@ def create_report(pol_name: str,
     log.info('Reading report template from "%s"', template_file_name)
     report_template = Template(filename=template_file_name)
 
-    # Assemble all the parameters to substitute in the Markdown template into a
-    # dictionary
-    params = {
-        'polarimeter': pol_name,
-        'title': 'Noise temperature analysis for polarimeter {0}'.format(pol_name),
-        'date': datetime.now().strftime('%d %b %Y, %H:%M:%S'),
-        'blind_channel': blind_channel,
-        'sampling_frequency': SAMPLING_FREQUENCY_HZ,
-        'regions': dict([(idx, assemble_region_info(time, data[:, idx], regions[idx]))
-                         for idx, region in regions.items()]),
-    }
-
     # Fill the template and save the report in Markdown format
     md_report = report_template.render_unicode(**params)
-    md_report_path = os.path.join(output_path, 'index.md')
+    md_report_path = os.path.join(output_path, 'tnoise_report.md')
     with open(md_report_path, 'wt', encoding='utf-8') as md_file:
         md_file.write(md_report)
     log.info('Markdown report saved to "%s"', md_report_path)
@@ -283,7 +286,7 @@ def create_report(pol_name: str,
                'markdown.extensions.toc']
     ))
 
-    html_report_path = os.path.join(output_path, 'index.html')
+    html_report_path = os.path.join(output_path, 'tnoise_report.html')
     with open(html_report_path, 'wt', encoding='utf-8') as html_file:
         html_file.write(html_report)
     log.info('HTML report saved to "%s"', html_report_path)
@@ -350,11 +353,16 @@ def main():
         save_plot(time, data[:, curve_idx], slopes[curve_idx],
                   curve_regions, slope_threshold, output_file_name)
 
-    create_report(pol_name=args.polarimeter_name,
-                  blind_channel=blind_channel,
-                  time=time,
-                  data=data,
-                  regions=regions,
+    params = build_dict_from_results(pol_name=args.polarimeter_name,
+                                     blind_channel=blind_channel,
+                                     time=time,
+                                     data=data,
+                                     regions=regions)
+    save_parameters_to_json(params=params,
+                            output_file_name=os.path.join(args.output_path,
+                                                          'tnoise_results.json'))
+
+    create_report(params=params,
                   output_path=args.output_path)
 
 

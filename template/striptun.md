@@ -14,14 +14,14 @@ The report has been generated on ${date}.
 
 Best parameters found for the tuning:
 
-HEMT    | Idrain [mA] | Vdrain [mV] | Igate [mA] | Vgate [mV] | Transconductance [mA/V]
-------- |:-----------:|:-----------:|:----------:|:----------:|:----------------------:
-Q1/H0   | ${q1_id}    | ${q1_vd}    | ${q1_ig}   | ${q1_vg}   | ${q1_transconductance}
-Q6/H1   | ${q6_id}    | ${q6_vd}    | ${q6_ig}   | ${q6_vg}   | ${q6_transconductance}
-Q2/H2   | ${q2_id}    | ${q2_vd}    | ${q2_ig}   | ${q2_vg}   | ${q2_transconductance}
-Q5/H3   | ${q5_id}    | ${q5_vd}    | ${q5_ig}   | ${q5_vg}   | ${q5_transconductance}
-Q3/H4   | ${q3_id}    | ${q3_vd}    | ${q3_ig}   | ${q3_vg}   | ${q3_transconductance}
-Q4/H5   | ${q4_id}    | ${q4_vd}    | ${q4_ig}   | ${q4_vg}   | ${q4_transconductance}
+HEMT  | Idrain [mA] | Vdrain [mV] | Igate [mA] | Vgate [mV] | Transconductance [mA/V]
+----- |:-----------:|:-----------:|:----------:|:----------:|:----------------------:
+Q1/H0 | ${'{0:.2f}'.format(q1_id)} | ${'{0:.0f}'.format(q1_vd)} | ${'{0:.2f}'.format(q1_ig)} | ${'{0:.0f}'.format(q1_vg)} | ${'{0:.1f}'.format(q1_transconductance)}
+Q6/H1 | ${'{0:.2f}'.format(q6_id)} | ${'{0:.0f}'.format(q6_vd)} | ${'{0:.2f}'.format(q6_ig)} | ${'{0:.0f}'.format(q6_vg)} | ${'{0:.1f}'.format(q6_transconductance)}
+Q2/H2 | ${'{0:.2f}'.format(q2_id)} | ${'{0:.0f}'.format(q2_vd)} | ${'{0:.2f}'.format(q2_ig)} | ${'{0:.0f}'.format(q2_vg)} | ${'{0:.1f}'.format(q2_transconductance)}
+Q5/H3 | ${'{0:.2f}'.format(q5_id)} | ${'{0:.0f}'.format(q5_vd)} | ${'{0:.2f}'.format(q5_ig)} | ${'{0:.0f}'.format(q5_vg)} | ${'{0:.1f}'.format(q5_transconductance)}
+Q3/H4 | ${'{0:.2f}'.format(q3_id)} | ${'{0:.0f}'.format(q3_vd)} | ${'{0:.2f}'.format(q3_ig)} | ${'{0:.0f}'.format(q3_vg)} | ${'{0:.1f}'.format(q3_transconductance)}
+Q4/H5 | ${'{0:.2f}'.format(q4_id)} | ${'{0:.0f}'.format(q4_vd)} | ${'{0:.2f}'.format(q4_ig)} | ${'{0:.0f}'.format(q4_vg)} | ${'{0:.1f}'.format(q4_transconductance)}
 
 The product of the transconductances across the two legs for this tuning is:
 
@@ -47,10 +47,10 @@ ${ '{0:.0f}'.format(cur_solution.balance) }
 
 <h2>Amplifier pair Q1/Q6</h2>
 
-HEMT    | Idrain [mA] | Vdrain [mV] | Igate [mA] | Vgate [mV] | Transconductance [mA/V]
-------- |:-----------:|:-----------:|:----------:|:----------:|:----------------------:
-Q1/H0   | ${q1_id}    | ${q1_vd}    | ${q1_ig}   | ${q1_vg}   | ${q1_transconductance}
-Q6/H1   | ${q6_id}    | ${q6_vd}    | ${q6_ig}   | ${q6_vg}   | ${q6_transconductance}
+HEMT  | Idrain [mA] | Vdrain [mV] | Igate [mA] | Vgate [mV] 
+----- |:-----------:|:-----------:|:----------:|:----------:
+Q1/H0 | ${'{0:.2f}'.format(q1_id)} | ${'{0:.0f}'.format(q1_vd)} | ${'{0:.2f}'.format(q1_ig)} | ${'{0:.0f}'.format(q1_vg)}
+Q6/H1 | ${'{0:.2f}'.format(q6_id)} | ${'{0:.0f}'.format(q6_vd)} | ${'{0:.2f}'.format(q6_ig)} | ${'{0:.0f}'.format(q6_vg)}
 
 <h3>Q1/H0</h3>
 
@@ -72,10 +72,10 @@ Q6/H1   | ${q6_id}    | ${q6_vd}    | ${q6_ig}   | ${q6_vg}   | ${q6_transconduc
 
 <h2>Amplifier pair Q2/Q5</h2>
 
-HEMT    | Idrain [mA] | Vdrain [mV] | Igate [mA] | Vgate [mV] | Transconductance [mA/V]
-------- |:-----------:|:-----------:|:----------:|:----------:|:----------------------:
-Q2/H2   | ${q2_id}    | ${q2_vd}    | ${q2_ig}   | ${q2_vg}   | ${q2_transconductance}
-Q5/H3   | ${q5_id}    | ${q5_vd}    | ${q5_ig}   | ${q5_vg}   | ${q5_transconductance}
+HEMT  | Idrain [mA] | Vdrain [mV] | Igate [mA] | Vgate [mV] 
+----- |:-----------:|:-----------:|:----------:|:----------:
+Q2/H2 | ${'{0:.2f}'.format(q2_id)} | ${'{0:.0f}'.format(q2_vd)} | ${'{0:.2f}'.format(q2_ig)} | ${'{0:.0f}'.format(q2_vg)}
+Q5/H3 | ${'{0:.2f}'.format(q5_id)} | ${'{0:.0f}'.format(q5_vd)} | ${'{0:.2f}'.format(q5_ig)} | ${'{0:.0f}'.format(q5_vg)}
 
 Here are a few plots:
 
@@ -100,10 +100,10 @@ Here are a few plots:
 
 <h2>Amplifier pair Q3/Q4</h2>
 
-HEMT    | Idrain [mA] | Vdrain [mV] | Igate [mA] | Vgate [mV] | Transconductance [mA/V]
-------- |:-----------:|:-----------:|:----------:|:----------:|:----------------------:
-Q3/H4   | ${q3_id}    | ${q3_vd}    | ${q3_ig}   | ${q3_vg}   | ${q3_transconductance}
-Q4/H5   | ${q4_id}    | ${q4_vd}    | ${q4_ig}   | ${q4_vg}   | ${q4_transconductance}
+HEMT  | Idrain [mA] | Vdrain [mV] | Igate [mA] | Vgate [mV] 
+----- |:-----------:|:-----------:|:----------:|:----------:
+Q3/H4 | ${'{0:.2f}'.format(q3_id)} | ${'{0:.0f}'.format(q3_vd)} | ${'{0:.2f}'.format(q3_ig)} | ${'{0:.0f}'.format(q3_vg)}
+Q4/H5 | ${'{0:.2f}'.format(q4_id)} | ${'{0:.0f}'.format(q4_vd)} | ${'{0:.2f}'.format(q4_ig)} | ${'{0:.0f}'.format(q4_vg)}
 
 
 <h3>Q3/H4</h3>

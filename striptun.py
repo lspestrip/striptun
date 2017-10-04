@@ -14,13 +14,14 @@ from shutil import copyfile
 from mako.template import Template
 from typing import Any, Dict, List, Tuple
 
-import xlrd
+from json_save import save_parameters_to_json
+from markdown import markdown
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pylab as plt
 import numpy as np
 from scipy.interpolate import interp2d
-from markdown import markdown
+import xlrd
 
 import excel_import as excel
 
@@ -541,29 +542,14 @@ def create_plots(hemt_list: List[HemtProperties]):
         cur_hemt.create_plots()
 
 
-def create_report(pol_name: str,
-                  hemt_dict: Dict[str, HemtProperties],
-                  balances: List[BalanceInformation],
-                  output_path: str):
-    '''Saves a report of the tuning in the output path.
+def build_dict_from_results(pol_name: str,
+                            hemt_dict: Dict[str, HemtProperties],
+                            balances: List[BalanceInformation]):
+    '''Assemble all the tuning information into a Python dictionary.
 
-    This function assumes that ``output_path`` points to a directory that already exists.
+    This is the dictionary that will be saved into a JSON file and will
+    be used to build the Markdown and HTML reports.
     '''
-
-    template_path = os.path.join(os.path.dirname(__file__), 'template')
-
-    # Copy all the static files into the destination directory
-    for static_file_name in ['report_style.css']:
-        copyfile(os.path.join(template_path, static_file_name),
-                 os.path.join(output_path, static_file_name))
-
-    # Load the file containing the Markdown template in a string
-    template_file_name = os.path.join(template_path, 'striptun.md')
-    log.info('Reading report template from "%s"', template_file_name)
-    report_template = Template(filename=template_file_name)
-
-    # Assemble all the parameters to substitute in the Markdown template into a
-    # dictionary
     params = {
         'polarimeter': pol_name,
         'title': 'Tuning report for polarimeter {0}'.format(pol_name),
@@ -582,16 +568,38 @@ def create_report(pol_name: str,
     for hemt_name in ('q1', 'q2', 'q3', 'q4', 'q5', 'q6'):
         tuning_point = hemt_dict[hemt_name].tuning_point
 
-        params['{0}_id'.format(hemt_name)] = '{0:.2f}'.format(tuning_point.id)
-        params['{0}_vd'.format(hemt_name)] = '{0:.1f}'.format(tuning_point.vd)
-        params['{0}_ig'.format(hemt_name)] = '{0:.2f}'.format(tuning_point.ig)
-        params['{0}_vg'.format(hemt_name)] = '{0:.1f}'.format(tuning_point.vg)
-        params['{0}_transconductance'.format(hemt_name)] = '{0:.2f}'.format(
-            tuning_point.transconductance)
+        params['{0}_id'.format(hemt_name)] = tuning_point.id
+        params['{0}_vd'.format(hemt_name)] = tuning_point.vd
+        params['{0}_ig'.format(hemt_name)] = tuning_point.ig
+        params['{0}_vg'.format(hemt_name)] = tuning_point.vg
+        params['{0}_transconductance'.format(hemt_name)] = \
+            tuning_point.transconductance
+
+    return params
+
+
+def create_report(params: Dict[str, Any],
+                  output_path: str):
+    '''Saves a report of the tuning in the output path.
+
+    This function assumes that ``output_path`` points to a directory that already exists.
+    '''
+
+    template_path = os.path.join(os.path.dirname(__file__), 'template')
+
+    # Copy all the static files into the destination directory
+    for static_file_name in ['report_style.css']:
+        copyfile(os.path.join(template_path, static_file_name),
+                 os.path.join(output_path, static_file_name))
+
+    # Load the file containing the Markdown template in a string
+    template_file_name = os.path.join(template_path, 'striptun.md')
+    log.info('Reading report template from "%s"', template_file_name)
+    report_template = Template(filename=template_file_name)
 
     # Fill the template and save the report in Markdown format
     md_report = report_template.render_unicode(**params)
-    md_report_path = os.path.join(output_path, 'index.md')
+    md_report_path = os.path.join(output_path, 'striptun_report.md')
     with open(md_report_path, 'wt', encoding='utf-8') as f:
         f.write(md_report)
     log.info('Markdown report saved to "%s"', md_report_path)
@@ -617,7 +625,7 @@ def create_report(pol_name: str,
                'markdown.extensions.toc']
     ))
 
-    html_report_path = os.path.join(output_path, 'index.html')
+    html_report_path = os.path.join(output_path, 'striptun_report.html')
     with open(html_report_path, 'wt', encoding='utf-8') as f:
         f.write(html_report)
     log.info('HTML report saved to "%s"', html_report_path)
@@ -667,11 +675,17 @@ def main():
                       for q in (1, 2, 3, 4, 5, 6)])
 
     balances = tune(hemt_dict)
+
+    params = build_dict_from_results(pol_name=args.polarimeter_name,
+                                     hemt_dict=hemt_dict,
+                                     balances=balances)
+
+    save_parameters_to_json(params=params,
+                            output_file_name=os.path.join(args.output_path,
+                                                          'striptun_results.json'))
+
     create_plots(hemt_dict.values())
-    create_report(pol_name=args.polarimeter_name,
-                  hemt_dict=hemt_dict,
-                  balances=balances,
-                  output_path=args.output_path)
+    create_report(params=params,  output_path=args.output_path)
 
 
 if __name__ == '__main__':
