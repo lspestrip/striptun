@@ -26,6 +26,7 @@ All the programs need the following packages:
 - `Matplotlib <https://pypi.python.org/pypi/matplotlib>`_ (plotting library)
 - `NumPy <https://pypi.python.org/pypi/numpy>`_ (vector/matrix operations)
 - `SciPy <https://pypi.python.org/pypi/scipy>`_ (interpolation)
+- `SimpleJSON <https://pypi.python.org/pypi/simplejson>`_ (JSON export)
 - `Xlrd <https://pypi.python.org/pypi/xlrd>`_ (Excel file importing)
 
 If you are using `Anaconda Python <https://www.anaconda.com/>`_, you can install them 

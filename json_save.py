@@ -1,6 +1,8 @@
 # -*- encoding: utf-8 -*-
 
-import json
+# We use simplejson instead of the json package in the Python standard package
+# library, as the latter does not save namedtuples correctly
+import simplejson as json
 import logging as log
 from typing import Any, Dict
 
