@@ -15,6 +15,13 @@ The following programs have been implemented so far::
    determines which are the stable portions of the data that can be used to perform
    the analysis.
 
+All the programs save the results of their calculations in JSON files, and they
+are able to produce reports in `Markdown
+<https://daringfireball.net/projects/markdown/>`_ and HTML formats. The Markdown
+format is useful when used in conjunction with the program `Pandoc
+<http://pandoc.org>`_, as it can be easily converted to a variety of other
+formats (LaTeX, Microsoft Word, etc.).
+
 
 Installation
 ------------
@@ -64,11 +71,13 @@ The meaning of the parameters is the following:
 - ``OUTPUT_PATH`` is the name of the directory that will contain the report (if the
   directory does not exist, it will be created silently)
 
-At the end of the execution, the directory ``OUTPUT_PATH`` will contain a
-Markdown file named ``striptun_report.md``, which can be converted to many other
-textual formats using `Pandoc <http://pandoc.org>`_, and an HTML file named
-``striptun_report.html``, which can be opened using any web browser (e.g.,
-Firefox).
+At the end of the execution, the directory ``OUTPUT_PATH`` will contain the following files:
+
+1. A JSON file named ``striptun_results.json``, containing the results of the analysis;
+
+2. A Markdown file named ``striptun_report.md``;
+
+3. An HTML file named ``striptun_report.html``.
 
 
 Example
@@ -138,7 +147,10 @@ The meaning of the parameters is the following:
 - ``OUTPUT_PATH`` is the name of the directory that will contain the report (if the
   directory does not exist, it will be created silently)
 
-At the end of the execution, the directory ``OUTPUT_PATH`` will contain a
-Markdown file named ``tnoise_report.md`` and an HTML file named
-``tnoise_report.html``. The latter can be opened using any web browser (e.g.,
-Firefox).
+At the end of the execution, the directory ``OUTPUT_PATH`` will contain the following files:
+
+1. A JSON file named ``tnoise_results.json``, containing the results of the analysis;
+
+2. A Markdown file named ``tnoise_report.md``;
+
+3. An HTML file named ``tnoise_report.html``.
