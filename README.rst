@@ -105,10 +105,10 @@ Transconductance
 
 The formula used to compute transconductance is the following::
 
-    TransHEMT = 1e3 * (Id2 - Id1) / ((Vg2 - Vg1) - 1e5 * (Ig2 - Ig1))
+    TransHEMT = 1e3 * (Id2 - Id1) / ((Vg2 - Vg1) - 1e4 * (Ig2 - Ig1))
 
 where pairs like ``(Id1, Id2)`` refer to two consecutive lines with different values of Vg.
-The factor 1e5 is a resistance, and its presence seems to be due to the partitor.
+The factor 1e4 is a resistance, and its presence seems to be due to the partitor.
 
 
 Tnoise
