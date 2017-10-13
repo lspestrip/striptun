@@ -39,11 +39,11 @@ All the programs need the following packages:
 If you are using `Anaconda Python <https://www.anaconda.com/>`_, you can install them 
 using the command ``conda``::
 
-    conda install mako markdown matplotlib numpy scipy xlrd
+    conda install mako markdown matplotlib numpy scipy simplejson xlrd
 
 In any other case, you can use ``pip``::
 
-    pip install mako markdown matplotlib numpy scipy xlrd
+    pip install mako markdown matplotlib numpy scipy simplejson xlrd
 
 Striptun
 --------------
