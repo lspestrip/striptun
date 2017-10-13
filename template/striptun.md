@@ -5,7 +5,15 @@
 This document contains the result of the tuning of the six amplifiers in
 polarimeter ${polarimeter}.
 
-The report has been generated on ${date}.
+The report has been generated on ${date}. The tuning procedure used the user-defined constraints:
+
+Parameter | Value
+--------- |:-----:
+Vdrain [mV] | ${'{0:.2f}'.format(settings.ref_vd_mV)}
+Idrain for Q1/Q6 [mA] | ${'{0:.2f}'.format(settings.id_mA_q1_q6)}
+Idrain for Q2/Q5 [mA] | ${'{0:.2f}'.format(settings.id_mA_q2_q5)}
+Idrain for Q3/Q4 [mA] | ${'{0:.2f}'.format(settings.id_mA_q3_q4)}
+Tolerance on Q3/Q4 [mA] | ${'{0:.2f}'.format(settings.id_mA_tolerance)}
 
 [TOC]
 

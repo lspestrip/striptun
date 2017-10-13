@@ -7,7 +7,6 @@ polarimeter.'''
 from argparse import ArgumentParser
 import logging as log
 import os
-import os.path
 from collections import namedtuple
 from datetime import datetime
 from shutil import copyfile
@@ -32,6 +31,29 @@ TuningPoint = namedtuple('TuningPoint', [
     'id',
     'transconductance'
 ])
+
+# User-defined settings
+Settings = namedtuple('Settings', [
+    'ref_vd_mV',
+    'id_mA_q1_q6',
+    'id_mA_q2_q5',
+    'id_mA_q3_q4',
+    'id_mA_tolerance',
+])
+
+
+def load_settings_from_file(settings_f) -> Settings:
+    'Load a "Settings" object from a JSON file'
+    from simplejson import load
+
+    dictionary = load(settings_f)
+    return Settings(
+        ref_vd_mV=dictionary['ref_vd_mV'],
+        id_mA_q1_q6=dictionary['id_mA_q1_q6'],
+        id_mA_q2_q5=dictionary['id_mA_q2_q5'],
+        id_mA_q3_q4=dictionary['id_mA_q3_q4'],
+        id_mA_tolerance=dictionary['id_mA_tolerance']
+    )
 
 
 class HemtCurves:
@@ -434,11 +456,7 @@ BalanceInformation = namedtuple('BalanceInformation', [
 
 
 def tune(hemt_dict: Dict[str, HemtProperties],
-         ref_vd_mV=900.0,
-         id_mA_q1_q6=4.5,
-         id_mA_q2_q5=7.5,
-         id_mA_q3_q4=6.5,
-         id_mA_tolerance=1.5) -> List[BalanceInformation]:
+         settings: Settings) -> List[BalanceInformation]:
     '''Tune the amplifiers in ``hemt_dict``.
 
     The result of the tuning is saved in ``hemt_dict`` itself.'''
@@ -449,15 +467,15 @@ def tune(hemt_dict: Dict[str, HemtProperties],
     point_idx = {}  # Type: Dict[str, int]
 
     # Tune the first two amplifiers in each leg
-    for hemt_name, ref_value in [('q1', id_mA_q1_q6),
-                                 ('q6', id_mA_q1_q6),
-                                 ('q2', id_mA_q2_q5),
-                                 ('q5', id_mA_q2_q5)]:
+    for hemt_name, ref_value in [('q1', settings.id_mA_q1_q6),
+                                 ('q6', settings.id_mA_q1_q6),
+                                 ('q2', settings.id_mA_q2_q5),
+                                 ('q5', settings.id_mA_q2_q5)]:
 
         id_vd = hemt_dict[hemt_name].id_vd
         curve, point = \
             find_matching_vd_id(id_vd,
-                                ref_vd_mV=ref_vd_mV,
+                                ref_vd_mV=settings.ref_vd_mV,
                                 ref_id_mA=ref_value)
 
         vg_mV = id_vd.get_vg_mV(curve)
@@ -488,7 +506,7 @@ def tune(hemt_dict: Dict[str, HemtProperties],
     for hemt_name in ('q3', 'q4'):
         id_vd = hemt_dict[hemt_name].id_vd
         vd_mV = id_vd.get_vd_mV(0)
-        datapoint_idx = np.argmin(np.abs(vd_mV - ref_vd_mV))
+        datapoint_idx = np.argmin(np.abs(vd_mV - settings.ref_vd_mV))
 
         setpoints[hemt_name] = []
         for curve_idx in range(id_vd.num_of_curves):
@@ -498,7 +516,7 @@ def tune(hemt_dict: Dict[str, HemtProperties],
             transconductance = id_vd.transconductance(vd=vd_mV[datapoint_idx],
                                                       vg=vg_mV)
 
-            if np.abs(id_mA - id_mA_q3_q4) < id_mA_tolerance:
+            if np.abs(id_mA - settings.id_mA_q3_q4) < settings.id_mA_tolerance:
                 cur_setpoint = TuningPoint(vg=vg_mV,
                                            ig=ig_muA,
                                            vd=vd_mV[datapoint_idx],
@@ -544,7 +562,8 @@ def create_plots(hemt_list: List[HemtProperties]):
 
 def build_dict_from_results(pol_name: str,
                             hemt_dict: Dict[str, HemtProperties],
-                            balances: List[BalanceInformation]):
+                            balances: List[BalanceInformation],
+                            settings: Settings):
     '''Assemble all the tuning information into a Python dictionary.
 
     This is the dictionary that will be saved into a JSON file and will
@@ -563,6 +582,7 @@ def build_dict_from_results(pol_name: str,
                      for x in ('q6', 'q5', 'q4')])
         ),
         'solutions': sorted(balances, key=lambda x: x.balance),
+        'settings': settings,
     }
 
     for hemt_name in ('q1', 'q2', 'q3', 'q4', 'q5', 'q6'):
@@ -649,6 +669,16 @@ def parse_arguments():
     parser.add_argument('output_path', type=str,
                         help='''Path to the directory that will contain the
                         report. If the path does not exist, it will be created''')
+
+    default_settings_file = \
+        os.path.abspath(os.path.join(os.path.dirname(__file__),
+                        'striptun_defaults.json'))
+    parser.add_argument('-s', '--settings', dest='settings_file_path', type=str,
+                        help='''Path to a JSON file containing a few numerical
+                        parameters to be used in the tuning process (default: {default})'''
+                        .format(default=default_settings_file),
+                        default=default_settings_file)
+
     return parser.parse_args()
 
 
@@ -666,6 +696,9 @@ def main():
     # Create the directory that will contain the report
     os.makedirs(args.output_path, exist_ok=True)
 
+    with open(args.settings_file_path, 'rt') as settings_file:
+        settings = load_settings_from_file(settings_file)
+
     # Create a dictionary associating names like "q1" with
     # a HemtProperties object
     hemt_dict = dict([('q{0}'.format(q),
@@ -673,12 +706,12 @@ def main():
                                       input_path=args.input_path,
                                       output_path=args.output_path))
                       for q in (1, 2, 3, 4, 5, 6)])
-
-    balances = tune(hemt_dict)
+    balances = tune(hemt_dict, settings)
 
     params = build_dict_from_results(pol_name=args.polarimeter_name,
                                      hemt_dict=hemt_dict,
-                                     balances=balances)
+                                     balances=balances,
+                                     settings=settings)
 
     save_parameters_to_json(params=params,
                             output_file_name=os.path.join(args.output_path,

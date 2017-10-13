@@ -1,0 +1,7 @@
+{
+    "ref_vd_mV": 900.0,
+    "id_mA_q1_q6": 4.5,
+    "id_mA_q2_q5": 7.5,
+    "id_mA_q3_q4": 6.5,
+    "id_mA_tolerance": 1.5
+}
