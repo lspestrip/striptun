@@ -254,13 +254,13 @@ def create_report(params: Dict[str, Any],
                  os.path.join(output_path, static_file_name))
 
     # Load the file containing the Markdown template in a string
-    template_file_name = os.path.join(template_path, 'tnoise.md')
+    template_file_name = os.path.join(template_path, 'tnoise_step1.md')
     log.info('Reading report template from "%s"', template_file_name)
     report_template = Template(filename=template_file_name)
 
     # Fill the template and save the report in Markdown format
     md_report = report_template.render_unicode(**params)
-    md_report_path = os.path.join(output_path, 'tnoise_report.md')
+    md_report_path = os.path.join(output_path, 'tnoise_step1_report.md')
     with open(md_report_path, 'wt', encoding='utf-8') as md_file:
         md_file.write(md_report)
     log.info('Markdown report saved to "%s"', md_report_path)

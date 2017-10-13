@@ -127,15 +127,20 @@ The factor 1e4 is a resistance, and its presence seems to be due to the partitor
 Tnoise
 ------
 
-This program can be used to ease the computation of the noise temperature. 
+Two programs are implemented to compute the noise temperature. The first one,
+``tnoise_step1.py``, automatically detects the time spans where the signal of
+the polarimeter was stable enough to assume thermal equilibrium. The output of
+this program is used by the second program, ``tnoise_step2.py``, to run a
+Bayesian analysis on the data and extract the best value of the noise
+temperature for the two legs of the amplifier.
 
 Usage
 +++++
 
-The program does not need to be installed. Just run it with the following
-parameters::
+The program does not need to be installed. To run the first program, use the
+following parameters::
 
-     python tnoise.py POLARIMETER_NAME INPUT_FILE_NAME OUTPUT_PATH
+     python tnoise_step1.py POLARIMETER_NAME INPUT_FILE_NAME OUTPUT_PATH
 
 The meaning of the parameters is the following:
 
