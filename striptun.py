@@ -153,6 +153,11 @@ class HemtCurves:
         ax1.set_xlabel(x_label)
         ax1.set_ylabel(y1_label)
 
+        ax1.get_xaxis().set_minor_locator(matplotlib.ticker.AutoMinorLocator())
+        ax1.get_yaxis().set_minor_locator(matplotlib.ticker.AutoMinorLocator())
+        ax1.grid(b=True, which='major', ls='-', lw=1, alpha=1)
+        ax1.grid(b=True, which='minor', ls='--', lw=0.5, alpha=0.5)
+        
         if get_y2:
             ax2 = ax1.twinx()
             for curve_idx in range(self.num_of_curves):
