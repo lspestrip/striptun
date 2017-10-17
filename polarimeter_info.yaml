@@ -1,4 +1,13 @@
 ---
+STRIP21:
+  date: 2017-06-08
+  operators:
+    - Claudio Pincella
+    - Paola Battaglia
+    - Mario Zannoni
+  cryo: true
+  defective: true
+  
 STRIP58:
   date: 2017-06-09
   operators:
