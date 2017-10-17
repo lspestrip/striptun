@@ -1,4 +1,187 @@
 ---
+STRIP36:
+  date: 2017-06-20
+  operators:
+    - Claudio Pincella
+    - Mario Zannoni
+  cryo: true
+  defective: false
+  detector_offsets:
+    PWR0_adu: 99510
+    PWR1_adu: 100700
+    PWR2_adu: 99530
+    PWR3_adu: 101030
+  biases:
+    H0:
+      vdrain_V: 0.8
+      idrain_mA: 6.67
+      vgate_mV: 96
+    H1:
+      vdrain_V: 0.8
+      idrain_mA: 6.86
+      vgate_mV: 229
+    H2:
+      vdrain_V: 0.8
+      idrain_mA: 4.72
+      vgate_mV: 229
+    H3:
+      vdrain_V: 0.8
+      idrain_mA: 5.51
+      vgate_mV: 237
+    H4:
+      vdrain_V: 0.8
+      idrain_mA: 3.06
+      vgate_mV: 369
+    H5:
+      vdrain_V: 0.8
+      idrain_mA: 4.48
+      vgate_mV: 0
+
+# ---------------------------------------------------------------------
+
+STRIP30:
+  date: 2017-06-21
+  operators:
+    - Claudio Pincella
+  cryo: true
+  defective: false
+  channel_offsets:
+    PWR0_adu: 1881
+    PWR1_adu: 1820
+    PWR2_adu: 1862
+    PWR3_adu: 1883
+  detector_offsets:
+    PWR0_adu: 82900
+    PWR1_adu: 84570
+    PWR2_adu: 81440
+    PWR3_adu: 83870
+  biases:
+    H0:
+      vdrain_V: 0.9
+      idrain_mA: 11.7
+      vgate_mV: -180
+    H1:
+      vdrain_V: 0.9
+      idrain_mA: 9.3
+      vgate_mV: -105
+    H2:
+      vdrain_V: 0.9
+      idrain_mA: 11.0
+      vgate_mV: 222
+    H3:
+      vdrain_V: 0.9
+      idrain_mA: 11.0
+      vgate_mV: 326
+    H4:
+      vdrain_V: 0.9
+      idrain_mA: 11.0
+      vgate_mV: -98
+    H5:
+      vdrain_V: 0.9
+      idrain_mA: 4.0
+      vgate_mV: 154
+
+# ---------------------------------------------------------------------
+
+STRIP37:
+  date: 2017-06-22
+  operators:
+    - Paola Battaglia
+    - Claudio Pincella
+  cryo: true
+  defective: true
+  channel_offsets:
+    PWR0_adu: 1808
+    PWR1_adu: 1834
+    PWR2_adu: 1812
+    PWR3_adu: 1814
+  detector_offsets:
+    PWR0_adu: 82500
+    PWR1_adu: 80300
+    PWR2_adu: 80300
+    PWR3_adu: 79800
+
+# ---------------------------------------------------------------------
+
+STRIP37:
+  date: 2017-06-23
+  operators:
+    - Federico Incardona
+  cryo: true
+  defective: true
+  channel_offsets:
+    PWR0_adu: 1824
+    PWR1_adu: 1848
+    PWR2_adu: 1827
+    PWR3_adu: 1829
+  detector_offsets:
+    PWR0_adu: -2100
+    PWR1_adu: -300
+    PWR2_adu: 2000
+    PWR3_adu: 2700
+  biases:
+    H0:
+      vdrain_V: 0.9
+      idrain_mA: 7
+      vgate_mV: 34
+    H1:
+      vdrain_V: 0.9
+      idrain_mA: 7
+      vgate_mV: 30
+    H2:
+      vdrain_V: 0.6
+      idrain_mA: 5.35
+      vgate_mV: 340
+    H3:
+      vdrain_V: 0.6
+      idrain_mA: 5
+      vgate_mV: 350
+    H4:
+      vdrain_V: 0.7
+      idrain_mA: 7.3
+      vgate_mV: -100
+    H5:
+      vdrain_V: 0.7
+      idrain_mA: 7.7
+      vgate_mV: 50
+
+# ---------------------------------------------------------------------
+
+STRIP38:
+  date: 2017-06-27
+  operators:
+    - Claudio Pincella
+    - Mario Zannoni
+  cryo: true
+  defective: false
+  biases:
+    H0:
+      vdrain_V: 0.7
+      idrain_mA: 3.0
+      vgate_mV: 100
+    H1:
+      vdrain_V: 0.7
+      idrain_mA: 2.0
+      vgate_mV: 58
+    H2:
+      vdrain_V: 0.7
+      idrain_mA: 9.0
+      vgate_mV: 473
+    H3:
+      vdrain_V: 0.7
+      idrain_mA: 4.0
+      vgate_mV: 288
+    H4:
+      vdrain_V: 0.7
+      idrain_mA: 9.1
+      vgate_mV: 347
+    H5:
+      vdrain_V: 0.7
+      idrain_mA: 4.0
+      vgate_mV: -205
+
+# ---------------------------------------------------------------------
+
 STRIP70:
   date: 2017-06-29
   operators:
