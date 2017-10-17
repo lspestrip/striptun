@@ -1,4 +1,187 @@
 ---
+STRIP41:
+  date: 2017-04-28
+  operators:
+    - Silvia Caprioli
+    - Federico Incardona
+  cryo: true
+  defective: false
+  biases:
+    H0:
+      vdrain_V: 0.9
+      idrain_mA: 4.1
+      vgate_mV: 10
+    H1:
+      vdrain_V: 0.9
+      idrain_mA: 4.0
+      vgate_mV: 120
+    H2:
+      vdrain_V: 0.9
+      idrain_mA: 5.0
+      vgate_mV: 195
+    H3:
+      vdrain_V: 0.9
+      idrain_mA: 4.0
+      vgate_mV: 128
+    H4:
+      vdrain_V: 0.9
+      idrain_mA: 7.0
+      vgate_mV: -140
+    H5:
+      vdrain_V: 0.9
+      idrain_mA: 7.0
+      vgate_mV: -290
+
+# ---------------------------------------------------------------------
+
+STRIP48:
+  date: 2017-05-04
+  operators:
+    - Paola Battaglia
+    - Claudio Pincella
+    - Mario Zannoni
+  cryo: true
+  defective: false
+  biases:
+    H0:
+      vdrain_V: 0.72
+      idrain_mA: 2.13
+      vgate_mV: 57
+    H1:
+      vdrain_V: 0.9
+      idrain_mA: 5.3
+      vgate_mV: -13
+    H2:
+      vdrain_V: 0.75
+      idrain_mA: 3.54
+      vgate_mV: 254
+    H3:
+      vdrain_V: 0.75
+      idrain_mA: 3.47
+      vgate_mV: 277
+    H4:
+      vdrain_V: 0.9
+      idrain_mA: 2.6
+      vgate_mV: -35
+    H5:
+      vdrain_V: 0.75
+      idrain_mA: 1.62
+      vgate_mV: 133
+
+# ---------------------------------------------------------------------
+
+STRIP50:
+  date: 2017-05-10
+  operators:
+    - Claudio Pincella
+    - Mario Zannoni
+  cryo: true
+  defective: false
+  biases:
+    H0:
+      vdrain_V: 0.9
+      idrain_mA: 4.3
+      vgate_mV: 64
+    H1:
+      vdrain_V: 0.9
+      idrain_mA: 4.2
+      vgate_mV: 82
+    H2:
+      vdrain_V: 0.9
+      idrain_mA: 6.0
+      vgate_mV: 372
+    H3:
+      vdrain_V: 0.9
+      idrain_mA: 5.1
+      vgate_mV: 440
+    H4:
+      vdrain_V: 0.9
+      idrain_mA: 9.1
+      vgate_mV: 5
+    H5:
+      vdrain_V: 0.9
+      idrain_mA: 5.1
+      vgate_mV: 20
+
+# ---------------------------------------------------------------------
+
+STRIP55:
+  date: 2017-05-16
+  operators:
+    - Claudio Pincella
+  cryo: true
+  defective: false
+  biases:
+    H0:
+      vdrain_V: 0.9
+      idrain_mA: 4.5
+      vgate_mV: 20
+    H1:
+      vdrain_V: 0.9
+      idrain_mA: 5.0
+      vgate_mV: 56
+    H2:
+      vdrain_V: 1.2
+      idrain_mA: 16.9
+      vgate_mV: -192
+    H3:
+      vdrain_V: 1.22
+      idrain_mA: 17.0
+      vgate_mV: -225
+    H4:
+      vdrain_V: 0.91
+      idrain_mA: 11
+      vgate_mV: 396
+    H5:
+      vdrain_V: 0.93
+      idrain_mA: 12
+      vgate_mV: 418
+
+# ---------------------------------------------------------------------
+
+STRIP53:
+  date: 2017-05-18
+  operators:
+    - Paola Battaglia
+    - Silvia Caprioli
+    - Federico Incardona
+    - Maurizio Tomasi
+    - Mario Zannoni
+  cryo: true
+  defective: true
+
+# ---------------------------------------------------------------------
+
+STRIP62:
+  date: 2017-05-25
+  operators:
+    - Paola Battaglia
+    - Mario Zannoni
+  cryo: true
+  defective: false
+
+# ---------------------------------------------------------------------
+
+STRIP52:
+  date: 2017-05-25
+  operators:
+    - Paola Battaglia
+    - Mario Zannoni
+  cryo: true
+  defective: false
+
+# ---------------------------------------------------------------------
+
+STRIP54:
+  date: 2017-05-30
+  operators:
+    - Claudio Pincella
+    - Mario Zannoni
+  cryo: true
+  defective: false
+
+# ---------------------------------------------------------------------
+
 STRIP56:
   date: 2017-05-31
   operators:
