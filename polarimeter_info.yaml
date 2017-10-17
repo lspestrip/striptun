@@ -1,4 +1,48 @@
 ---
+STRIP70:
+  date: 2017-06-29
+  operators:
+    - Paola Battaglia
+    - Claudio Pincella
+  cryo: true
+  channel_offsets:
+    PWR0_adu: 1742
+    PWR1_adu: 1868
+    PWR2_adu: 1826
+    PWR3_adu: 1786
+  detector_offsets:
+    PWR0_adu: 86000
+    PWR1_adu: 84370
+    PWR2_adu: 83100
+    PWR3_adu: 82430
+  biases:
+    H0:
+      vdrain_V: 0.8
+      idrain_mA: 7.27
+      vgate_mV: 198
+    H1:
+      vdrain_V: 0.8
+      idrain_mA: 8.08
+      vgate_mV: 242
+    H2:
+      vdrain_V: 0.8
+      idrain_mA: 8.0
+      vgate_mV: 158
+    H3:
+      vdrain_V: 0.8
+      idrain_mA: 8.94
+      vgate_mV: 226
+    H4:
+      vdrain_V: 0.8
+      idrain_mA: 7.01
+      vgate_mV: 400
+    H5:
+      vdrain_V: 0.8
+      idrain_mA: 7.29
+      vgate_mV: 236
+
+# ---------------------------------------------------------------------
+
 STRIP68:
   date: 2017-07-03
   operators:
