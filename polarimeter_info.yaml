@@ -1,4 +1,99 @@
 ---
+STRIP68:
+  date: 2017-07-03
+  operators:
+    - Paola Battaglia
+    - Mario Zannoni
+  cryo: true
+  channel_offsets:
+    PWR0_adu: 1990
+    PWR1_adu: 1937
+    PWR2_adu: 1968
+    PWR3_adu: 1890
+  detector_offsets:
+    PWR0_adu: 87700
+    PWR1_adu: 85200
+    PWR2_adu: 87400
+    PWR3_adu: 88000
+  biases:
+    H0:
+      vdrain_V: 0.91
+      idrain_mA: 3.16
+      vgate_mV: 307
+    H1:
+      vdrain_V: 0.91
+      idrain_mA: 3.16
+      vgate_mV: 331
+    H2:
+      vdrain_V: 1.21
+      idrain_mA: 12.16
+      vgate_mV: 9
+    H3:
+      vdrain_V: 1.21
+      idrain_mA: 11.08
+      vgate_mV: -56
+    H4:
+      vdrain_V: 0.91
+      idrain_mA: 9.30
+      vgate_mV: 245
+    H5:
+      vdrain_V: 0.93
+      idrain_mA: 8.4
+      vgate_mV: 374
+
+  noise_temperature_steps_up:
+    -
+      t_load_a_1_K: 20.0
+      t_load_a_2_K: 25.6
+      t_load_b_1_K: 10.0
+      t_load_b_2_K: 14.5
+      t_cross_guide_1_K: 15.0
+      t_cross_guide_2_K: 24.7
+      t_polarimeter_1_K: 20.0
+      t_polarimeter_2_K: 16.3
+
+    -
+      t_load_a_1_K: 20.0
+      t_load_a_2_K: 25.5
+      t_load_b_1_K: 20.0
+      t_load_b_2_K: 27.9
+      t_cross_guide_1_K: 15.0
+      t_cross_guide_2_K: 24.7
+      t_polarimeter_1_K: 20.0
+      t_polarimeter_2_K: 16.3
+
+    -
+      t_load_a_1_K: 20.0
+      t_load_a_2_K: 25.5
+      t_load_b_1_K: 30.0
+      t_load_b_2_K: 36.8
+      t_cross_guide_1_K: 15.0
+      t_cross_guide_2_K: 24.6
+      t_polarimeter_1_K: 20.0
+      t_polarimeter_2_K: 16.3
+
+    -
+      t_load_a_1_K: 20.0
+      t_load_a_2_K: 25.5
+      t_load_b_1_K: 40.0
+      t_load_b_2_K: 48.5
+      t_cross_guide_1_K: 15.0
+      t_cross_guide_2_K: 24.6
+      t_polarimeter_1_K: 20.0
+      t_polarimeter_2_K: 16.3
+
+    -
+      t_load_a_1_K: 20.0
+      t_load_a_2_K: 25.5
+      t_load_b_1_K: 50.0
+      t_load_b_2_K: 59.3
+      t_cross_guide_1_K: 15.0
+      t_cross_guide_2_K: 24.5
+      t_polarimeter_1_K: 20.0
+      t_polarimeter_2_K: 16.3
+
+# ---------------------------------------------------------------------
+
 STRIP67:
   date: 2017-07-05
   operators:
@@ -64,7 +159,7 @@ STRIP67:
 
     -
       t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.4.9
+      t_load_a_2_K: 24.9
       t_load_b_1_K: 30.0
       t_load_b_2_K: 36.6
       t_cross_guide_1_K: 15.0
