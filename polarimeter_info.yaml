@@ -1,4 +1,43 @@
 ---
+STRIP58:
+  date: 2017-06-09
+  operators:
+    - Paola Battaglia
+  cryo: true
+  defective: false
+  channel_offsets:
+    PWR0_adu: 1879
+    PWR1_adu: 1915
+    PWR2_adu: 1872
+    PWR3_adu: 1883
+  biases:
+    H0:
+      vdrain_V: 0.9
+      idrain_mA: 2.95
+      vgate_mV: 170
+    H1:
+      vdrain_V: 0.9
+      idrain_mA: 4.03
+      vgate_mV: 55
+    H2:
+      vdrain_V: 1.2
+      idrain_mA: 12.26
+      vgate_mV: 276
+    H3:
+      vdrain_V: 1.2
+      idrain_mA: 14.05
+      vgate_mV: 166
+    H4:
+      vdrain_V: 0.9
+      idrain_mA: 9.05
+      vgate_mV: 321
+    H5:
+      vdrain_V: 0.9
+      idrain_mA: 9.03
+      vgate_mV: 432
+
+# ---------------------------------------------------------------------
+
 STRIP04:
   date: 2017-06-12
   operators:
