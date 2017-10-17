@@ -1,4 +1,99 @@
 ---
+STRIP61:
+  date: 2017-07-11
+  operators:
+    - Paola Battaglia
+    - Mario Zannoni
+  cryo: true
+  channel_offsets:
+    PWR0_adu: 1916
+    PWR1_adu: 1885
+    PWR2_adu: 1880
+    PWR3_adu: 1811
+  detector_offsets:
+    PWR0_adu: 57400
+    PWR1_adu: 59700
+    PWR2_adu: 59800
+    PWR3_adu: 60900
+  biases:
+    H0:
+      vdrain_V: 0.92
+      idrain_mA: 3.02
+      vgate_mV: 185
+    H1:
+      vdrain_V: 0.90
+      idrain_mA: 3.10
+      vgate_mV: 341
+    H2:
+      vdrain_V: 1.21
+      idrain_mA: 9.94
+      vgate_mV: 428
+    H3:
+      vdrain_V: 1.21
+      idrain_mA: 12.01
+      vgate_mV: 504
+    H4:
+      vdrain_V: 0.95
+      idrain_mA: 6.94
+      vgate_mV: 453
+    H5:
+      vdrain_V: 0.91
+      idrain_mA: 8.03
+      vgate_mV: 181
+
+  noise_temperature_steps_up:
+    -
+      t_load_a_1_K: 20.0
+      t_load_a_2_K: 25.3
+      t_load_b_1_K: 10.1
+      t_load_b_2_K: 13.2
+      t_cross_guide_1_K: 15.0
+      t_cross_guide_2_K: 24.9
+      t_polarimeter_1_K: 20.0
+      t_polarimeter_2_K: 16.2
+
+    -
+      t_load_a_1_K: 20.0
+      t_load_a_2_K: 25.3
+      t_load_b_1_K: 20.0
+      t_load_b_2_K: 26.9
+      t_cross_guide_1_K: 15.0
+      t_cross_guide_2_K: 24.9
+      t_polarimeter_1_K: 20.0
+      t_polarimeter_2_K: 16.2
+
+    -
+      t_load_a_1_K: 20.0
+      t_load_a_2_K: 25.3
+      t_load_b_1_K: 30.0
+      t_load_b_2_K: 36.1
+      t_cross_guide_1_K: 15.0
+      t_cross_guide_2_K: 24.9
+      t_polarimeter_1_K: 20.0
+      t_polarimeter_2_K: 16.2
+
+    -
+      t_load_a_1_K: 20.0
+      t_load_a_2_K: 25.3
+      t_load_b_1_K: 40.0
+      t_load_b_2_K: 47.9
+      t_cross_guide_1_K: 15.0
+      t_cross_guide_2_K: 24.4
+      t_polarimeter_1_K: 20.0
+      t_polarimeter_2_K: 16.2
+
+    -
+      t_load_a_1_K: 20.0
+      t_load_a_2_K: 25.3
+      t_load_b_1_K: 50.0
+      t_load_b_2_K: 58.8
+      t_cross_guide_1_K: 15.0
+      t_cross_guide_2_K: 24.9
+      t_polarimeter_1_K: 20.0
+      t_polarimeter_2_K: 16.2
+
+# ---------------------------------------------------------------------
+
 STRIP59:
   date: 2017-07-14
   operators:
