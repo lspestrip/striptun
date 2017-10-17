@@ -1,4 +1,44 @@
 ---
+STRIP57:
+  date: 2017-06-06
+  operators:
+    - Claudio Pincella
+    - Mario Zannoni
+  cryo: true
+  defective: false
+  detector_offsets:
+    PWR0_adu: 90800
+    PWR1_adu: 89400
+    PWR2_adu: 88070
+    PWR3_adu: 87860
+  biases:
+    H0:
+      vdrain_V: 0.9
+      idrain_mA: 4.95
+      vgate_mV: 82
+    H1:
+      vdrain_V: 0.9
+      idrain_mA: 4.0
+      vgate_mV: 251
+    H2:
+      vdrain_V: 1.21
+      idrain_mA: 15.9
+      vgate_mV: 383
+    H3:
+      vdrain_V: 1.2
+      idrain_mA: 14.3
+      vgate_mV: -87
+    H4:
+      vdrain_V: 0.9
+      idrain_mA: 11.0
+      vgate_mV: 159
+    H5:
+      vdrain_V: 0.93
+      idrain_mA: 11.0
+      vgate_mV: 265
+
+# ---------------------------------------------------------------------
+
 STRIP21:
   date: 2017-06-08
   operators:
@@ -8,6 +48,8 @@ STRIP21:
   cryo: true
   defective: true
   
+# ---------------------------------------------------------------------
+
 STRIP58:
   date: 2017-06-09
   operators:
