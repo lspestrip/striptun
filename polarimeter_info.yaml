@@ -5,6 +5,7 @@ STRIP70:
     - Paola Battaglia
     - Claudio Pincella
   cryo: true
+  defective: false
   channel_offsets:
     PWR0_adu: 1742
     PWR1_adu: 1868
@@ -49,6 +50,7 @@ STRIP68:
     - Paola Battaglia
     - Mario Zannoni
   cryo: true
+  defective: false
   channel_offsets:
     PWR0_adu: 1990
     PWR1_adu: 1937
@@ -144,6 +146,7 @@ STRIP67:
     - Silvia Caprioli
     - Mario Zannoni
   cryo: true
+  defective: false
   channel_offsets:
     PWR0_adu: 1928
     PWR1_adu: 1968
@@ -239,6 +242,7 @@ STRIP69:
     - Federico Incardona
     - Mario Zannoni
   cryo: true
+  defective: false
   channel_offsets:
     PWR0_adu: 1936
     PWR1_adu: 1892
@@ -334,6 +338,7 @@ STRIP61:
     - Paola Battaglia
     - Mario Zannoni
   cryo: true
+  defective: false
   channel_offsets:
     PWR0_adu: 1916
     PWR1_adu: 1885
@@ -429,6 +434,7 @@ STRIP59:
     - Silvia Caprioli
     - Mario Zannoni
   cryo: true
+  defective: false
   channel_offsets:
     PWR0_adu: 1918
     PWR1_adu: 1932
@@ -524,6 +530,7 @@ STRIP66:
     - Paola Battaglia
     - Mario Zannoni
   cryo: true
+  defective: false
   channel_offsets:
     PWR0_adu: 1969
     PWR1_adu: 1982
@@ -619,6 +626,7 @@ STRIP64:
     - Federico Incardona
     - Mario Zannoni
   cryo: true
+  defective: false
   channel_offsets:
     PWR0_adu: 1894
     PWR1_adu: 1879
@@ -714,6 +722,7 @@ STRIP63:
     - Claudio Pincella
     - Mario Zannoni
   cryo: true
+  defective: false
   channel_offsets:
     PWR0_adu: 1884
     PWR1_adu: 1877
@@ -810,6 +819,7 @@ STRIP33:
     - Silvia Caprioli
     - Federico Incardona
   cryo: true
+  defective: false
   channel_offsets:
     PWR0_adu: 1841
     PWR1_adu: 1821
@@ -905,6 +915,7 @@ STRIP35:
     - Silvia Caprioli
     - Mario Zannoni
   cryo: true
+  defective: true
   channel_offsets:
     PWR0_adu: 1808
     PWR1_adu: 1794
@@ -949,6 +960,7 @@ STRIP07:
     - Federico Incardona
     - Maurizio Tomasi
   cryo: true
+  defective: false
   channel_offsets:
     PWR0_adu: 1793
     PWR1_adu: 1790
@@ -1044,6 +1056,7 @@ STRIP44:
     - Silvia Caprioli
     - Mario Zannoni
   cryo: true
+  defective: false
   channel_offsets:
     PWR0_adu: 1873
     PWR1_adu: 1880
@@ -1139,6 +1152,7 @@ STRIP02:
     - Paola Battaglia
     - Claudio Pincella
   cryo: true
+  defective: false
   channel_offsets:
     PWR0_adu: 1837
     PWR1_adu: 1754
@@ -1224,6 +1238,7 @@ STRIP43:
     - Federico Incardona
     - Claudio Pincella
   cryo: true
+  defective: false
   channel_offsets:
     PWR0_adu: 1807
     PWR1_adu: 1870
