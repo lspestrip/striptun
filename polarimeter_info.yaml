@@ -397,6 +397,56 @@ STRIP56:
       vdrain_V: 0.9
       idrain_mA: 8.56
       vgate_mV: 320
+  noise_temperature_steps_up:
+    -
+      t_load_a_1_K: 20.0
+      t_load_a_2_K: 25.1
+      t_load_b_1_K: 10.0
+      t_load_b_2_K: 11.7
+      t_cross_guide_1_K: 14.98
+      t_cross_guide_2_K: 24.25
+      t_polarimeter_1_K: 20
+      t_polarimeter_2_K: 16.45
+
+    -
+      t_load_a_1_K: 20.0
+      t_load_a_2_K: 25.1
+      t_load_b_1_K: 20.0
+      t_load_b_2_K: 21.7
+      t_cross_guide_1_K: 14.98
+      t_cross_guide_2_K: 24.25
+      t_polarimeter_1_K: 20.0
+      t_polarimeter_2_K: 16.45
+
+    -
+      t_load_a_1_K: 20.0
+      t_load_a_2_K: 25.1
+      t_load_b_1_K: 30.0
+      t_load_b_2_K: 31.7
+      t_cross_guide_1_K: 14.98
+      t_cross_guide_2_K: 24.25
+      t_polarimeter_1_K: 20.0
+      t_polarimeter_2_K: 16.45
+
+    -
+      t_load_a_1_K: 20.0
+      t_load_a_2_K: 25.1
+      t_load_b_1_K: 40.0
+      t_load_b_2_K: 41.5
+      t_cross_guide_1_K: 15.0
+      t_cross_guide_2_K: 17.4
+      t_polarimeter_1_K: 20.0
+      t_polarimeter_2_K: 20.0
+
+    -
+      t_load_a_1_K: 20.0
+      t_load_a_2_K: 25.0
+      t_load_b_1_K: 50.0
+      t_load_b_2_K: 51.4
+      t_cross_guide_1_K: 15.0
+      t_cross_guide_2_K: 17.4
+      t_polarimeter_1_K: 20.0
+      t_polarimeter_2_K: 20.0
 
 # ---------------------------------------------------------------------
 
@@ -2004,6 +2054,92 @@ STRIP44:
       t_cross_guide_2_K: 24.6
       t_polarimeter_1_K: 22.6
       t_polarimeter_2_K: 21.3
+
+# ---------------------------------------------------------------------
+
+STRIP49:
+  date: 2017-10-04
+  operators:
+    - Federico Incardona
+    - Maurizio Tomasi
+  cryo: true
+  defective: true
+  channel_offsets:
+    PWR0_adu: 1857
+    PWR1_adu: 1877
+    PWR2_adu: 1859
+    PWR3_adu: 1867
+  detector_offsets:
+    PWR0_adu: 57200
+    PWR1_adu: 58100
+    PWR2_adu: 56800
+    PWR3_adu: 58200
+  biases:
+    H0:
+      vdrain_V: 0.9
+      idrain_mA: 4.96
+      vgate_mV: 159
+    H1:
+      vdrain_V: 0.9
+      idrain_mA: 4.56
+      vgate_mV: 81
+    H2:
+      vdrain_V: 0.9
+      idrain_mA: 8.19
+      vgate_mV: 336
+    H3:
+      vdrain_V: 0.9
+      idrain_mA: 7.97
+      vgate_mV: 200
+    H4:
+      vdrain_V: 0.9
+      idrain_mA: 5.84
+      vgate_mV: 101
+    H5:
+      vdrain_V: 0.9
+      idrain_mA: 6.67
+      vgate_mV: -411
+
+  noise_temperature_steps_up:
+    -
+      t_load_a_1_K: 20.0
+      t_load_a_2_K: 26.4
+      t_load_b_1_K: 20.0
+      t_load_b_2_K: 27.7
+      t_cross_guide_1_K: 15.0
+      t_cross_guide_2_K: 24.6
+      t_polarimeter_1_K: 20.0
+      t_polarimeter_2_K: 16.8
+
+    -
+      t_load_a_1_K: 20.0
+      t_load_a_2_K: 26.4
+      t_load_b_1_K: 30.0
+      t_load_b_2_K: 36.8
+      t_cross_guide_1_K: 15.0
+      t_cross_guide_2_K: 24.6
+      t_polarimeter_1_K: 20.0
+      t_polarimeter_2_K: 16.8
+
+    -
+      t_load_a_1_K: 20.0
+      t_load_a_2_K: 26.4
+      t_load_b_1_K: 40.0
+      t_load_b_2_K: 48.6
+      t_cross_guide_1_K: 15.0
+      t_cross_guide_2_K: 24.6
+      t_polarimeter_1_K: 20.0
+      t_polarimeter_2_K: 16.8
+
+    -
+      t_load_a_1_K: 20.0
+      t_load_a_2_K: 26.4
+      t_load_b_1_K: 50.0
+      t_load_b_2_K: 59.8
+      t_cross_guide_1_K: 15.0
+      t_cross_guide_2_K: 24.6
+      t_polarimeter_1_K: 20.0
+      t_polarimeter_2_K: 16.7
 
 # ---------------------------------------------------------------------
 
