@@ -22,6 +22,13 @@ format is useful when used in conjunction with the program `Pandoc
 <http://pandoc.org>`_, as it can be easily converted to a variety of other
 formats (LaTeX, Microsoft Word, etc.).
 
+This repository contains a database of the parameters used during the tests in
+Bicocca
+(https://github.com/lspestrip/striptun/blob/master/polarimeter_info.yaml). Any
+operator should update this file any time a new polarimeter is tested. If you do
+not have access rights to this repository, you should fork the repository, make
+your changes, and open a pull request.
+
 
 Installation
 ------------
