@@ -1,2315 +1,2361 @@
 ---
 STRIP47:
-  date: 2017-03-22
-  operators:
-    - Claudio Pincella
-  cryo: true
-  defective: false
-  biases:
-    H0:
-      vdrain_V: 0.8
-      idrain_mA: 4.5
-      vgate_mV: 160
-    H1:
-      vdrain_V: 0.9
-      idrain_mA: 6.7
-      vgate_mV: -140
-    H2:
-      vdrain_V: 0.7
-      idrain_mA: 5.7
-      vgate_mV: 360
-    H3:
-      vdrain_V: 0.9
-      idrain_mA: 7.1
-      vgate_mV: 385
-    H4:
-      vdrain_V: 0.7
-      idrain_mA: 5.8
-      vgate_mV: 145
-    H5:
-      vdrain_V: 0.7
-      idrain_mA: 7.2
-      vgate_mV: -140
+  -
+    date: 2017-03-22
+    operators:
+      - Claudio Pincella
+    cryo: true
+    defective: false
+    biases:
+      H0:
+        vdrain_V: 0.8
+        idrain_mA: 4.5
+        vgate_mV: 160
+      H1:
+        vdrain_V: 0.9
+        idrain_mA: 6.7
+        vgate_mV: -140
+      H2:
+        vdrain_V: 0.7
+        idrain_mA: 5.7
+        vgate_mV: 360
+      H3:
+        vdrain_V: 0.9
+        idrain_mA: 7.1
+        vgate_mV: 385
+      H4:
+        vdrain_V: 0.7
+        idrain_mA: 5.8
+        vgate_mV: 145
+      H5:
+        vdrain_V: 0.7
+        idrain_mA: 7.2
+        vgate_mV: -140
 
 # ---------------------------------------------------------------------
 
 STRIP15:
-  date: 2017-03-29
-  operators:
-    - Claudio Pincella
-  cryo: true
-  defective: false
-  biases:
-    H0:
-      vdrain_V: 0.9
-      idrain_mA: 4.4
-      vgate_mV: -200
-    H1:
-      vdrain_V: 0.9
-      idrain_mA: 4.6
-      vgate_mV: 210
-    H2:
-      vdrain_V: 0.9
-      idrain_mA: 5.5
-      vgate_mV: 260
-    H3:
-      vdrain_V: 0.9
-      idrain_mA: 9.5
-      vgate_mV: 440
-    H4:
-      vdrain_V: 0.9
-      idrain_mA: 7.2
-      vgate_mV: 100
-    H5:
-      vdrain_V: 0.9
-      idrain_mA: 7.4
-      vgate_mV: 77
+  -
+    date: 2017-03-29
+    operators:
+      - Claudio Pincella
+    cryo: true
+    defective: false
+    biases:
+      H0:
+        vdrain_V: 0.9
+        idrain_mA: 4.4
+        vgate_mV: -200
+      H1:
+        vdrain_V: 0.9
+        idrain_mA: 4.6
+        vgate_mV: 210
+      H2:
+        vdrain_V: 0.9
+        idrain_mA: 5.5
+        vgate_mV: 260
+      H3:
+        vdrain_V: 0.9
+        idrain_mA: 9.5
+        vgate_mV: 440
+      H4:
+        vdrain_V: 0.9
+        idrain_mA: 7.2
+        vgate_mV: 100
+      H5:
+        vdrain_V: 0.9
+        idrain_mA: 7.4
+        vgate_mV: 77
 
 # ---------------------------------------------------------------------
 
 STRIP08:
-  date: 2017-03-31
-  operators:
-    - Mario Zannoni
-    - Alessandro Baù
-  cryo: true
-  defective: false
+  -
+    date: 2017-03-31
+    operators:
+      - Mario Zannoni
+      - Alessandro Baù
+    cryo: true
+    defective: false
 
 # ---------------------------------------------------------------------
 
 STRIP16:
-  date: 2017-04-04
-  operators:
-    - Federico Incardona
-    - Claudio Pincella
-  cryo: true
-  defective: false
+  -
+    date: 2017-04-04
+    operators:
+      - Federico Incardona
+      - Claudio Pincella
+    cryo: true
+    defective: false
 
 # ---------------------------------------------------------------------
 
 STRIP24:
-  date: 2017-04-07
-  operators:
-    - Federico Incardona
-    - Mario Zannoni
-  cryo: true
-  defective: false
+  -
+    date: 2017-04-07
+    operators:
+      - Federico Incardona
+      - Mario Zannoni
+    cryo: true
+    defective: false
 
 # ---------------------------------------------------------------------
 
 STRIP27:
-  date: 2017-04-13
-  operators:
-    - Silvia Caprioli
-    - Federico Incardona
-  cryo: true
-  defective: false
-  biases:
-    H0:
-      vdrain_V: 0.9
-      idrain_mA: 5.0
-      vgate_mV: 113
-    H1:
-      vdrain_V: 0.9
-      idrain_mA: 4.2
-      vgate_mV: 270
-    H2:
-      vdrain_V: 0.9
-      idrain_mA: 7.7
-      vgate_mV: 348
-    H3:
-      vdrain_V: 0.9
-      idrain_mA: 8.9
-      vgate_mV: 495
-    H4:
-      vdrain_V: 0.9
-      idrain_mA: 8.7
-      vgate_mV: 373
-    H5:
-      vdrain_V: 0.9
-      idrain_mA: 9.0
-      vgate_mV: 485
+  -
+    date: 2017-04-13
+    operators:
+      - Silvia Caprioli
+      - Federico Incardona
+    cryo: true
+    defective: false
+    biases:
+      H0:
+        vdrain_V: 0.9
+        idrain_mA: 5.0
+        vgate_mV: 113
+      H1:
+        vdrain_V: 0.9
+        idrain_mA: 4.2
+        vgate_mV: 270
+      H2:
+        vdrain_V: 0.9
+        idrain_mA: 7.7
+        vgate_mV: 348
+      H3:
+        vdrain_V: 0.9
+        idrain_mA: 8.9
+        vgate_mV: 495
+      H4:
+        vdrain_V: 0.9
+        idrain_mA: 8.7
+        vgate_mV: 373
+      H5:
+        vdrain_V: 0.9
+        idrain_mA: 9.0
+        vgate_mV: 485
 
 # ---------------------------------------------------------------------
 
 STRIP29:
-  date: 2017-04-19
-  operators:
-    - Claudio Pincella
-  cryo: true
-  defective: false
+  -
+    date: 2017-04-19
+    operators:
+      - Claudio Pincella
+    cryo: true
+    defective: false
 
 # ---------------------------------------------------------------------
 
 STRIP31:
-  date: 2017-04-21
-  operators:
-    - Silvia Caprioli
-    - Federico Incardona
-  cryo: true
-  defective: false
-  biases:
-    H0:
-      vdrain_V: 0.7
-      idrain_mA: 3.0
-      vgate_mV: 30
-    H1:
-      vdrain_V: 0.7
-      idrain_mA: 3.0
-      vgate_mV: 30
-    H2:
-      vdrain_V: 0.9
-      idrain_mA: 5.0
-      vgate_mV: 300
-    H3:
-      vdrain_V: 0.9
-      idrain_mA: 4.2
-      vgate_mV: 260
-    H4:
-      vdrain_V: 0.9
-      idrain_mA: 7.0
-      vgate_mV: -224
-    H5:
-      vdrain_V: 0.9
-      idrain_mA: 6.0
-      vgate_mV: -77
+  -
+    date: 2017-04-21
+    operators:
+      - Silvia Caprioli
+      - Federico Incardona
+    cryo: true
+    defective: false
+    biases:
+      H0:
+        vdrain_V: 0.7
+        idrain_mA: 3.0
+        vgate_mV: 30
+      H1:
+        vdrain_V: 0.7
+        idrain_mA: 3.0
+        vgate_mV: 30
+      H2:
+        vdrain_V: 0.9
+        idrain_mA: 5.0
+        vgate_mV: 300
+      H3:
+        vdrain_V: 0.9
+        idrain_mA: 4.2
+        vgate_mV: 260
+      H4:
+        vdrain_V: 0.9
+        idrain_mA: 7.0
+        vgate_mV: -224
+      H5:
+        vdrain_V: 0.9
+        idrain_mA: 6.0
+        vgate_mV: -77
 
 # ---------------------------------------------------------------------
 
 STRIP41:
-  date: 2017-04-28
-  operators:
-    - Silvia Caprioli
-    - Federico Incardona
-  cryo: true
-  defective: false
-  biases:
-    H0:
-      vdrain_V: 0.9
-      idrain_mA: 4.1
-      vgate_mV: 10
-    H1:
-      vdrain_V: 0.9
-      idrain_mA: 4.0
-      vgate_mV: 120
-    H2:
-      vdrain_V: 0.9
-      idrain_mA: 5.0
-      vgate_mV: 195
-    H3:
-      vdrain_V: 0.9
-      idrain_mA: 4.0
-      vgate_mV: 128
-    H4:
-      vdrain_V: 0.9
-      idrain_mA: 7.0
-      vgate_mV: -140
-    H5:
-      vdrain_V: 0.9
-      idrain_mA: 7.0
-      vgate_mV: -290
+  -
+    date: 2017-04-28
+    operators:
+      - Silvia Caprioli
+      - Federico Incardona
+    cryo: true
+    defective: false
+    biases:
+      H0:
+        vdrain_V: 0.9
+        idrain_mA: 4.1
+        vgate_mV: 10
+      H1:
+        vdrain_V: 0.9
+        idrain_mA: 4.0
+        vgate_mV: 120
+      H2:
+        vdrain_V: 0.9
+        idrain_mA: 5.0
+        vgate_mV: 195
+      H3:
+        vdrain_V: 0.9
+        idrain_mA: 4.0
+        vgate_mV: 128
+      H4:
+        vdrain_V: 0.9
+        idrain_mA: 7.0
+        vgate_mV: -140
+      H5:
+        vdrain_V: 0.9
+        idrain_mA: 7.0
+        vgate_mV: -290
 
 # ---------------------------------------------------------------------
 
 STRIP48:
-  date: 2017-05-04
-  operators:
-    - Paola Battaglia
-    - Claudio Pincella
-    - Mario Zannoni
-  cryo: true
-  defective: false
-  biases:
-    H0:
-      vdrain_V: 0.72
-      idrain_mA: 2.13
-      vgate_mV: 57
-    H1:
-      vdrain_V: 0.9
-      idrain_mA: 5.3
-      vgate_mV: -13
-    H2:
-      vdrain_V: 0.75
-      idrain_mA: 3.54
-      vgate_mV: 254
-    H3:
-      vdrain_V: 0.75
-      idrain_mA: 3.47
-      vgate_mV: 277
-    H4:
-      vdrain_V: 0.9
-      idrain_mA: 2.6
-      vgate_mV: -35
-    H5:
-      vdrain_V: 0.75
-      idrain_mA: 1.62
-      vgate_mV: 133
+  -
+    date: 2017-05-04
+    operators:
+      - Paola Battaglia
+      - Claudio Pincella
+      - Mario Zannoni
+    cryo: true
+    defective: false
+    biases:
+      H0:
+        vdrain_V: 0.72
+        idrain_mA: 2.13
+        vgate_mV: 57
+      H1:
+        vdrain_V: 0.9
+        idrain_mA: 5.3
+        vgate_mV: -13
+      H2:
+        vdrain_V: 0.75
+        idrain_mA: 3.54
+        vgate_mV: 254
+      H3:
+        vdrain_V: 0.75
+        idrain_mA: 3.47
+        vgate_mV: 277
+      H4:
+        vdrain_V: 0.9
+        idrain_mA: 2.6
+        vgate_mV: -35
+      H5:
+        vdrain_V: 0.75
+        idrain_mA: 1.62
+        vgate_mV: 133
 
 # ---------------------------------------------------------------------
 
 STRIP50:
-  date: 2017-05-10
-  operators:
-    - Claudio Pincella
-    - Mario Zannoni
-  cryo: true
-  defective: false
-  biases:
-    H0:
-      vdrain_V: 0.9
-      idrain_mA: 4.3
-      vgate_mV: 64
-    H1:
-      vdrain_V: 0.9
-      idrain_mA: 4.2
-      vgate_mV: 82
-    H2:
-      vdrain_V: 0.9
-      idrain_mA: 6.0
-      vgate_mV: 372
-    H3:
-      vdrain_V: 0.9
-      idrain_mA: 5.1
-      vgate_mV: 440
-    H4:
-      vdrain_V: 0.9
-      idrain_mA: 9.1
-      vgate_mV: 5
-    H5:
-      vdrain_V: 0.9
-      idrain_mA: 5.1
-      vgate_mV: 20
+  -
+    date: 2017-05-10
+    operators:
+      - Claudio Pincella
+      - Mario Zannoni
+    cryo: true
+    defective: false
+    biases:
+      H0:
+        vdrain_V: 0.9
+        idrain_mA: 4.3
+        vgate_mV: 64
+      H1:
+        vdrain_V: 0.9
+        idrain_mA: 4.2
+        vgate_mV: 82
+      H2:
+        vdrain_V: 0.9
+        idrain_mA: 6.0
+        vgate_mV: 372
+      H3:
+        vdrain_V: 0.9
+        idrain_mA: 5.1
+        vgate_mV: 440
+      H4:
+        vdrain_V: 0.9
+        idrain_mA: 9.1
+        vgate_mV: 5
+      H5:
+        vdrain_V: 0.9
+        idrain_mA: 5.1
+        vgate_mV: 20
 
 # ---------------------------------------------------------------------
 
 STRIP55:
-  date: 2017-05-16
-  operators:
-    - Claudio Pincella
-  cryo: true
-  defective: false
-  biases:
-    H0:
-      vdrain_V: 0.9
-      idrain_mA: 4.5
-      vgate_mV: 20
-    H1:
-      vdrain_V: 0.9
-      idrain_mA: 5.0
-      vgate_mV: 56
-    H2:
-      vdrain_V: 1.2
-      idrain_mA: 16.9
-      vgate_mV: -192
-    H3:
-      vdrain_V: 1.22
-      idrain_mA: 17.0
-      vgate_mV: -225
-    H4:
-      vdrain_V: 0.91
-      idrain_mA: 11
-      vgate_mV: 396
-    H5:
-      vdrain_V: 0.93
-      idrain_mA: 12
-      vgate_mV: 418
+  -
+    date: 2017-05-16
+    operators:
+      - Claudio Pincella
+    cryo: true
+    defective: false
+    biases:
+      H0:
+        vdrain_V: 0.9
+        idrain_mA: 4.5
+        vgate_mV: 20
+      H1:
+        vdrain_V: 0.9
+        idrain_mA: 5.0
+        vgate_mV: 56
+      H2:
+        vdrain_V: 1.2
+        idrain_mA: 16.9
+        vgate_mV: -192
+      H3:
+        vdrain_V: 1.22
+        idrain_mA: 17.0
+        vgate_mV: -225
+      H4:
+        vdrain_V: 0.91
+        idrain_mA: 11
+        vgate_mV: 396
+      H5:
+        vdrain_V: 0.93
+        idrain_mA: 12
+        vgate_mV: 418
 
 # ---------------------------------------------------------------------
 
 STRIP53:
-  date: 2017-05-18
-  operators:
-    - Paola Battaglia
-    - Silvia Caprioli
-    - Federico Incardona
-    - Maurizio Tomasi
-    - Mario Zannoni
-  cryo: true
-  defective: true
+  -
+    date: 2017-05-18
+    operators:
+      - Paola Battaglia
+      - Silvia Caprioli
+      - Federico Incardona
+      - Maurizio Tomasi
+      - Mario Zannoni
+    cryo: true
+    defective: true
 
 # ---------------------------------------------------------------------
 
 STRIP62:
-  date: 2017-05-25
-  operators:
-    - Paola Battaglia
-    - Mario Zannoni
-  cryo: true
-  defective: false
+  -
+    date: 2017-05-25
+    operators:
+      - Paola Battaglia
+      - Mario Zannoni
+    cryo: true
+    defective: false
 
 # ---------------------------------------------------------------------
 
 STRIP52:
-  date: 2017-05-25
-  operators:
-    - Paola Battaglia
-    - Mario Zannoni
-  cryo: true
-  defective: false
+  -
+    date: 2017-05-25
+    operators:
+      - Paola Battaglia
+      - Mario Zannoni
+    cryo: true
+    defective: false
 
 # ---------------------------------------------------------------------
 
 STRIP54:
-  date: 2017-05-30
-  operators:
-    - Claudio Pincella
-    - Mario Zannoni
-  cryo: true
-  defective: false
+  -
+    date: 2017-05-30
+    operators:
+      - Claudio Pincella
+      - Mario Zannoni
+    cryo: true
+    defective: false
 
 # ---------------------------------------------------------------------
 
 STRIP56:
-  date: 2017-05-31
-  operators:
-    - Silvia Caprioli
-    - Federico Incardona
-    - Claudio Pincella
-  cryo: true
-  defective: false
-  detector_offsets:
-    PWR0_adu: 65700
-    PWR1_adu: 69200
-    PWR2_adu: 67300
-    PWR3_adu: 66500
-  biases:
-    H0:
-      vdrain_V: 0.9
-      idrain_mA: 3.45
-      vgate_mV: 35
-    H1:
-      vdrain_V: 0.9
-      idrain_mA: 3.53
-      vgate_mV: 37
-    H2:
-      vdrain_V: 1.2
-      idrain_mA: 13.87
-      vgate_mV: -57
-    H3:
-      vdrain_V: 1.2
-      idrain_mA: 13
-      vgate_mV: 79
-    H4:
-      vdrain_V: 0.9
-      idrain_mA: 9.0
-      vgate_mV: 400
-    H5:
-      vdrain_V: 0.9
-      idrain_mA: 8.56
-      vgate_mV: 320
-  noise_temperature_steps_up:
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.1
-      t_load_b_1_K: 10.0
-      t_load_b_2_K: 11.7
-      t_cross_guide_1_K: 14.98
-      t_cross_guide_2_K: 24.25
-      t_polarimeter_1_K: 20
-      t_polarimeter_2_K: 16.45
+  -
+    date: 2017-05-31
+    operators:
+      - Silvia Caprioli
+      - Federico Incardona
+      - Claudio Pincella
+    cryo: true
+    defective: false
+    detector_offsets:
+      PWR0_adu: 65700
+      PWR1_adu: 69200
+      PWR2_adu: 67300
+      PWR3_adu: 66500
+    biases:
+      H0:
+        vdrain_V: 0.9
+        idrain_mA: 3.45
+        vgate_mV: 35
+      H1:
+        vdrain_V: 0.9
+        idrain_mA: 3.53
+        vgate_mV: 37
+      H2:
+        vdrain_V: 1.2
+        idrain_mA: 13.87
+        vgate_mV: -57
+      H3:
+        vdrain_V: 1.2
+        idrain_mA: 13
+        vgate_mV: 79
+      H4:
+        vdrain_V: 0.9
+        idrain_mA: 9.0
+        vgate_mV: 400
+      H5:
+        vdrain_V: 0.9
+        idrain_mA: 8.56
+        vgate_mV: 320
+    noise_temperature_steps_up:
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.1
+        t_load_b_1_K: 10.0
+        t_load_b_2_K: 11.7
+        t_cross_guide_1_K: 14.98
+        t_cross_guide_2_K: 24.25
+        t_polarimeter_1_K: 20
+        t_polarimeter_2_K: 16.45
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.1
-      t_load_b_1_K: 20.0
-      t_load_b_2_K: 21.7
-      t_cross_guide_1_K: 14.98
-      t_cross_guide_2_K: 24.25
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.45
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.1
+        t_load_b_1_K: 20.0
+        t_load_b_2_K: 21.7
+        t_cross_guide_1_K: 14.98
+        t_cross_guide_2_K: 24.25
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.45
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.1
-      t_load_b_1_K: 30.0
-      t_load_b_2_K: 31.7
-      t_cross_guide_1_K: 14.98
-      t_cross_guide_2_K: 24.25
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.45
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.1
+        t_load_b_1_K: 30.0
+        t_load_b_2_K: 31.7
+        t_cross_guide_1_K: 14.98
+        t_cross_guide_2_K: 24.25
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.45
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.1
-      t_load_b_1_K: 40.0
-      t_load_b_2_K: 41.5
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 17.4
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 20.0
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.1
+        t_load_b_1_K: 40.0
+        t_load_b_2_K: 41.5
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 17.4
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 20.0
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.0
-      t_load_b_1_K: 50.0
-      t_load_b_2_K: 51.4
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 17.4
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 20.0
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.0
+        t_load_b_1_K: 50.0
+        t_load_b_2_K: 51.4
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 17.4
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 20.0
 
 # ---------------------------------------------------------------------
 
 STRIP21:
-  date: 2017-06-08
-  operators:
-    - Claudio Pincella
-    - Paola Battaglia
-    - Mario Zannoni
-  cryo: true
-  defective: true
+  -
+    date: 2017-06-08
+    operators:
+      - Claudio Pincella
+      - Paola Battaglia
+      - Mario Zannoni
+    cryo: true
+    defective: true
   
 # ---------------------------------------------------------------------
 
 STRIP57:
-  date: 2017-06-06
-  operators:
-    - Claudio Pincella
-    - Mario Zannoni
-  cryo: true
-  defective: false
-  detector_offsets:
-    PWR0_adu: 90800
-    PWR1_adu: 89400
-    PWR2_adu: 88070
-    PWR3_adu: 87860
-  biases:
-    H0:
-      vdrain_V: 0.9
-      idrain_mA: 4.95
-      vgate_mV: 82
-    H1:
-      vdrain_V: 0.9
-      idrain_mA: 4.0
-      vgate_mV: 251
-    H2:
-      vdrain_V: 1.21
-      idrain_mA: 15.9
-      vgate_mV: 383
-    H3:
-      vdrain_V: 1.2
-      idrain_mA: 14.3
-      vgate_mV: -87
-    H4:
-      vdrain_V: 0.9
-      idrain_mA: 11.0
-      vgate_mV: 159
-    H5:
-      vdrain_V: 0.93
-      idrain_mA: 11.0
-      vgate_mV: 265
+  -
+    date: 2017-06-06
+    operators:
+      - Claudio Pincella
+      - Mario Zannoni
+    cryo: true
+    defective: false
+    detector_offsets:
+      PWR0_adu: 90800
+      PWR1_adu: 89400
+      PWR2_adu: 88070
+      PWR3_adu: 87860
+    biases:
+      H0:
+        vdrain_V: 0.9
+        idrain_mA: 4.95
+        vgate_mV: 82
+      H1:
+        vdrain_V: 0.9
+        idrain_mA: 4.0
+        vgate_mV: 251
+      H2:
+        vdrain_V: 1.21
+        idrain_mA: 15.9
+        vgate_mV: 383
+      H3:
+        vdrain_V: 1.2
+        idrain_mA: 14.3
+        vgate_mV: -87
+      H4:
+        vdrain_V: 0.9
+        idrain_mA: 11.0
+        vgate_mV: 159
+      H5:
+        vdrain_V: 0.93
+        idrain_mA: 11.0
+        vgate_mV: 265
 
 # ---------------------------------------------------------------------
 
 STRIP21:
-  date: 2017-06-08
-  operators:
-    - Claudio Pincella
-    - Paola Battaglia
-    - Mario Zannoni
-  cryo: true
-  defective: true
+  -
+    date: 2017-06-08
+    operators:
+      - Claudio Pincella
+      - Paola Battaglia
+      - Mario Zannoni
+    cryo: true
+    defective: true
   
 # ---------------------------------------------------------------------
 
 STRIP58:
-  date: 2017-06-09
-  operators:
-    - Paola Battaglia
-  cryo: true
-  defective: false
-  adc_offsets:
-    PWR0_adu: 1879
-    PWR1_adu: 1915
-    PWR2_adu: 1872
-    PWR3_adu: 1883
-  biases:
-    H0:
-      vdrain_V: 0.9
-      idrain_mA: 2.95
-      vgate_mV: 170
-    H1:
-      vdrain_V: 0.9
-      idrain_mA: 4.03
-      vgate_mV: 55
-    H2:
-      vdrain_V: 1.2
-      idrain_mA: 12.26
-      vgate_mV: 276
-    H3:
-      vdrain_V: 1.2
-      idrain_mA: 14.05
-      vgate_mV: 166
-    H4:
-      vdrain_V: 0.9
-      idrain_mA: 9.05
-      vgate_mV: 321
-    H5:
-      vdrain_V: 0.9
-      idrain_mA: 9.03
-      vgate_mV: 432
+  -
+    date: 2017-06-09
+    operators:
+      - Paola Battaglia
+    cryo: true
+    defective: false
+    adc_offsets:
+      PWR0_adu: 1879
+      PWR1_adu: 1915
+      PWR2_adu: 1872
+      PWR3_adu: 1883
+    biases:
+      H0:
+        vdrain_V: 0.9
+        idrain_mA: 2.95
+        vgate_mV: 170
+      H1:
+        vdrain_V: 0.9
+        idrain_mA: 4.03
+        vgate_mV: 55
+      H2:
+        vdrain_V: 1.2
+        idrain_mA: 12.26
+        vgate_mV: 276
+      H3:
+        vdrain_V: 1.2
+        idrain_mA: 14.05
+        vgate_mV: 166
+      H4:
+        vdrain_V: 0.9
+        idrain_mA: 9.05
+        vgate_mV: 321
+      H5:
+        vdrain_V: 0.9
+        idrain_mA: 9.03
+        vgate_mV: 432
 
 # ---------------------------------------------------------------------
 
 STRIP04:
-  date: 2017-06-12
-  operators:
-    - Federico Incardona
-  cryo: true
-  defective: false
-  adc_offsets:
-    PWR0_adu: 1795
-    PWR1_adu: 1910
-    PWR2_adu: 1878
-    PWR3_adu: 1806
-  detector_offsets:
-    PWR0_adu: 1170
-    PWR1_adu: 5750
-    PWR2_adu: 4250
-    PWR3_adu: 8250
-  biases:
-    H0:
-      vdrain_V: 0.9
-      idrain_mA: 7.2
-      vgate_mV: 260
-    H1:
-      vdrain_V: 0.9
-      idrain_mA: 11.0
-      vgate_mV: 270
-    H2:
-      vdrain_V: 0.9
-      idrain_mA: 6.2
-      vgate_mV: 360
-    H3:
-      vdrain_V: 0.9
-      idrain_mA: 7.0
-      vgate_mV: 500
-    H4:
-      vdrain_V: 0.9
-      idrain_mA: 10.0
-      vgate_mV: 320
-    H5:
-      vdrain_V: 0.9
-      idrain_mA: 4.5
-      vgate_mV: 300
+  -
+    date: 2017-06-12
+    operators:
+      - Federico Incardona
+    cryo: true
+    defective: false
+    adc_offsets:
+      PWR0_adu: 1795
+      PWR1_adu: 1910
+      PWR2_adu: 1878
+      PWR3_adu: 1806
+    detector_offsets:
+      PWR0_adu: 1170
+      PWR1_adu: 5750
+      PWR2_adu: 4250
+      PWR3_adu: 8250
+    biases:
+      H0:
+        vdrain_V: 0.9
+        idrain_mA: 7.2
+        vgate_mV: 260
+      H1:
+        vdrain_V: 0.9
+        idrain_mA: 11.0
+        vgate_mV: 270
+      H2:
+        vdrain_V: 0.9
+        idrain_mA: 6.2
+        vgate_mV: 360
+      H3:
+        vdrain_V: 0.9
+        idrain_mA: 7.0
+        vgate_mV: 500
+      H4:
+        vdrain_V: 0.9
+        idrain_mA: 10.0
+        vgate_mV: 320
+      H5:
+        vdrain_V: 0.9
+        idrain_mA: 4.5
+        vgate_mV: 300
 
 # ---------------------------------------------------------------------
 
 STRIP58:
-  date: 2017-06-12
-  operators:
-    - Paola Battaglia
-  cryo: true
-  defective: false
-  adc_offsets:
-    PWR0_adu: 1898
-    PWR1_adu: 1841
-    PWR2_adu: 1867
-    PWR3_adu: 1899
-  detector_offsets:
-    PWR0_adu: 62500
-    PWR1_adu: 63100
-    PWR2_adu: 65900
-    PWR3_adu: 64800
-  biases:
-    H0:
-      vdrain_V: 0.9
-      idrain_mA: 11.7
-      vgate_mV: -180
-    H1:
-      vdrain_V: 0.9
-      idrain_mA: 9.3
-      vgate_mV: -105
-    H2:
-      vdrain_V: 0.9
-      idrain_mA: 11.0
-      vgate_mV: 222
-    H3:
-      vdrain_V: 0.9
-      idrain_mA: 11.0
-      vgate_mV: 326
-    H4:
-      vdrain_V: 0.9
-      idrain_mA: 11.0
-      vgate_mV: -98
-    H5:
-      vdrain_V: 0.9
-      idrain_mA: 4.0
-      vgate_mV: 154
+  -
+    date: 2017-06-12
+    operators:
+      - Paola Battaglia
+    cryo: true
+    defective: false
+    adc_offsets:
+      PWR0_adu: 1898
+      PWR1_adu: 1841
+      PWR2_adu: 1867
+      PWR3_adu: 1899
+    detector_offsets:
+      PWR0_adu: 62500
+      PWR1_adu: 63100
+      PWR2_adu: 65900
+      PWR3_adu: 64800
+    biases:
+      H0:
+        vdrain_V: 0.9
+        idrain_mA: 11.7
+        vgate_mV: -180
+      H1:
+        vdrain_V: 0.9
+        idrain_mA: 9.3
+        vgate_mV: -105
+      H2:
+        vdrain_V: 0.9
+        idrain_mA: 11.0
+        vgate_mV: 222
+      H3:
+        vdrain_V: 0.9
+        idrain_mA: 11.0
+        vgate_mV: 326
+      H4:
+        vdrain_V: 0.9
+        idrain_mA: 11.0
+        vgate_mV: -98
+      H5:
+        vdrain_V: 0.9
+        idrain_mA: 4.0
+        vgate_mV: 154
 
 # ---------------------------------------------------------------------
 
 STRIP30:
-  date: 2017-06-16
-  operators:
-    - Paola Battaglia
-  cryo: true
-  defective: false
-  adc_offsets:
-    PWR0_adu: 1898
-    PWR1_adu: 1841
-    PWR2_adu: 1867
-    PWR3_adu: 1899
-  detector_offsets:
-    PWR0_adu: 62500
-    PWR1_adu: 63100
-    PWR2_adu: 65900
-    PWR3_adu: 64800
-  biases:
-    H0:
-      vdrain_V: 0.9
-      idrain_mA: 11.7
-      vgate_mV: -180
-    H1:
-      vdrain_V: 0.9
-      idrain_mA: 9.3
-      vgate_mV: -105
-    H2:
-      vdrain_V: 0.9
-      idrain_mA: 11.0
-      vgate_mV: 222
-    H3:
-      vdrain_V: 0.9
-      idrain_mA: 11.0
-      vgate_mV: 326
-    H4:
-      vdrain_V: 0.9
-      idrain_mA: 11.0
-      vgate_mV: -98
-    H5:
-      vdrain_V: 0.9
-      idrain_mA: 4.0
-      vgate_mV: 154
+  -
+    date: 2017-06-16
+    operators:
+      - Paola Battaglia
+    cryo: true
+    defective: false
+    adc_offsets:
+      PWR0_adu: 1898
+      PWR1_adu: 1841
+      PWR2_adu: 1867
+      PWR3_adu: 1899
+    detector_offsets:
+      PWR0_adu: 62500
+      PWR1_adu: 63100
+      PWR2_adu: 65900
+      PWR3_adu: 64800
+    biases:
+      H0:
+        vdrain_V: 0.9
+        idrain_mA: 11.7
+        vgate_mV: -180
+      H1:
+        vdrain_V: 0.9
+        idrain_mA: 9.3
+        vgate_mV: -105
+      H2:
+        vdrain_V: 0.9
+        idrain_mA: 11.0
+        vgate_mV: 222
+      H3:
+        vdrain_V: 0.9
+        idrain_mA: 11.0
+        vgate_mV: 326
+      H4:
+        vdrain_V: 0.9
+        idrain_mA: 11.0
+        vgate_mV: -98
+      H5:
+        vdrain_V: 0.9
+        idrain_mA: 4.0
+        vgate_mV: 154
 
 # ---------------------------------------------------------------------
 
 STRIP30:
-  date: 2017-06-21
-  operators:
-    - Claudio Pincella
-  cryo: true
-  defective: false
-  adc_offsets:
-    PWR0_adu: 1881
-    PWR1_adu: 1820
-    PWR2_adu: 1862
-    PWR3_adu: 1883
-  detector_offsets:
-    PWR0_adu: 82900
-    PWR1_adu: 84570
-    PWR2_adu: 81440
-    PWR3_adu: 83870
-  biases:
-    H0:
-      vdrain_V: 0.9
-      idrain_mA: 11.7
-      vgate_mV: -180
-    H1:
-      vdrain_V: 0.9
-      idrain_mA: 9.3
-      vgate_mV: -105
-    H2:
-      vdrain_V: 0.9
-      idrain_mA: 11.0
-      vgate_mV: 222
-    H3:
-      vdrain_V: 0.9
-      idrain_mA: 11.0
-      vgate_mV: 326
-    H4:
-      vdrain_V: 0.9
-      idrain_mA: 11.0
-      vgate_mV: -98
-    H5:
-      vdrain_V: 0.9
-      idrain_mA: 4.0
-      vgate_mV: 154
+  -
+    date: 2017-06-21
+    operators:
+      - Claudio Pincella
+    cryo: true
+    defective: false
+    adc_offsets:
+      PWR0_adu: 1881
+      PWR1_adu: 1820
+      PWR2_adu: 1862
+      PWR3_adu: 1883
+    detector_offsets:
+      PWR0_adu: 82900
+      PWR1_adu: 84570
+      PWR2_adu: 81440
+      PWR3_adu: 83870
+    biases:
+      H0:
+        vdrain_V: 0.9
+        idrain_mA: 11.7
+        vgate_mV: -180
+      H1:
+        vdrain_V: 0.9
+        idrain_mA: 9.3
+        vgate_mV: -105
+      H2:
+        vdrain_V: 0.9
+        idrain_mA: 11.0
+        vgate_mV: 222
+      H3:
+        vdrain_V: 0.9
+        idrain_mA: 11.0
+        vgate_mV: 326
+      H4:
+        vdrain_V: 0.9
+        idrain_mA: 11.0
+        vgate_mV: -98
+      H5:
+        vdrain_V: 0.9
+        idrain_mA: 4.0
+        vgate_mV: 154
 
 # ---------------------------------------------------------------------
 
 STRIP36:
-  date: 2017-06-20
-  operators:
-    - Claudio Pincella
-    - Mario Zannoni
-  cryo: true
-  defective: false
-  detector_offsets:
-    PWR0_adu: 99510
-    PWR1_adu: 100700
-    PWR2_adu: 99530
-    PWR3_adu: 101030
-  biases:
-    H0:
-      vdrain_V: 0.8
-      idrain_mA: 6.67
-      vgate_mV: 96
-    H1:
-      vdrain_V: 0.8
-      idrain_mA: 6.86
-      vgate_mV: 229
-    H2:
-      vdrain_V: 0.8
-      idrain_mA: 4.72
-      vgate_mV: 229
-    H3:
-      vdrain_V: 0.8
-      idrain_mA: 5.51
-      vgate_mV: 237
-    H4:
-      vdrain_V: 0.8
-      idrain_mA: 3.06
-      vgate_mV: 369
-    H5:
-      vdrain_V: 0.8
-      idrain_mA: 4.48
-      vgate_mV: 0
+  -
+    date: 2017-06-20
+    operators:
+      - Claudio Pincella
+      - Mario Zannoni
+    cryo: true
+    defective: false
+    detector_offsets:
+      PWR0_adu: 99510
+      PWR1_adu: 100700
+      PWR2_adu: 99530
+      PWR3_adu: 101030
+    biases:
+      H0:
+        vdrain_V: 0.8
+        idrain_mA: 6.67
+        vgate_mV: 96
+      H1:
+        vdrain_V: 0.8
+        idrain_mA: 6.86
+        vgate_mV: 229
+      H2:
+        vdrain_V: 0.8
+        idrain_mA: 4.72
+        vgate_mV: 229
+      H3:
+        vdrain_V: 0.8
+        idrain_mA: 5.51
+        vgate_mV: 237
+      H4:
+        vdrain_V: 0.8
+        idrain_mA: 3.06
+        vgate_mV: 369
+      H5:
+        vdrain_V: 0.8
+        idrain_mA: 4.48
+        vgate_mV: 0
 
 # ---------------------------------------------------------------------
 
 STRIP30:
-  date: 2017-06-21
-  operators:
-    - Claudio Pincella
-  cryo: true
-  defective: false
-  adc_offsets:
-    PWR0_adu: 1881
-    PWR1_adu: 1820
-    PWR2_adu: 1862
-    PWR3_adu: 1883
-  detector_offsets:
-    PWR0_adu: 82900
-    PWR1_adu: 84570
-    PWR2_adu: 81440
-    PWR3_adu: 83870
-  biases:
-    H0:
-      vdrain_V: 0.9
-      idrain_mA: 11.7
-      vgate_mV: -180
-    H1:
-      vdrain_V: 0.9
-      idrain_mA: 9.3
-      vgate_mV: -105
-    H2:
-      vdrain_V: 0.9
-      idrain_mA: 11.0
-      vgate_mV: 222
-    H3:
-      vdrain_V: 0.9
-      idrain_mA: 11.0
-      vgate_mV: 326
-    H4:
-      vdrain_V: 0.9
-      idrain_mA: 11.0
-      vgate_mV: -98
-    H5:
-      vdrain_V: 0.9
-      idrain_mA: 4.0
-      vgate_mV: 154
+  -
+    date: 2017-06-21
+    operators:
+      - Claudio Pincella
+    cryo: true
+    defective: false
+    adc_offsets:
+      PWR0_adu: 1881
+      PWR1_adu: 1820
+      PWR2_adu: 1862
+      PWR3_adu: 1883
+    detector_offsets:
+      PWR0_adu: 82900
+      PWR1_adu: 84570
+      PWR2_adu: 81440
+      PWR3_adu: 83870
+    biases:
+      H0:
+        vdrain_V: 0.9
+        idrain_mA: 11.7
+        vgate_mV: -180
+      H1:
+        vdrain_V: 0.9
+        idrain_mA: 9.3
+        vgate_mV: -105
+      H2:
+        vdrain_V: 0.9
+        idrain_mA: 11.0
+        vgate_mV: 222
+      H3:
+        vdrain_V: 0.9
+        idrain_mA: 11.0
+        vgate_mV: 326
+      H4:
+        vdrain_V: 0.9
+        idrain_mA: 11.0
+        vgate_mV: -98
+      H5:
+        vdrain_V: 0.9
+        idrain_mA: 4.0
+        vgate_mV: 154
 
 # ---------------------------------------------------------------------
 
 STRIP37:
-  date: 2017-06-22
-  operators:
-    - Paola Battaglia
-    - Claudio Pincella
-  cryo: true
-  defective: true
-  adc_offsets:
-    PWR0_adu: 1808
-    PWR1_adu: 1834
-    PWR2_adu: 1812
-    PWR3_adu: 1814
-  detector_offsets:
-    PWR0_adu: 82500
-    PWR1_adu: 80300
-    PWR2_adu: 80300
-    PWR3_adu: 79800
+  -
+    date: 2017-06-22
+    operators:
+      - Paola Battaglia
+      - Claudio Pincella
+    cryo: true
+    defective: true
+    adc_offsets:
+      PWR0_adu: 1808
+      PWR1_adu: 1834
+      PWR2_adu: 1812
+      PWR3_adu: 1814
+    detector_offsets:
+      PWR0_adu: 82500
+      PWR1_adu: 80300
+      PWR2_adu: 80300
+      PWR3_adu: 79800
 
 # ---------------------------------------------------------------------
 
 STRIP37:
-  date: 2017-06-23
-  operators:
-    - Federico Incardona
-  cryo: true
-  defective: true
-  adc_offsets:
-    PWR0_adu: 1824
-    PWR1_adu: 1848
-    PWR2_adu: 1827
-    PWR3_adu: 1829
-  detector_offsets:
-    PWR0_adu: -2100
-    PWR1_adu: -300
-    PWR2_adu: 2000
-    PWR3_adu: 2700
-  biases:
-    H0:
-      vdrain_V: 0.9
-      idrain_mA: 7
-      vgate_mV: 34
-    H1:
-      vdrain_V: 0.9
-      idrain_mA: 7
-      vgate_mV: 30
-    H2:
-      vdrain_V: 0.6
-      idrain_mA: 5.35
-      vgate_mV: 340
-    H3:
-      vdrain_V: 0.6
-      idrain_mA: 5
-      vgate_mV: 350
-    H4:
-      vdrain_V: 0.7
-      idrain_mA: 7.3
-      vgate_mV: -100
-    H5:
-      vdrain_V: 0.7
-      idrain_mA: 7.7
-      vgate_mV: 50
+  -
+    date: 2017-06-23
+    operators:
+      - Federico Incardona
+    cryo: true
+    defective: true
+    adc_offsets:
+      PWR0_adu: 1824
+      PWR1_adu: 1848
+      PWR2_adu: 1827
+      PWR3_adu: 1829
+    detector_offsets:
+      PWR0_adu: -2100
+      PWR1_adu: -300
+      PWR2_adu: 2000
+      PWR3_adu: 2700
+    biases:
+      H0:
+        vdrain_V: 0.9
+        idrain_mA: 7
+        vgate_mV: 34
+      H1:
+        vdrain_V: 0.9
+        idrain_mA: 7
+        vgate_mV: 30
+      H2:
+        vdrain_V: 0.6
+        idrain_mA: 5.35
+        vgate_mV: 340
+      H3:
+        vdrain_V: 0.6
+        idrain_mA: 5
+        vgate_mV: 350
+      H4:
+        vdrain_V: 0.7
+        idrain_mA: 7.3
+        vgate_mV: -100
+      H5:
+        vdrain_V: 0.7
+        idrain_mA: 7.7
+        vgate_mV: 50
 
 # ---------------------------------------------------------------------
 
 STRIP38:
-  date: 2017-06-27
-  operators:
-    - Claudio Pincella
-    - Mario Zannoni
-  cryo: true
-  defective: false
-  biases:
-    H0:
-      vdrain_V: 0.7
-      idrain_mA: 3.0
-      vgate_mV: 100
-    H1:
-      vdrain_V: 0.7
-      idrain_mA: 2.0
-      vgate_mV: 58
-    H2:
-      vdrain_V: 0.7
-      idrain_mA: 9.0
-      vgate_mV: 473
-    H3:
-      vdrain_V: 0.7
-      idrain_mA: 4.0
-      vgate_mV: 288
-    H4:
-      vdrain_V: 0.7
-      idrain_mA: 9.1
-      vgate_mV: 347
-    H5:
-      vdrain_V: 0.7
-      idrain_mA: 4.0
-      vgate_mV: -205
+  -
+    date: 2017-06-27
+    operators:
+      - Claudio Pincella
+      - Mario Zannoni
+    cryo: true
+    defective: false
+    biases:
+      H0:
+        vdrain_V: 0.7
+        idrain_mA: 3.0
+        vgate_mV: 100
+      H1:
+        vdrain_V: 0.7
+        idrain_mA: 2.0
+        vgate_mV: 58
+      H2:
+        vdrain_V: 0.7
+        idrain_mA: 9.0
+        vgate_mV: 473
+      H3:
+        vdrain_V: 0.7
+        idrain_mA: 4.0
+        vgate_mV: 288
+      H4:
+        vdrain_V: 0.7
+        idrain_mA: 9.1
+        vgate_mV: 347
+      H5:
+        vdrain_V: 0.7
+        idrain_mA: 4.0
+        vgate_mV: -205
 
 # ---------------------------------------------------------------------
 
 STRIP70:
-  date: 2017-06-29
-  operators:
-    - Paola Battaglia
-    - Claudio Pincella
-  cryo: true
-  defective: false
-  adc_offsets:
-    PWR0_adu: 1742
-    PWR1_adu: 1868
-    PWR2_adu: 1826
-    PWR3_adu: 1786
-  detector_offsets:
-    PWR0_adu: 86000
-    PWR1_adu: 84370
-    PWR2_adu: 83100
-    PWR3_adu: 82430
-  biases:
-    H0:
-      vdrain_V: 0.8
-      idrain_mA: 7.27
-      vgate_mV: 198
-    H1:
-      vdrain_V: 0.8
-      idrain_mA: 8.08
-      vgate_mV: 242
-    H2:
-      vdrain_V: 0.8
-      idrain_mA: 8.0
-      vgate_mV: 158
-    H3:
-      vdrain_V: 0.8
-      idrain_mA: 8.94
-      vgate_mV: 226
-    H4:
-      vdrain_V: 0.8
-      idrain_mA: 7.01
-      vgate_mV: 400
-    H5:
-      vdrain_V: 0.8
-      idrain_mA: 7.29
-      vgate_mV: 236
+  -
+    date: 2017-06-29
+    operators:
+      - Paola Battaglia
+      - Claudio Pincella
+    cryo: true
+    defective: false
+    adc_offsets:
+      PWR0_adu: 1742
+      PWR1_adu: 1868
+      PWR2_adu: 1826
+      PWR3_adu: 1786
+    detector_offsets:
+      PWR0_adu: 86000
+      PWR1_adu: 84370
+      PWR2_adu: 83100
+      PWR3_adu: 82430
+    biases:
+      H0:
+        vdrain_V: 0.8
+        idrain_mA: 7.27
+        vgate_mV: 198
+      H1:
+        vdrain_V: 0.8
+        idrain_mA: 8.08
+        vgate_mV: 242
+      H2:
+        vdrain_V: 0.8
+        idrain_mA: 8.0
+        vgate_mV: 158
+      H3:
+        vdrain_V: 0.8
+        idrain_mA: 8.94
+        vgate_mV: 226
+      H4:
+        vdrain_V: 0.8
+        idrain_mA: 7.01
+        vgate_mV: 400
+      H5:
+        vdrain_V: 0.8
+        idrain_mA: 7.29
+        vgate_mV: 236
 
 # ---------------------------------------------------------------------
 
 STRIP68:
-  date: 2017-07-03
-  operators:
-    - Paola Battaglia
-    - Mario Zannoni
-  cryo: true
-  defective: false
-  adc_offsets:
-    PWR0_adu: 1990
-    PWR1_adu: 1937
-    PWR2_adu: 1968
-    PWR3_adu: 1890
-  detector_offsets:
-    PWR0_adu: 87700
-    PWR1_adu: 85200
-    PWR2_adu: 87400
-    PWR3_adu: 88000
-  biases:
-    H0:
-      vdrain_V: 0.91
-      idrain_mA: 3.16
-      vgate_mV: 307
-    H1:
-      vdrain_V: 0.91
-      idrain_mA: 3.16
-      vgate_mV: 331
-    H2:
-      vdrain_V: 1.21
-      idrain_mA: 12.16
-      vgate_mV: 9
-    H3:
-      vdrain_V: 1.21
-      idrain_mA: 11.08
-      vgate_mV: -56
-    H4:
-      vdrain_V: 0.91
-      idrain_mA: 9.30
-      vgate_mV: 245
-    H5:
-      vdrain_V: 0.93
-      idrain_mA: 8.4
-      vgate_mV: 374
+  -
+    date: 2017-07-03
+    operators:
+      - Paola Battaglia
+      - Mario Zannoni
+    cryo: true
+    defective: false
+    adc_offsets:
+      PWR0_adu: 1990
+      PWR1_adu: 1937
+      PWR2_adu: 1968
+      PWR3_adu: 1890
+    detector_offsets:
+      PWR0_adu: 87700
+      PWR1_adu: 85200
+      PWR2_adu: 87400
+      PWR3_adu: 88000
+    biases:
+      H0:
+        vdrain_V: 0.91
+        idrain_mA: 3.16
+        vgate_mV: 307
+      H1:
+        vdrain_V: 0.91
+        idrain_mA: 3.16
+        vgate_mV: 331
+      H2:
+        vdrain_V: 1.21
+        idrain_mA: 12.16
+        vgate_mV: 9
+      H3:
+        vdrain_V: 1.21
+        idrain_mA: 11.08
+        vgate_mV: -56
+      H4:
+        vdrain_V: 0.91
+        idrain_mA: 9.30
+        vgate_mV: 245
+      H5:
+        vdrain_V: 0.93
+        idrain_mA: 8.4
+        vgate_mV: 374
 
-  noise_temperature_steps_up:
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.6
-      t_load_b_1_K: 10.0
-      t_load_b_2_K: 14.5
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.7
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.3
+    noise_temperature_steps_up:
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.6
+        t_load_b_1_K: 10.0
+        t_load_b_2_K: 14.5
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.7
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.3
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.5
-      t_load_b_1_K: 20.0
-      t_load_b_2_K: 27.9
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.7
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.3
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.5
+        t_load_b_1_K: 20.0
+        t_load_b_2_K: 27.9
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.7
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.3
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.5
-      t_load_b_1_K: 30.0
-      t_load_b_2_K: 36.8
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.3
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.5
+        t_load_b_1_K: 30.0
+        t_load_b_2_K: 36.8
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.3
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.5
-      t_load_b_1_K: 40.0
-      t_load_b_2_K: 48.5
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.3
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.5
+        t_load_b_1_K: 40.0
+        t_load_b_2_K: 48.5
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.3
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.5
-      t_load_b_1_K: 50.0
-      t_load_b_2_K: 59.3
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.5
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.3
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.5
+        t_load_b_1_K: 50.0
+        t_load_b_2_K: 59.3
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.5
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.3
 
 # ---------------------------------------------------------------------
 
 STRIP67:
-  date: 2017-07-05
-  operators:
-    - Silvia Caprioli
-    - Mario Zannoni
-  cryo: true
-  defective: false
-  adc_offsets:
-    PWR0_adu: 1928
-    PWR1_adu: 1968
-    PWR2_adu: 1980
-    PWR3_adu: 2006
-  detector_offsets:
-    PWR0_adu: 58740
-    PWR1_adu: 57100
-    PWR2_adu: 60120
-    PWR3_adu: 55640
-  biases:
-    H0:
-      vdrain_V: 0.9
-      idrain_mA: 4.45
-      vgate_mV: 360
-    H1:
-      vdrain_V: 0.30
-      idrain_mA: 4.40
-      vgate_mV: 270
-    H2:
-      vdrain_V: 1.21
-      idrain_mA: 13.95
-      vgate_mV: -9
-    H3:
-      vdrain_V: 1.21
-      idrain_mA: 15.01
-      vgate_mV: 42
-    H4:
-      vdrain_V: 0.9
-      idrain_mA: 10.00
-      vgate_mV: 236
-    H5:
-      vdrain_V: 0.9
-      idrain_mA: 8.10
-      vgate_mV: 295
+  -
+    date: 2017-07-05
+    operators:
+      - Silvia Caprioli
+      - Mario Zannoni
+    cryo: true
+    defective: false
+    adc_offsets:
+      PWR0_adu: 1928
+      PWR1_adu: 1968
+      PWR2_adu: 1980
+      PWR3_adu: 2006
+    detector_offsets:
+      PWR0_adu: 58740
+      PWR1_adu: 57100
+      PWR2_adu: 60120
+      PWR3_adu: 55640
+    biases:
+      H0:
+        vdrain_V: 0.9
+        idrain_mA: 4.45
+        vgate_mV: 360
+      H1:
+        vdrain_V: 0.30
+        idrain_mA: 4.40
+        vgate_mV: 270
+      H2:
+        vdrain_V: 1.21
+        idrain_mA: 13.95
+        vgate_mV: -9
+      H3:
+        vdrain_V: 1.21
+        idrain_mA: 15.01
+        vgate_mV: 42
+      H4:
+        vdrain_V: 0.9
+        idrain_mA: 10.00
+        vgate_mV: 236
+      H5:
+        vdrain_V: 0.9
+        idrain_mA: 8.10
+        vgate_mV: 295
 
-  noise_temperature_steps_up:
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.6
-      t_load_b_1_K: 10.0
-      t_load_b_2_K: 13.9
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.7
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.2
+    noise_temperature_steps_up:
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.6
+        t_load_b_1_K: 10.0
+        t_load_b_2_K: 13.9
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.7
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.2
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 24.9
-      t_load_b_1_K: 20.0
-      t_load_b_2_K: 27.5
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.7
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.2
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 24.9
+        t_load_b_1_K: 20.0
+        t_load_b_2_K: 27.5
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.7
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.2
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 24.9
-      t_load_b_1_K: 30.0
-      t_load_b_2_K: 36.6
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.7
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.2
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 24.9
+        t_load_b_1_K: 30.0
+        t_load_b_2_K: 36.6
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.7
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.2
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 24.9
-      t_load_b_1_K: 40.0
-      t_load_b_2_K: 48.1
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.7
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.2
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 24.9
+        t_load_b_1_K: 40.0
+        t_load_b_2_K: 48.1
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.7
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.2
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 24.9
-      t_load_b_1_K: 50.0
-      t_load_b_2_K: 59.6
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.7
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.2
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 24.9
+        t_load_b_1_K: 50.0
+        t_load_b_2_K: 59.6
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.7
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.2
 
 # ---------------------------------------------------------------------
 
 STRIP69:
-  date: 2017-07-10
-  operators:
-    - Federico Incardona
-    - Mario Zannoni
-  cryo: true
-  defective: false
-  adc_offsets:
-    PWR0_adu: 1936
-    PWR1_adu: 1892
-    PWR2_adu: 2018
-    PWR3_adu: 1958
-  detector_offsets:
-    PWR0_adu: 4500
-    PWR1_adu: -1500
-    PWR2_adu: 720
-    PWR3_adu: 910
-  biases:
-    H0:
-      vdrain_V: 0.9
-      idrain_mA: 9.45
-      vgate_mV: 200
-    H1:
-      vdrain_V: 0.90
-      idrain_mA: 10.60
-      vgate_mV: 200
-    H2:
-      vdrain_V: 0.9
-      idrain_mA: 5.3
-      vgate_mV: 120
-    H3:
-      vdrain_V: 0.9
-      idrain_mA: 4.5
-      vgate_mV: 100
-    H4:
-      vdrain_V: 0.9
-      idrain_mA: 4.95
-      vgate_mV: 320
-    H5:
-      vdrain_V: 0.9
-      idrain_mA: 5.35
-      vgate_mV: 240
+  -
+    date: 2017-07-10
+    operators:
+      - Federico Incardona
+      - Mario Zannoni
+    cryo: true
+    defective: false
+    adc_offsets:
+      PWR0_adu: 1936
+      PWR1_adu: 1892
+      PWR2_adu: 2018
+      PWR3_adu: 1958
+    detector_offsets:
+      PWR0_adu: 4500
+      PWR1_adu: -1500
+      PWR2_adu: 720
+      PWR3_adu: 910
+    biases:
+      H0:
+        vdrain_V: 0.9
+        idrain_mA: 9.45
+        vgate_mV: 200
+      H1:
+        vdrain_V: 0.90
+        idrain_mA: 10.60
+        vgate_mV: 200
+      H2:
+        vdrain_V: 0.9
+        idrain_mA: 5.3
+        vgate_mV: 120
+      H3:
+        vdrain_V: 0.9
+        idrain_mA: 4.5
+        vgate_mV: 100
+      H4:
+        vdrain_V: 0.9
+        idrain_mA: 4.95
+        vgate_mV: 320
+      H5:
+        vdrain_V: 0.9
+        idrain_mA: 5.35
+        vgate_mV: 240
 
-  noise_temperature_steps_up:
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.47
-      t_load_b_1_K: 10.0
-      t_load_b_2_K: 13.51
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.48
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.417
+    noise_temperature_steps_up:
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.47
+        t_load_b_1_K: 10.0
+        t_load_b_2_K: 13.51
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.48
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.417
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.47
-      t_load_b_1_K: 20.0
-      t_load_b_2_K: 27.20
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.48
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.417
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.47
+        t_load_b_1_K: 20.0
+        t_load_b_2_K: 27.20
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.48
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.417
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.47
-      t_load_b_1_K: 30.0
-      t_load_b_2_K: 36.30
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.48
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.417
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.47
+        t_load_b_1_K: 30.0
+        t_load_b_2_K: 36.30
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.48
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.417
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.47
-      t_load_b_1_K: 40.0
-      t_load_b_2_K: 47.98
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.48
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.417
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.47
+        t_load_b_1_K: 40.0
+        t_load_b_2_K: 47.98
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.48
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.417
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.47
-      t_load_b_1_K: 50.0
-      t_load_b_2_K: 59.40
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.48
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.417
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.47
+        t_load_b_1_K: 50.0
+        t_load_b_2_K: 59.40
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.48
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.417
 
 # ---------------------------------------------------------------------
 
 STRIP61:
-  date: 2017-07-11
-  operators:
-    - Paola Battaglia
-    - Mario Zannoni
-  cryo: true
-  defective: false
-  adc_offsets:
-    PWR0_adu: 1916
-    PWR1_adu: 1885
-    PWR2_adu: 1880
-    PWR3_adu: 1811
-  detector_offsets:
-    PWR0_adu: 57400
-    PWR1_adu: 59700
-    PWR2_adu: 59800
-    PWR3_adu: 60900
-  biases:
-    H0:
-      vdrain_V: 0.92
-      idrain_mA: 3.02
-      vgate_mV: 185
-    H1:
-      vdrain_V: 0.90
-      idrain_mA: 3.10
-      vgate_mV: 341
-    H2:
-      vdrain_V: 1.21
-      idrain_mA: 9.94
-      vgate_mV: 428
-    H3:
-      vdrain_V: 1.21
-      idrain_mA: 12.01
-      vgate_mV: 504
-    H4:
-      vdrain_V: 0.95
-      idrain_mA: 6.94
-      vgate_mV: 453
-    H5:
-      vdrain_V: 0.91
-      idrain_mA: 8.03
-      vgate_mV: 181
+  -
+    date: 2017-07-11
+    operators:
+      - Paola Battaglia
+      - Mario Zannoni
+    cryo: true
+    defective: false
+    adc_offsets:
+      PWR0_adu: 1916
+      PWR1_adu: 1885
+      PWR2_adu: 1880
+      PWR3_adu: 1811
+    detector_offsets:
+      PWR0_adu: 57400
+      PWR1_adu: 59700
+      PWR2_adu: 59800
+      PWR3_adu: 60900
+    biases:
+      H0:
+        vdrain_V: 0.92
+        idrain_mA: 3.02
+        vgate_mV: 185
+      H1:
+        vdrain_V: 0.90
+        idrain_mA: 3.10
+        vgate_mV: 341
+      H2:
+        vdrain_V: 1.21
+        idrain_mA: 9.94
+        vgate_mV: 428
+      H3:
+        vdrain_V: 1.21
+        idrain_mA: 12.01
+        vgate_mV: 504
+      H4:
+        vdrain_V: 0.95
+        idrain_mA: 6.94
+        vgate_mV: 453
+      H5:
+        vdrain_V: 0.91
+        idrain_mA: 8.03
+        vgate_mV: 181
 
-  noise_temperature_steps_up:
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.3
-      t_load_b_1_K: 10.1
-      t_load_b_2_K: 13.2
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.9
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.2
+    noise_temperature_steps_up:
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.3
+        t_load_b_1_K: 10.1
+        t_load_b_2_K: 13.2
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.9
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.2
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.3
-      t_load_b_1_K: 20.0
-      t_load_b_2_K: 26.9
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.9
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.2
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.3
+        t_load_b_1_K: 20.0
+        t_load_b_2_K: 26.9
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.9
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.2
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.3
-      t_load_b_1_K: 30.0
-      t_load_b_2_K: 36.1
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.9
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.2
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.3
+        t_load_b_1_K: 30.0
+        t_load_b_2_K: 36.1
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.9
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.2
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.3
-      t_load_b_1_K: 40.0
-      t_load_b_2_K: 47.9
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.4
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.2
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.3
+        t_load_b_1_K: 40.0
+        t_load_b_2_K: 47.9
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.4
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.2
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.3
-      t_load_b_1_K: 50.0
-      t_load_b_2_K: 58.8
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.9
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.2
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.3
+        t_load_b_1_K: 50.0
+        t_load_b_2_K: 58.8
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.9
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.2
 
 # ---------------------------------------------------------------------
 
 STRIP59:
-  date: 2017-07-14
-  operators:
-    - Silvia Caprioli
-    - Mario Zannoni
-  cryo: true
-  defective: false
-  adc_offsets:
-    PWR0_adu: 1918
-    PWR1_adu: 1932
-    PWR2_adu: 1900
-    PWR3_adu: 1963
-  detector_offsets:
-    PWR0_adu: 84940
-    PWR1_adu: 83150
-    PWR2_adu: 84000
-    PWR3_adu: 85760
-  biases:
-    H0:
-      vdrain_V: 0.92
-      idrain_mA: 3.02
-      vgate_mV: 93
-    H1:
-      vdrain_V: 0.90
-      idrain_mA: 3.20
-      vgate_mV: 121
-    H2:
-      vdrain_V: 1.21
-      idrain_mA: 12.10
-      vgate_mV: 274
-    H3:
-      vdrain_V: 1.21
-      idrain_mA: 12.04
-      vgate_mV: 222
-    H4:
-      vdrain_V: 0.91
-      idrain_mA: 8.04
-      vgate_mV: 201
-    H5:
-      vdrain_V: 0.90
-      idrain_mA: 8.06
-      vgate_mV: 234
+  -
+    date: 2017-07-14
+    operators:
+      - Silvia Caprioli
+      - Mario Zannoni
+    cryo: true
+    defective: false
+    adc_offsets:
+      PWR0_adu: 1918
+      PWR1_adu: 1932
+      PWR2_adu: 1900
+      PWR3_adu: 1963
+    detector_offsets:
+      PWR0_adu: 84940
+      PWR1_adu: 83150
+      PWR2_adu: 84000
+      PWR3_adu: 85760
+    biases:
+      H0:
+        vdrain_V: 0.92
+        idrain_mA: 3.02
+        vgate_mV: 93
+      H1:
+        vdrain_V: 0.90
+        idrain_mA: 3.20
+        vgate_mV: 121
+      H2:
+        vdrain_V: 1.21
+        idrain_mA: 12.10
+        vgate_mV: 274
+      H3:
+        vdrain_V: 1.21
+        idrain_mA: 12.04
+        vgate_mV: 222
+      H4:
+        vdrain_V: 0.91
+        idrain_mA: 8.04
+        vgate_mV: 201
+      H5:
+        vdrain_V: 0.90
+        idrain_mA: 8.06
+        vgate_mV: 234
 
-  noise_temperature_steps_up:
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 26.1
-      t_load_b_1_K: 10.0
-      t_load_b_2_K: 14.8
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.4
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 17.1
+    noise_temperature_steps_up:
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 26.1
+        t_load_b_1_K: 10.0
+        t_load_b_2_K: 14.8
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.4
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 17.1
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 26.1
-      t_load_b_1_K: 20.0
-      t_load_b_2_K: 28.2
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.4
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 17.1
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 26.1
+        t_load_b_1_K: 20.0
+        t_load_b_2_K: 28.2
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.4
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 17.1
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 26.1
-      t_load_b_1_K: 30.0
-      t_load_b_2_K: 37.1
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.4
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 17.1
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 26.1
+        t_load_b_1_K: 30.0
+        t_load_b_2_K: 37.1
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.4
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 17.1
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 26.0
-      t_load_b_1_K: 40.0
-      t_load_b_2_K: 48.9
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.4
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 17.1
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 26.0
+        t_load_b_1_K: 40.0
+        t_load_b_2_K: 48.9
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.4
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 17.1
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 26.0
-      t_load_b_1_K: 50.0
-      t_load_b_2_K: 59.9
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.4
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 17.1
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 26.0
+        t_load_b_1_K: 50.0
+        t_load_b_2_K: 59.9
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.4
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 17.1
 
 # ---------------------------------------------------------------------
 
 STRIP66:
-  date: 2017-07-20
-  operators:
-    - Paola Battaglia
-    - Mario Zannoni
-  cryo: true
-  defective: false
-  adc_offsets:
-    PWR0_adu: 1969
-    PWR1_adu: 1982
-    PWR2_adu: 1875
-    PWR3_adu: 1946
-  detector_offsets:
-    PWR0_adu: 64600
-    PWR1_adu: 63800
-    PWR2_adu: 65000
-    PWR3_adu: 66700
-  biases:
-    H0:
-      vdrain_V: 0.92
-      idrain_mA: 3.07
-      vgate_mV: 343
-    H1:
-      vdrain_V: 0.91
-      idrain_mA: 5.37
-      vgate_mV: 419
-    H2:
-      vdrain_V: 1.21
-      idrain_mA: 15.21
-      vgate_mV: -108
-    H3:
-      vdrain_V: 1.21
-      idrain_mA: 15.68
-      vgate_mV: 528
-    H4:
-      vdrain_V: 0.91
-      idrain_mA: 8.16
-      vgate_mV: 240
-    H5:
-      vdrain_V: 0.93
-      idrain_mA: 10.18
-      vgate_mV: 283
+  -
+    date: 2017-07-20
+    operators:
+      - Paola Battaglia
+      - Mario Zannoni
+    cryo: true
+    defective: false
+    adc_offsets:
+      PWR0_adu: 1969
+      PWR1_adu: 1982
+      PWR2_adu: 1875
+      PWR3_adu: 1946
+    detector_offsets:
+      PWR0_adu: 64600
+      PWR1_adu: 63800
+      PWR2_adu: 65000
+      PWR3_adu: 66700
+    biases:
+      H0:
+        vdrain_V: 0.92
+        idrain_mA: 3.07
+        vgate_mV: 343
+      H1:
+        vdrain_V: 0.91
+        idrain_mA: 5.37
+        vgate_mV: 419
+      H2:
+        vdrain_V: 1.21
+        idrain_mA: 15.21
+        vgate_mV: -108
+      H3:
+        vdrain_V: 1.21
+        idrain_mA: 15.68
+        vgate_mV: 528
+      H4:
+        vdrain_V: 0.91
+        idrain_mA: 8.16
+        vgate_mV: 240
+      H5:
+        vdrain_V: 0.93
+        idrain_mA: 10.18
+        vgate_mV: 283
 
-  noise_temperature_steps_up:
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.7
-      t_load_b_1_K: 10.1
-      t_load_b_2_K: 14.2
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.8
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.4
+    noise_temperature_steps_up:
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.7
+        t_load_b_1_K: 10.1
+        t_load_b_2_K: 14.2
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.8
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.4
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.7
-      t_load_b_1_K: 20.0
-      t_load_b_2_K: 27.6
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.8
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.4
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.7
+        t_load_b_1_K: 20.0
+        t_load_b_2_K: 27.6
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.8
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.4
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.7
-      t_load_b_1_K: 30.0
-      t_load_b_2_K: 36.6
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.8
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.4
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.7
+        t_load_b_1_K: 30.0
+        t_load_b_2_K: 36.6
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.8
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.4
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.7
-      t_load_b_1_K: 40.0
-      t_load_b_2_K: 48.3
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.8
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.4
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.7
+        t_load_b_1_K: 40.0
+        t_load_b_2_K: 48.3
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.8
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.4
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.6
-      t_load_b_1_K: 50.0
-      t_load_b_2_K: 59.1
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.8
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.4
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.6
+        t_load_b_1_K: 50.0
+        t_load_b_2_K: 59.1
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.8
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.4
 
 # ---------------------------------------------------------------------
 
 STRIP64:
-  date: 2017-07-27
-  operators:
-    - Federico Incardona
-    - Mario Zannoni
-  cryo: true
-  defective: false
-  adc_offsets:
-    PWR0_adu: 1894
-    PWR1_adu: 1879
-    PWR2_adu: 1904
-    PWR3_adu: 2053
-  detector_offsets:
-    PWR0_adu: 720
-    PWR1_adu: 2050
-    PWR2_adu: 720
-    PWR3_adu: 990
-  biases:
-    H0:
-      vdrain_V: 0.91
-      idrain_mA: 2.96
-      vgate_mV: 430
-    H1:
-      vdrain_V: 0.91
-      idrain_mA: 3.15
-      vgate_mV: 503
-    H2:
-      vdrain_V: 1.21
-      idrain_mA: 11.73
-      vgate_mV: 42
-    H3:
-      vdrain_V: 1.21
-      idrain_mA: 11.0
-      vgate_mV: 119
-    H4:
-      vdrain_V: 0.91
-      idrain_mA: 3.04
-      vgate_mV: 315
-    H5:
-      vdrain_V: 0.91
-      idrain_mA: 7.01
-      vgate_mV: 320
+  -
+    date: 2017-07-27
+    operators:
+      - Federico Incardona
+      - Mario Zannoni
+    cryo: true
+    defective: false
+    adc_offsets:
+      PWR0_adu: 1894
+      PWR1_adu: 1879
+      PWR2_adu: 1904
+      PWR3_adu: 2053
+    detector_offsets:
+      PWR0_adu: 720
+      PWR1_adu: 2050
+      PWR2_adu: 720
+      PWR3_adu: 990
+    biases:
+      H0:
+        vdrain_V: 0.91
+        idrain_mA: 2.96
+        vgate_mV: 430
+      H1:
+        vdrain_V: 0.91
+        idrain_mA: 3.15
+        vgate_mV: 503
+      H2:
+        vdrain_V: 1.21
+        idrain_mA: 11.73
+        vgate_mV: 42
+      H3:
+        vdrain_V: 1.21
+        idrain_mA: 11.0
+        vgate_mV: 119
+      H4:
+        vdrain_V: 0.91
+        idrain_mA: 3.04
+        vgate_mV: 315
+      H5:
+        vdrain_V: 0.91
+        idrain_mA: 7.01
+        vgate_mV: 320
 
-  noise_temperature_steps_up:
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.8
-      t_load_b_1_K: 10.0
-      t_load_b_2_K: 14.2
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.4
+    noise_temperature_steps_up:
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.8
+        t_load_b_1_K: 10.0
+        t_load_b_2_K: 14.2
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.4
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.8
-      t_load_b_1_K: 20.0
-      t_load_b_2_K: 27.8
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.4
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.8
+        t_load_b_1_K: 20.0
+        t_load_b_2_K: 27.8
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.4
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.8
-      t_load_b_1_K: 30.0
-      t_load_b_2_K: 36.5
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.4
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.8
+        t_load_b_1_K: 30.0
+        t_load_b_2_K: 36.5
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.4
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.8
-      t_load_b_1_K: 40.0
-      t_load_b_2_K: 48.6
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.4
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.8
+        t_load_b_1_K: 40.0
+        t_load_b_2_K: 48.6
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.4
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.7
-      t_load_b_1_K: 50.0
-      t_load_b_2_K: 59.2
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.4
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.7
+        t_load_b_1_K: 50.0
+        t_load_b_2_K: 59.2
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.4
 
 # ---------------------------------------------------------------------
 
 STRIP63:
-  date: 2017-08-30
-  operators:
-    - Claudio Pincella
-    - Mario Zannoni
-  cryo: true
-  defective: false
-  adc_offsets:
-    PWR0_adu: 1884
-    PWR1_adu: 1877
-    PWR2_adu: 1842
-    PWR3_adu: 1895
-  detector_offsets:
-    PWR0_adu: 78700
-    PWR1_adu: 77930
-    PWR2_adu: 78000
-    PWR3_adu: 79790
-  biases:
-    H0:
-      vdrain_V: 0.91
-      idrain_mA: 3.0
-      vgate_mV: 276
-    H1:
-      vdrain_V: 0.91
-      idrain_mA: 3.3
-      vgate_mV: 418
-    H2:
-      vdrain_V: 1.21
-      idrain_mA: 13.0
-      vgate_mV: 221
-    H3:
-      vdrain_V: 1.21
-      idrain_mA: 13.05
-      vgate_mV: 310
-    H4:
-      vdrain_V: 0.91
-      idrain_mA: 8.1
-      vgate_mV: 283
-    H5:
-      vdrain_V: 0.91
-      idrain_mA: 9.1
-      vgate_mV: 238
+  -
+    date: 2017-08-30
+    operators:
+      - Claudio Pincella
+      - Mario Zannoni
+    cryo: true
+    defective: false
+    adc_offsets:
+      PWR0_adu: 1884
+      PWR1_adu: 1877
+      PWR2_adu: 1842
+      PWR3_adu: 1895
+    detector_offsets:
+      PWR0_adu: 78700
+      PWR1_adu: 77930
+      PWR2_adu: 78000
+      PWR3_adu: 79790
+    biases:
+      H0:
+        vdrain_V: 0.91
+        idrain_mA: 3.0
+        vgate_mV: 276
+      H1:
+        vdrain_V: 0.91
+        idrain_mA: 3.3
+        vgate_mV: 418
+      H2:
+        vdrain_V: 1.21
+        idrain_mA: 13.0
+        vgate_mV: 221
+      H3:
+        vdrain_V: 1.21
+        idrain_mA: 13.05
+        vgate_mV: 310
+      H4:
+        vdrain_V: 0.91
+        idrain_mA: 8.1
+        vgate_mV: 283
+      H5:
+        vdrain_V: 0.91
+        idrain_mA: 9.1
+        vgate_mV: 238
 
-  noise_temperature_steps_up:
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 26.1
-      t_load_b_1_K: 10.0
-      t_load_b_2_K: 13.6
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.7
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.2
+    noise_temperature_steps_up:
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 26.1
+        t_load_b_1_K: 10.0
+        t_load_b_2_K: 13.6
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.7
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.2
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 26.1
-      t_load_b_1_K: 20.0
-      t_load_b_2_K: 27.3
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.7
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.2
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 26.1
+        t_load_b_1_K: 20.0
+        t_load_b_2_K: 27.3
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.7
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.2
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 26.1
-      t_load_b_1_K: 30.0
-      t_load_b_2_K: 36.3
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.7
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.2
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 26.1
+        t_load_b_1_K: 30.0
+        t_load_b_2_K: 36.3
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.7
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.2
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 26.1
-      t_load_b_1_K: 40.0
-      t_load_b_2_K: 48.0
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.7
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.2
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 26.1
+        t_load_b_1_K: 40.0
+        t_load_b_2_K: 48.0
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.7
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.2
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 26.1
-      t_load_b_1_K: 50.0
-      t_load_b_2_K: 58.9
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.7
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.2
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 26.1
+        t_load_b_1_K: 50.0
+        t_load_b_2_K: 58.9
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.7
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.2
 
 # ---------------------------------------------------------------------
 
 STRIP33:
-  date: 2017-09-22
-  operators:
-    - Paola Battaglia
-    - Silvia Caprioli
-    - Federico Incardona
-  cryo: true
-  defective: false
-  adc_offsets:
-    PWR0_adu: 1841
-    PWR1_adu: 1821
-    PWR2_adu: 1815
-    PWR3_adu: 1812
-  detector_offsets:
-    PWR0_adu: 168305
-    PWR1_adu: 215816
-    PWR2_adu: 247391
-    PWR3_adu: 210553
-  biases:
-    H0:
-      vdrain_V: 0.6
-      idrain_mA: 6.9
-      vgate_mV: -40
-    H1:
-      vdrain_V: 0.6
-      idrain_mA: 7.0
-      vgate_mV: -28
-    H2:
-      vdrain_V: 0.6
-      idrain_mA: 7.0
-      vgate_mV: 235
-    H3:
-      vdrain_V: 0.6
-      idrain_mA: 7.0
-      vgate_mV: 180
-    H4:
-      vdrain_V: 0.6
-      idrain_mA: 7.0
-      vgate_mV: 180
-    H5:
-      vdrain_V: 0.6
-      idrain_mA: 6.9
-      vgate_mV: -60
+  -
+    date: 2017-09-22
+    operators:
+      - Paola Battaglia
+      - Silvia Caprioli
+      - Federico Incardona
+    cryo: true
+    defective: false
+    adc_offsets:
+      PWR0_adu: 1841
+      PWR1_adu: 1821
+      PWR2_adu: 1815
+      PWR3_adu: 1812
+    detector_offsets:
+      PWR0_adu: 168305
+      PWR1_adu: 215816
+      PWR2_adu: 247391
+      PWR3_adu: 210553
+    biases:
+      H0:
+        vdrain_V: 0.6
+        idrain_mA: 6.9
+        vgate_mV: -40
+      H1:
+        vdrain_V: 0.6
+        idrain_mA: 7.0
+        vgate_mV: -28
+      H2:
+        vdrain_V: 0.6
+        idrain_mA: 7.0
+        vgate_mV: 235
+      H3:
+        vdrain_V: 0.6
+        idrain_mA: 7.0
+        vgate_mV: 180
+      H4:
+        vdrain_V: 0.6
+        idrain_mA: 7.0
+        vgate_mV: 180
+      H5:
+        vdrain_V: 0.6
+        idrain_mA: 6.9
+        vgate_mV: -60
 
-  noise_temperature_steps_up:
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.5
-      t_load_b_1_K: 10.0
-      t_load_b_2_K: 13.3
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.0
+    noise_temperature_steps_up:
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.5
+        t_load_b_1_K: 10.0
+        t_load_b_2_K: 13.3
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.0
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.4
-      t_load_b_1_K: 20.0
-      t_load_b_2_K: 27.1
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.0
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.4
+        t_load_b_1_K: 20.0
+        t_load_b_2_K: 27.1
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.0
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.4
-      t_load_b_1_K: 30.0
-      t_load_b_2_K: 36.2
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.0
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.4
+        t_load_b_1_K: 30.0
+        t_load_b_2_K: 36.2
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.0
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.4
-      t_load_b_1_K: 40.0
-      t_load_b_2_K: 48.2
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.0
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.4
+        t_load_b_1_K: 40.0
+        t_load_b_2_K: 48.2
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.0
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.3
-      t_load_b_1_K: 50.0
-      t_load_b_2_K: 59.3
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.0
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.3
+        t_load_b_1_K: 50.0
+        t_load_b_2_K: 59.3
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.0
 
 # ---------------------------------------------------------------------
 
 STRIP35:
-  date: 2017-09-25
-  operators:
-    - Silvia Caprioli
-    - Mario Zannoni
-  cryo: true
-  defective: true
-  adc_offsets:
-    PWR0_adu: 1808
-    PWR1_adu: 1794
-    PWR2_adu: 1815
-    PWR3_adu: 1812
-  detector_offsets:
-    PWR0_adu: 96100
-    PWR1_adu: 100710
-    PWR2_adu: 99520
-    PWR3_adu: 98270
-  biases:
-    H0:
-      vdrain_V: 0.9
-      idrain_mA: 5.00
-      vgate_mV: 150
-    H1:
-      vdrain_V: 0.9
-      idrain_mA: 5.00
-      vgate_mV: 100
-    H2:
-      vdrain_V: 0.9
-      idrain_mA: 4.00
-      vgate_mV: 380
-    H3:
-      vdrain_V: 0.9
-      idrain_mA: 3.9
-      vgate_mV: 390
-    H4:
-      vdrain_V: 0.9
-      idrain_mA: 8.3
-      vgate_mV: -159
-    H5:
-      vdrain_V: 0.9
-      idrain_mA: 8.0
-      vgate_mV: 195
+  -
+    date: 2017-09-25
+    operators:
+      - Silvia Caprioli
+      - Mario Zannoni
+    cryo: true
+    defective: true
+    adc_offsets:
+      PWR0_adu: 1808
+      PWR1_adu: 1794
+      PWR2_adu: 1815
+      PWR3_adu: 1812
+    detector_offsets:
+      PWR0_adu: 96100
+      PWR1_adu: 100710
+      PWR2_adu: 99520
+      PWR3_adu: 98270
+    biases:
+      H0:
+        vdrain_V: 0.9
+        idrain_mA: 5.00
+        vgate_mV: 150
+      H1:
+        vdrain_V: 0.9
+        idrain_mA: 5.00
+        vgate_mV: 100
+      H2:
+        vdrain_V: 0.9
+        idrain_mA: 4.00
+        vgate_mV: 380
+      H3:
+        vdrain_V: 0.9
+        idrain_mA: 3.9
+        vgate_mV: 390
+      H4:
+        vdrain_V: 0.9
+        idrain_mA: 8.3
+        vgate_mV: -159
+      H5:
+        vdrain_V: 0.9
+        idrain_mA: 8.0
+        vgate_mV: 195
 
 # ---------------------------------------------------------------------
 
 STRIP07:
-  date: 2017-09-29
-  operators:
-    - Federico Incardona
-    - Maurizio Tomasi
-  cryo: true
-  defective: false
-  adc_offsets:
-    PWR0_adu: 1793
-    PWR1_adu: 1790
-    PWR2_adu: 1792
-    PWR3_adu: 1848
-  detector_offsets:
-    PWR0_adu: 63800
-    PWR1_adu: 62500
-    PWR2_adu: 61300
-    PWR3_adu: 62600
-  biases:
-    H0:
-      vdrain_V: 0.9
-      idrain_mA: 4.40
-      vgate_mV: 635
-    H1:
-      vdrain_V: 0.9
-      idrain_mA: 4.50
-      vgate_mV: -160
-    H2:
-      vdrain_V: 0.9
-      idrain_mA: 7.60
-      vgate_mV: 439
-    H3:
-      vdrain_V: 0.9
-      idrain_mA: 7.20
-      vgate_mV: 278
-    H4:
-      vdrain_V: 0.9
-      idrain_mA: 6.30
-      vgate_mV: -282
-    H5:
-      vdrain_V: 0.9
-      idrain_mA: 5.60
-      vgate_mV: 18
+  -
+    date: 2017-09-29
+    operators:
+      - Federico Incardona
+      - Maurizio Tomasi
+    cryo: true
+    defective: false
+    adc_offsets:
+      PWR0_adu: 1793
+      PWR1_adu: 1790
+      PWR2_adu: 1792
+      PWR3_adu: 1848
+    detector_offsets:
+      PWR0_adu: 63800
+      PWR1_adu: 62500
+      PWR2_adu: 61300
+      PWR3_adu: 62600
+    biases:
+      H0:
+        vdrain_V: 0.9
+        idrain_mA: 4.40
+        vgate_mV: 635
+      H1:
+        vdrain_V: 0.9
+        idrain_mA: 4.50
+        vgate_mV: -160
+      H2:
+        vdrain_V: 0.9
+        idrain_mA: 7.60
+        vgate_mV: 439
+      H3:
+        vdrain_V: 0.9
+        idrain_mA: 7.20
+        vgate_mV: 278
+      H4:
+        vdrain_V: 0.9
+        idrain_mA: 6.30
+        vgate_mV: -282
+      H5:
+        vdrain_V: 0.9
+        idrain_mA: 5.60
+        vgate_mV: 18
 
-  noise_temperature_steps_up:
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.5
-      t_load_b_1_K: 10.0
-      t_load_b_2_K: 13.3
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.0
+    noise_temperature_steps_up:
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.5
+        t_load_b_1_K: 10.0
+        t_load_b_2_K: 13.3
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.0
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.4
-      t_load_b_1_K: 20.0
-      t_load_b_2_K: 27.1
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.0
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.4
+        t_load_b_1_K: 20.0
+        t_load_b_2_K: 27.1
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.0
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.4
-      t_load_b_1_K: 30.0
-      t_load_b_2_K: 36.2
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.0
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.4
+        t_load_b_1_K: 30.0
+        t_load_b_2_K: 36.2
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.0
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.4
-      t_load_b_1_K: 40.0
-      t_load_b_2_K: 48.2
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.0
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.4
+        t_load_b_1_K: 40.0
+        t_load_b_2_K: 48.2
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.0
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.3
-      t_load_b_1_K: 50.0
-      t_load_b_2_K: 59.3
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.0
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.3
+        t_load_b_1_K: 50.0
+        t_load_b_2_K: 59.3
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.0
 
 # ---------------------------------------------------------------------
 
 STRIP44:
-  date: 2017-10-02
-  operators:
-    - Silvia Caprioli
-    - Mario Zannoni
-  cryo: true
-  defective: false
-  adc_offsets:
-    PWR0_adu: 1873
-    PWR1_adu: 1880
-    PWR2_adu: 1816
-    PWR3_adu: 1873
-  detector_offsets:
-    PWR0_adu: 125048
-    PWR1_adu: 37270
-    PWR2_adu: 125840
-    PWR3_adu: 111700
-  biases:
-    H0:
-      vdrain_V: 0.9
-      idrain_mA: 4.80
-      vgate_mV: 90
-    H1:
-      vdrain_V: 0.9
-      idrain_mA: 7.60
-      vgate_mV: -280
-    H2:
-      vdrain_V: 0.9
-      idrain_mA: 4.00
-      vgate_mV: 222
-    H3:
-      vdrain_V: 0.9
-      idrain_mA: 8.50
-      vgate_mV: 297
-    H4:
-      vdrain_V: 0.9
-      idrain_mA: 4.50
-      vgate_mV: 139
-    H5:
-      vdrain_V: 0.9
-      idrain_mA: 9.00
-      vgate_mV: 203
+  -
+    date: 2017-10-02
+    operators:
+      - Silvia Caprioli
+      - Mario Zannoni
+    cryo: true
+    defective: false
+    adc_offsets:
+      PWR0_adu: 1873
+      PWR1_adu: 1880
+      PWR2_adu: 1816
+      PWR3_adu: 1873
+    detector_offsets:
+      PWR0_adu: 125048
+      PWR1_adu: 37270
+      PWR2_adu: 125840
+      PWR3_adu: 111700
+    biases:
+      H0:
+        vdrain_V: 0.9
+        idrain_mA: 4.80
+        vgate_mV: 90
+      H1:
+        vdrain_V: 0.9
+        idrain_mA: 7.60
+        vgate_mV: -280
+      H2:
+        vdrain_V: 0.9
+        idrain_mA: 4.00
+        vgate_mV: 222
+      H3:
+        vdrain_V: 0.9
+        idrain_mA: 8.50
+        vgate_mV: 297
+      H4:
+        vdrain_V: 0.9
+        idrain_mA: 4.50
+        vgate_mV: 139
+      H5:
+        vdrain_V: 0.9
+        idrain_mA: 9.00
+        vgate_mV: 203
 
-  noise_temperature_steps_up:
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.7
-      t_load_b_1_K: 10.0
-      t_load_b_2_K: 13.7
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 22.0
-      t_polarimeter_2_K: 20.0
+    noise_temperature_steps_up:
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.7
+        t_load_b_1_K: 10.0
+        t_load_b_2_K: 13.7
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 22.0
+        t_polarimeter_2_K: 20.0
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.7
-      t_load_b_1_K: 20.0
-      t_load_b_2_K: 27.5
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 22.0
-      t_polarimeter_2_K: 20.0
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.7
+        t_load_b_1_K: 20.0
+        t_load_b_2_K: 27.5
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 22.0
+        t_polarimeter_2_K: 20.0
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.7
-      t_load_b_1_K: 30.0
-      t_load_b_2_K: 36.6
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 22.0
-      t_polarimeter_2_K: 20.0
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.7
+        t_load_b_1_K: 30.0
+        t_load_b_2_K: 36.6
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 22.0
+        t_polarimeter_2_K: 20.0
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.7
-      t_load_b_1_K: 40.0
-      t_load_b_2_K: 48.5
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 22.6
-      t_polarimeter_2_K: 21.3
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.7
+        t_load_b_1_K: 40.0
+        t_load_b_2_K: 48.5
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 22.6
+        t_polarimeter_2_K: 21.3
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 25.7
-      t_load_b_1_K: 50.0
-      t_load_b_2_K: 59.7
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 22.6
-      t_polarimeter_2_K: 21.3
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 25.7
+        t_load_b_1_K: 50.0
+        t_load_b_2_K: 59.7
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 22.6
+        t_polarimeter_2_K: 21.3
 
 # ---------------------------------------------------------------------
 
 STRIP49:
-  date: 2017-10-04
-  operators:
-    - Federico Incardona
-    - Maurizio Tomasi
-  cryo: true
-  defective: true
-  adc_offsets:
-    PWR0_adu: 1857
-    PWR1_adu: 1877
-    PWR2_adu: 1859
-    PWR3_adu: 1867
-  detector_offsets:
-    PWR0_adu: 57200
-    PWR1_adu: 58100
-    PWR2_adu: 56800
-    PWR3_adu: 58200
-  biases:
-    H0:
-      vdrain_V: 0.9
-      idrain_mA: 4.96
-      vgate_mV: 159
-    H1:
-      vdrain_V: 0.9
-      idrain_mA: 4.56
-      vgate_mV: 81
-    H2:
-      vdrain_V: 0.9
-      idrain_mA: 8.19
-      vgate_mV: 336
-    H3:
-      vdrain_V: 0.9
-      idrain_mA: 7.97
-      vgate_mV: 200
-    H4:
-      vdrain_V: 0.9
-      idrain_mA: 5.84
-      vgate_mV: 101
-    H5:
-      vdrain_V: 0.9
-      idrain_mA: 6.67
-      vgate_mV: -411
+  -
+    date: 2017-10-04
+    operators:
+      - Federico Incardona
+      - Maurizio Tomasi
+    cryo: true
+    defective: true
+    adc_offsets:
+      PWR0_adu: 1857
+      PWR1_adu: 1877
+      PWR2_adu: 1859
+      PWR3_adu: 1867
+    detector_offsets:
+      PWR0_adu: 57200
+      PWR1_adu: 58100
+      PWR2_adu: 56800
+      PWR3_adu: 58200
+    biases:
+      H0:
+        vdrain_V: 0.9
+        idrain_mA: 4.96
+        vgate_mV: 159
+      H1:
+        vdrain_V: 0.9
+        idrain_mA: 4.56
+        vgate_mV: 81
+      H2:
+        vdrain_V: 0.9
+        idrain_mA: 8.19
+        vgate_mV: 336
+      H3:
+        vdrain_V: 0.9
+        idrain_mA: 7.97
+        vgate_mV: 200
+      H4:
+        vdrain_V: 0.9
+        idrain_mA: 5.84
+        vgate_mV: 101
+      H5:
+        vdrain_V: 0.9
+        idrain_mA: 6.67
+        vgate_mV: -411
 
-  noise_temperature_steps_up:
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 26.4
-      t_load_b_1_K: 20.0
-      t_load_b_2_K: 27.7
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.8
+    noise_temperature_steps_up:
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 26.4
+        t_load_b_1_K: 20.0
+        t_load_b_2_K: 27.7
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.8
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 26.4
-      t_load_b_1_K: 30.0
-      t_load_b_2_K: 36.8
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.8
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 26.4
+        t_load_b_1_K: 30.0
+        t_load_b_2_K: 36.8
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.8
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 26.4
-      t_load_b_1_K: 40.0
-      t_load_b_2_K: 48.6
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.8
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 26.4
+        t_load_b_1_K: 40.0
+        t_load_b_2_K: 48.6
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.8
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 26.4
-      t_load_b_1_K: 50.0
-      t_load_b_2_K: 59.8
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.7
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 26.4
+        t_load_b_1_K: 50.0
+        t_load_b_2_K: 59.8
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.7
 
 # ---------------------------------------------------------------------
 
 STRIP02:
-  date: 2017-10-11
-  operators:
-    - Paola Battaglia
-    - Claudio Pincella
-  cryo: true
-  defective: false
-  adc_offsets:
-    PWR0_adu: 1837
-    PWR1_adu: 1754
-    PWR2_adu: 1796
-    PWR3_adu: 1824
-  detector_offsets:
-    PWR0_adu: 86900
-    PWR1_adu: 88780
-    PWR2_adu: 89760
-    PWR3_adu: 89120
-  biases:
-    H0:
-      vdrain_V: 0.9
-      idrain_mA: 4.00
-      vgate_mV: 220
-    H1:
-      vdrain_V: 0.9
-      idrain_mA: 4.00
-      vgate_mV: 300
-    H2:
-      vdrain_V: 0.9
-      idrain_mA: 6.00
-      vgate_mV: 256
-    H3:
-      vdrain_V: 0.9
-      idrain_mA: 4.50
-      vgate_mV: 267
-    H4:
-      vdrain_V: 0.9
-      idrain_mA: 6.00
-      vgate_mV: 123
-    H5:
-      vdrain_V: 0.9
-      idrain_mA: 3.40
-      vgate_mV: 204
+  -
+    date: 2017-10-11
+    operators:
+      - Paola Battaglia
+      - Claudio Pincella
+    cryo: true
+    defective: false
+    adc_offsets:
+      PWR0_adu: 1837
+      PWR1_adu: 1754
+      PWR2_adu: 1796
+      PWR3_adu: 1824
+    detector_offsets:
+      PWR0_adu: 86900
+      PWR1_adu: 88780
+      PWR2_adu: 89760
+      PWR3_adu: 89120
+    biases:
+      H0:
+        vdrain_V: 0.9
+        idrain_mA: 4.00
+        vgate_mV: 220
+      H1:
+        vdrain_V: 0.9
+        idrain_mA: 4.00
+        vgate_mV: 300
+      H2:
+        vdrain_V: 0.9
+        idrain_mA: 6.00
+        vgate_mV: 256
+      H3:
+        vdrain_V: 0.9
+        idrain_mA: 4.50
+        vgate_mV: 267
+      H4:
+        vdrain_V: 0.9
+        idrain_mA: 6.00
+        vgate_mV: 123
+      H5:
+        vdrain_V: 0.9
+        idrain_mA: 3.40
+        vgate_mV: 204
 
-  noise_temperature_steps_up:
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 26.4
-      t_load_b_1_K: 20.0
-      t_load_b_2_K: 27.8
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.7
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.6
+    noise_temperature_steps_up:
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 26.4
+        t_load_b_1_K: 20.0
+        t_load_b_2_K: 27.8
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.7
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.6
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 26.4
-      t_load_b_1_K: 30.0
-      t_load_b_2_K: 36.9
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.7
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.8
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 26.4
+        t_load_b_1_K: 30.0
+        t_load_b_2_K: 36.9
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.7
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.8
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 26.4
-      t_load_b_1_K: 40.0
-      t_load_b_2_K: 48.7
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.7
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.8
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 26.4
+        t_load_b_1_K: 40.0
+        t_load_b_2_K: 48.7
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.7
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.8
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 26.4
-      t_load_b_1_K: 50.0
-      t_load_b_2_K: 59.8
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.7
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.6
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 26.4
+        t_load_b_1_K: 50.0
+        t_load_b_2_K: 59.8
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.7
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.6
 
 # ---------------------------------------------------------------------
 
 STRIP43:
-  date: 2017-10-13
-  operators:
-    - Federico Incardona
-    - Claudio Pincella
-  cryo: true
-  defective: false
-  adc_offsets:
-    PWR0_adu: 1807
-    PWR1_adu: 1870
-    PWR2_adu: 1798
-    PWR3_adu: 1852
-  detector_offsets:
-    PWR0_adu: 103150
-    PWR1_adu: 101500
-    PWR2_adu: 103270
-    PWR3_adu: 103700
-  biases:
-    H0:
-      vdrain_V: 0.9
-      idrain_mA: 4.45
-      vgate_mV: 137
-    H1:
-      vdrain_V: 0.9
-      idrain_mA: 4.86
-      vgate_mV: 120
-    H2:
-      vdrain_V: 0.9
-      idrain_mA: 5.80
-      vgate_mV: 204
-    H3:
-      vdrain_V: 0.9
-      idrain_mA: 5.80
-      vgate_mV: 204
-    H4:
-      vdrain_V: 0.9
-      idrain_mA: 6.00
-      vgate_mV: 40
-    H5:
-      vdrain_V: 0.9
-      idrain_mA: 7.97
-      vgate_mV: -300
+  -
+    date: 2017-10-13
+    operators:
+      - Federico Incardona
+      - Claudio Pincella
+    cryo: true
+    defective: false
+    adc_offsets:
+      PWR0_adu: 1807
+      PWR1_adu: 1870
+      PWR2_adu: 1798
+      PWR3_adu: 1852
+    detector_offsets:
+      PWR0_adu: 103150
+      PWR1_adu: 101500
+      PWR2_adu: 103270
+      PWR3_adu: 103700
+    biases:
+      H0:
+        vdrain_V: 0.9
+        idrain_mA: 4.45
+        vgate_mV: 137
+      H1:
+        vdrain_V: 0.9
+        idrain_mA: 4.86
+        vgate_mV: 120
+      H2:
+        vdrain_V: 0.9
+        idrain_mA: 5.80
+        vgate_mV: 204
+      H3:
+        vdrain_V: 0.9
+        idrain_mA: 5.80
+        vgate_mV: 204
+      H4:
+        vdrain_V: 0.9
+        idrain_mA: 6.00
+        vgate_mV: 40
+      H5:
+        vdrain_V: 0.9
+        idrain_mA: 7.97
+        vgate_mV: -300
 
-  noise_temperature_steps_up:
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 26.4
-      t_load_b_1_K: 20.0
-      t_load_b_2_K: 27.7
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.8
+    noise_temperature_steps_up:
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 26.4
+        t_load_b_1_K: 20.0
+        t_load_b_2_K: 27.7
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.8
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 26.4
-      t_load_b_1_K: 30.0
-      t_load_b_2_K: 36.8
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.8
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 26.4
+        t_load_b_1_K: 30.0
+        t_load_b_2_K: 36.8
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.8
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 26.4
-      t_load_b_1_K: 40.0
-      t_load_b_2_K: 48.6
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.8
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 26.4
+        t_load_b_1_K: 40.0
+        t_load_b_2_K: 48.6
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.8
 
-    -
-      t_load_a_1_K: 20.0
-      t_load_a_2_K: 26.4
-      t_load_b_1_K: 50.0
-      t_load_b_2_K: 59.8
-      t_cross_guide_1_K: 15.0
-      t_cross_guide_2_K: 24.6
-      t_polarimeter_1_K: 20.0
-      t_polarimeter_2_K: 16.7
+      -
+        t_load_a_1_K: 20.0
+        t_load_a_2_K: 26.4
+        t_load_b_1_K: 50.0
+        t_load_b_2_K: 59.8
+        t_cross_guide_1_K: 15.0
+        t_cross_guide_2_K: 24.6
+        t_polarimeter_1_K: 20.0
+        t_polarimeter_2_K: 16.7
 ...
