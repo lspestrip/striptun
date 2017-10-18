@@ -518,7 +518,7 @@ STRIP58:
     - Paola Battaglia
   cryo: true
   defective: false
-  channel_offsets:
+  adc_offsets:
     PWR0_adu: 1879
     PWR1_adu: 1915
     PWR2_adu: 1872
@@ -557,7 +557,7 @@ STRIP04:
     - Federico Incardona
   cryo: true
   defective: false
-  channel_offsets:
+  adc_offsets:
     PWR0_adu: 1795
     PWR1_adu: 1910
     PWR2_adu: 1878
@@ -601,7 +601,7 @@ STRIP58:
     - Paola Battaglia
   cryo: true
   defective: false
-  channel_offsets:
+  adc_offsets:
     PWR0_adu: 1898
     PWR1_adu: 1841
     PWR2_adu: 1867
@@ -645,7 +645,7 @@ STRIP30:
     - Paola Battaglia
   cryo: true
   defective: false
-  channel_offsets:
+  adc_offsets:
     PWR0_adu: 1898
     PWR1_adu: 1841
     PWR2_adu: 1867
@@ -689,7 +689,7 @@ STRIP30:
     - Claudio Pincella
   cryo: true
   defective: false
-  channel_offsets:
+  adc_offsets:
     PWR0_adu: 1881
     PWR1_adu: 1820
     PWR2_adu: 1862
@@ -773,7 +773,7 @@ STRIP30:
     - Claudio Pincella
   cryo: true
   defective: false
-  channel_offsets:
+  adc_offsets:
     PWR0_adu: 1881
     PWR1_adu: 1820
     PWR2_adu: 1862
@@ -818,7 +818,7 @@ STRIP37:
     - Claudio Pincella
   cryo: true
   defective: true
-  channel_offsets:
+  adc_offsets:
     PWR0_adu: 1808
     PWR1_adu: 1834
     PWR2_adu: 1812
@@ -837,7 +837,7 @@ STRIP37:
     - Federico Incardona
   cryo: true
   defective: true
-  channel_offsets:
+  adc_offsets:
     PWR0_adu: 1824
     PWR1_adu: 1848
     PWR2_adu: 1827
@@ -917,7 +917,7 @@ STRIP70:
     - Claudio Pincella
   cryo: true
   defective: false
-  channel_offsets:
+  adc_offsets:
     PWR0_adu: 1742
     PWR1_adu: 1868
     PWR2_adu: 1826
@@ -962,7 +962,7 @@ STRIP68:
     - Mario Zannoni
   cryo: true
   defective: false
-  channel_offsets:
+  adc_offsets:
     PWR0_adu: 1990
     PWR1_adu: 1937
     PWR2_adu: 1968
@@ -1058,7 +1058,7 @@ STRIP67:
     - Mario Zannoni
   cryo: true
   defective: false
-  channel_offsets:
+  adc_offsets:
     PWR0_adu: 1928
     PWR1_adu: 1968
     PWR2_adu: 1980
@@ -1154,7 +1154,7 @@ STRIP69:
     - Mario Zannoni
   cryo: true
   defective: false
-  channel_offsets:
+  adc_offsets:
     PWR0_adu: 1936
     PWR1_adu: 1892
     PWR2_adu: 2018
@@ -1250,7 +1250,7 @@ STRIP61:
     - Mario Zannoni
   cryo: true
   defective: false
-  channel_offsets:
+  adc_offsets:
     PWR0_adu: 1916
     PWR1_adu: 1885
     PWR2_adu: 1880
@@ -1346,7 +1346,7 @@ STRIP59:
     - Mario Zannoni
   cryo: true
   defective: false
-  channel_offsets:
+  adc_offsets:
     PWR0_adu: 1918
     PWR1_adu: 1932
     PWR2_adu: 1900
@@ -1442,7 +1442,7 @@ STRIP66:
     - Mario Zannoni
   cryo: true
   defective: false
-  channel_offsets:
+  adc_offsets:
     PWR0_adu: 1969
     PWR1_adu: 1982
     PWR2_adu: 1875
@@ -1538,7 +1538,7 @@ STRIP64:
     - Mario Zannoni
   cryo: true
   defective: false
-  channel_offsets:
+  adc_offsets:
     PWR0_adu: 1894
     PWR1_adu: 1879
     PWR2_adu: 1904
@@ -1634,7 +1634,7 @@ STRIP63:
     - Mario Zannoni
   cryo: true
   defective: false
-  channel_offsets:
+  adc_offsets:
     PWR0_adu: 1884
     PWR1_adu: 1877
     PWR2_adu: 1842
@@ -1731,7 +1731,7 @@ STRIP33:
     - Federico Incardona
   cryo: true
   defective: false
-  channel_offsets:
+  adc_offsets:
     PWR0_adu: 1841
     PWR1_adu: 1821
     PWR2_adu: 1815
@@ -1827,7 +1827,7 @@ STRIP35:
     - Mario Zannoni
   cryo: true
   defective: true
-  channel_offsets:
+  adc_offsets:
     PWR0_adu: 1808
     PWR1_adu: 1794
     PWR2_adu: 1815
@@ -1872,7 +1872,7 @@ STRIP07:
     - Maurizio Tomasi
   cryo: true
   defective: false
-  channel_offsets:
+  adc_offsets:
     PWR0_adu: 1793
     PWR1_adu: 1790
     PWR2_adu: 1792
@@ -1968,7 +1968,7 @@ STRIP44:
     - Mario Zannoni
   cryo: true
   defective: false
-  channel_offsets:
+  adc_offsets:
     PWR0_adu: 1873
     PWR1_adu: 1880
     PWR2_adu: 1816
@@ -2064,7 +2064,7 @@ STRIP49:
     - Maurizio Tomasi
   cryo: true
   defective: true
-  channel_offsets:
+  adc_offsets:
     PWR0_adu: 1857
     PWR1_adu: 1877
     PWR2_adu: 1859
@@ -2150,7 +2150,7 @@ STRIP02:
     - Claudio Pincella
   cryo: true
   defective: false
-  channel_offsets:
+  adc_offsets:
     PWR0_adu: 1837
     PWR1_adu: 1754
     PWR2_adu: 1796
@@ -2236,7 +2236,7 @@ STRIP43:
     - Claudio Pincella
   cryo: true
   defective: false
-  channel_offsets:
+  adc_offsets:
     PWR0_adu: 1807
     PWR1_adu: 1870
     PWR2_adu: 1798
