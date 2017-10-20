@@ -15,6 +15,10 @@ The following programs have been implemented so far::
    runs an analysis to determine the gain and the noise temperature of the
    polarimeter.
 
+3. `Average output`_ determines the average output of a test. It is mainly used
+   to study the data acquired with all six HEMTs turned off, in order to
+   estimate the average ADU offset to be removed from the PWR data.
+
 All the programs save the results of their calculations in JSON files, and they
 are able to produce reports in `Markdown
 <https://daringfireball.net/projects/markdown/>`_ and HTML formats. The Markdown
@@ -229,3 +233,12 @@ tested on real data and holds with large confidence. The code is able
 to run a Bayesian analysis through a Monte Carlo Markow Chain (MCMC) approach,
 which is much slower but potentially more insightful. To run the MCMC analysis,
 use the ``--mcmc`` flag.
+
+
+Average output
+--------------
+
+This small program does exactly what it says: it computes the average of the columns
+``PWR0``, ``PWR1``, ``PWR2``, and ``PWR3`` in the raw text files acquired in Bicocca.
+The name of the script is ``output_average.py``, use the ``--help`` flag to get the
+command-line help.
