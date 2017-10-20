@@ -10,8 +10,7 @@ from shutil import copyfile
 from typing import Any, Dict, List, Tuple
 
 from json_save import save_parameters_to_json
-from mako.template import Template
-from markdown import markdown
+from reports import create_report
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
@@ -239,59 +238,6 @@ def build_dict_from_results(pol_name: str,
     }
 
 
-def create_report(params: Dict[str, Any],
-                  output_path: str):
-    '''Saves a report of the tuning in the output path.
-
-    This function assumes that ``output_path`` points to a directory that already exists.
-    '''
-
-    template_path = os.path.join(os.path.dirname(__file__), 'template')
-
-    # Copy all the static files into the destination directory
-    for static_file_name in ['report_style.css']:
-        copyfile(os.path.join(template_path, static_file_name),
-                 os.path.join(output_path, static_file_name))
-
-    # Load the file containing the Markdown template in a string
-    template_file_name = os.path.join(template_path, 'tnoise_step1.md')
-    log.info('Reading report template from "%s"', template_file_name)
-    report_template = Template(filename=template_file_name)
-
-    # Fill the template and save the report in Markdown format
-    md_report = report_template.render_unicode(**params)
-    md_report_path = os.path.join(output_path, 'tnoise_step1_report.md')
-    with open(md_report_path, 'wt', encoding='utf-8') as md_file:
-        md_file.write(md_report)
-    log.info('Markdown report saved to "%s"', md_report_path)
-
-    # Convert the report to HTML and save it too
-    html_report = '''<!DOCTYPE html>
-<html>
-    <head>
-        <title>{title}</title>
-        <meta charset="UTF-8">
-        <link rel="stylesheet" href="report_style.css" type="text/css" />
-    </head>
-    <body>
-        <div id="main">
-{contents}
-        </div>
-    </body>
-</html>
-'''.format(title=params['title'],
-           contents=markdown(md_report, extensions=[
-               'markdown.extensions.attr_list',
-               'markdown.extensions.tables',
-               'markdown.extensions.toc']
-    ))
-
-    html_report_path = os.path.join(output_path, 'tnoise_report.html')
-    with open(html_report_path, 'wt', encoding='utf-8') as html_file:
-        html_file.write(html_report)
-    log.info('HTML report saved to "%s"', html_report_path)
-
-
 def main():
 
     log.basicConfig(format='[%(asctime)s %(levelname)s] %(message)s',
@@ -360,9 +306,12 @@ def main():
                                      regions=regions)
     save_parameters_to_json(params=params,
                             output_file_name=os.path.join(args.output_path,
-                                                          'tnoise_results.json'))
+                                                          'tnoise_step1_results.json'))
 
     create_report(params=params,
+                  md_template_file='tnoise_step1.md',
+                  md_report_file='tnoise_step1_report.md',
+                  html_report_file='tnoise_step1_report.html',
                   output_path=args.output_path)
 
 
