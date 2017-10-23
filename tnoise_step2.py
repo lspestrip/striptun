@@ -345,7 +345,6 @@ def assemble_results(polarimeter_name: str, log_ln: LogLikelihood, popt, pcov):
         'polarimeter_name': polarimeter_name,
         'title': ('Noise temperature analysis for polarimeter {0}'
                   .format(polarimeter_name)),
-        'date': datetime.now().strftime('%d %b %Y, %H:%M:%S'),
         'mcmc': False,
         'steps': [{
             't_load_a_K': log_ln.temperatures_a[idx],

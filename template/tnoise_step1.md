@@ -6,7 +6,8 @@ This document contains a preliminary analysis of the noise temperature for
 the Strip polarimeter ${polarimeter}. The analysis assumes that the samples
 have been acquired using a sampling frequency equal to ${sampling_frequency} Hz.
 
-The report has been generated on ${date}.
+The report has been generated on ${date} using striptun v${striptun_version}
+(commit `${latest_git_commit}`).
 
 [TOC]
 

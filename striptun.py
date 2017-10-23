@@ -157,7 +157,7 @@ class HemtCurves:
         ax1.get_yaxis().set_minor_locator(matplotlib.ticker.AutoMinorLocator())
         ax1.grid(b=True, which='major', ls='-', lw=1, alpha=1)
         ax1.grid(b=True, which='minor', ls='--', lw=0.5, alpha=0.5)
-        
+
         if get_y2:
             ax2 = ax1.twinx()
             for curve_idx in range(self.num_of_curves):
@@ -577,7 +577,6 @@ def build_dict_from_results(pol_name: str,
     params = {
         'polarimeter': pol_name,
         'title': 'Tuning report for polarimeter {0}'.format(pol_name),
-        'date': datetime.now().strftime('%d %b %Y, %H:%M:%S'),
         'leg1_transconductance': '{0:.2f}'.format(
             np.prod([hemt_dict[x].tuning_point.transconductance
                      for x in ('q1', 'q2', 'q3')])
@@ -677,7 +676,7 @@ def parse_arguments():
 
     default_settings_file = \
         os.path.abspath(os.path.join(os.path.dirname(__file__),
-                        'striptun_defaults.json'))
+                                     'striptun_defaults.json'))
     parser.add_argument('-s', '--settings', dest='settings_file_path', type=str,
                         help='''Path to a JSON file containing a few numerical
                         parameters to be used in the tuning process (default: {default})'''

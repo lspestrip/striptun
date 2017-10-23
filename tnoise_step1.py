@@ -230,7 +230,6 @@ def build_dict_from_results(pol_name: str,
     return {
         'polarimeter': pol_name,
         'title': 'Noise temperature analysis for polarimeter {0}'.format(pol_name),
-        'date': datetime.now().strftime('%d %b %Y, %H:%M:%S'),
         'blind_channel': blind_channel,
         'sampling_frequency': SAMPLING_FREQUENCY_HZ,
         'regions': dict([(idx, assemble_region_info(time, data[:, idx], regions[idx]))
