@@ -4,14 +4,13 @@
 '''Compute the average output of the four detectors of a polarimeter
 
 This script loads the data acquired during a test and outputs the statistics of
-the four PWR outputs. The output is printed in YAML format, and it is suitable
+the four PWR outputs. The output is printed in JSON format, and it is suitable
 for inclusion in the test database
-(https://github.com/lspestrip/striptun/blob/master/polarimeter_info.yaml).
 '''
 
 import numpy as np
 from argparse import ArgumentParser
-import yaml
+import simplejson as json
 import sys
 
 
@@ -35,7 +34,7 @@ def main():
         }
     }
 
-    yaml.dump(output, stream=sys.stdout, default_flow_style=False)
+    json.dump(output, sys.stdout, indent=4)
 
 
 if __name__ == '__main__':
