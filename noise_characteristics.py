@@ -154,7 +154,7 @@ def create_plots(polarimeter_name, freq, fftDEM, fftIQU, fit_parDEM, fit_parIQU,
         return title
     
     def comulative_plots(title, freq, fft, legend_labels, output_path):
-        plt.figure(figsize=(16, 9))
+        plt.figure(figsize=(8, 6))
         plt.title(title, fontsize=22)
         data = plt.loglog(freq, fft, **kwargs)
         plt.legend(data, legend_labels, loc='best', fontsize=16)
@@ -163,7 +163,7 @@ def create_plots(polarimeter_name, freq, fftDEM, fftIQU, fit_parDEM, fit_parIQU,
         
     def single_plots(title_, freq, fft, fit_par, output_path):
         for i in range(fft.shape[-1]):
-            plt.figure(figsize=(16, 9))
+            plt.figure(figsize=(8, 6))
             title = polarimeter_name + ' PSD - ' + title_[i]
             plt.title(title, fontsize=22)
             plt.loglog(freq, fft[:, i], **kwargs)
@@ -246,12 +246,12 @@ def build_dict_from_results(pol_name, duration, left_freq, right_freq, n_chuncks
     
     for i, nam in enumerate(NAMING_CONVENTION):
         nam = nam.replace("/", "")
-        results[nam] = {'f_knee' : fkneeDEM[i],
+        results[nam] = {'f_knee' : fkneeDEM[i] * 1000,
                         'slope' : alphaDEM[i],
                         'WN_level' : WN_levelDEM[i]}
 
     for i, stokes in enumerate(STOKES):
-        results[stokes] = {'f_knee' : fkneeIQU[i],
+        results[stokes] = {'f_knee' : fkneeIQU[i] * 1000,
                            'slope' : alphaIQU[i],
                            'WN_level' : WN_levelIQU[i]}
 

@@ -9,7 +9,7 @@ The report has been generated on ${date} using striptun v${striptun_version}
 (commit `${latest_git_commit}`). 
 
 This test has been performed with a sampling frequency of ${sampling_frequency} [Hz]
- and lasted ${test_duration} [hours].
+ and lasted ${'{0:.2f}'.format(test_duration)} [hours].
 
 <h2>Results</h2>
 
@@ -37,18 +37,18 @@ part of the spectrum and the linear fit of the left part of the spectrum.
 In this section are reported the results of the analysis for the four demodulated detector 
 outputs.
 
-![](${polarimeter_name}_PSD_DEM0_Q1.svg){: class="plot"}
-![](${polarimeter_name}_PSD_DEM1_U1.svg){: class="plot"}
-![](${polarimeter_name}_PSD_DEM2_U2.svg){: class="plot"}
-![](${polarimeter_name}_PSD_DEM3_Q2.svg){: class="plot"}
+![](${polarimeter_name}_PSD_DEM0_Q1.svg){: class="plot"} 
+![](${polarimeter_name}_PSD_DEM1_U1.svg){: class="plot"} 
+![](${polarimeter_name}_PSD_DEM2_U2.svg){: class="plot"} 
+![](${polarimeter_name}_PSD_DEM3_Q2.svg){: class="plot"} 
 
 
-DETECTOR  | f knee [Hz]          | alpha [#]           | white noise level [mA] 
+DETECTOR  | f knee [mHz]         | alpha [#]           | white noise level [mA] 
 --------- |:--------------------:|:-------------------:|:----------------------:
-DEM0/Q1   | ${DEM0Q1['f_knee']} | ${DEM0Q1['slope']} | ${DEM0Q1['WN_level']} 
-DEM1/U1   | ${DEM1U1['f_knee']} | ${DEM1U1['slope']} | ${DEM1U1['WN_level']} 
-DEM2/U2   | ${DEM2U2['f_knee']} | ${DEM2U2['slope']} | ${DEM2U2['WN_level']} 
-DEM3/Q2   | ${DEM3Q2['f_knee']} | ${DEM3Q2['slope']} | ${DEM3Q2['WN_level']} 
+DEM0/Q1   | ${'{0:.2f}'.format(DEM0Q1['f_knee'])} | ${'{0:.2f}'.format(DEM0Q1['slope'])} | ${'{0:.2f}'.format(DEM0Q1['WN_level'])} 
+DEM1/U1   | ${'{0:.2f}'.format(DEM1U1['f_knee'])} | ${'{0:.2f}'.format(DEM1U1['slope'])} | ${'{0:.2f}'.format(DEM1U1['WN_level'])} 
+DEM2/U2   | ${'{0:.2f}'.format(DEM2U2['f_knee'])} | ${'{0:.2f}'.format(DEM2U2['slope'])} | ${'{0:.2f}'.format(DEM2U2['WN_level'])} 
+DEM3/Q2   | ${'{0:.2f}'.format(DEM3Q2['f_knee'])} | ${'{0:.2f}'.format(DEM3Q2['slope'])} | ${'{0:.2f}'.format(DEM3Q2['WN_level'])} 
 
 
 <h3>Stokes parameters signals</h3>
@@ -56,21 +56,24 @@ DEM3/Q2   | ${DEM3Q2['f_knee']} | ${DEM3Q2['slope']} | ${DEM3Q2['WN_level']}
 In this section are reported the results of the analysis for the combinations of the four 
 demodulated detector outputs, which provides the Stokes parameters.
 
-The following formulas have been used:
+The following combinations of the detector outputs have been used:
 
 I = DEM0/Q1 + DEM1/U1 + DEM2/U2 + DEM3/Q2 
+
 Q = (DEM0/Q1 - DEM3/Q2) / 2 
+
 U = (DEM1/U1 - DEM2/U2) / 2 
 
 ![](${polarimeter_name}_PSD_I.svg){: class="plot"}
 ![](${polarimeter_name}_PSD_Q.svg){: class="plot"}
 ![](${polarimeter_name}_PSD_U.svg){: class="plot"}
 
-SIGNAL  | f knee [Hz]    | alpha [#]     | white noise level [mA] 
+SIGNAL  | f knee [mHz]   | alpha [#]     | white noise level [mA] 
 ------- |:--------------:|:-------------:|:----------------------:
-I       | ${I['f_knee']} | ${I['slope']} | ${I['WN_level']} 
-Q       | ${Q['f_knee']} | ${Q['slope']} | ${Q['WN_level']} 
-U       | ${U['f_knee']} | ${U['slope']} | ${U['WN_level']} 
+I       | ${'{0:.2f}'.format(I['f_knee'])} | ${'{0:.2f}'.format(I['slope'])} | ${'{0:.2f}'.format(I['WN_level'])} 
+Q       | ${'{0:.2f}'.format(Q['f_knee'])} | ${'{0:.2f}'.format(Q['slope'])} | ${'{0:.2f}'.format(Q['WN_level'])} 
+U       | ${'{0:.2f}'.format(U['f_knee'])} | ${'{0:.2f}'.format(U['slope'])} | ${'{0:.2f}'.format(U['WN_level'])} 
+
 
 <h2>Spectra comparison</h2>
 
@@ -83,7 +86,7 @@ In this section spectra are compared in order to highlight possible similarities
 
 <h3>Stokes parameters signals</h3>
 
-![](${polarimeter_name}_PSD_I_Q_U){: class="plot"}
+![](${polarimeter_name}_PSD_I_Q_U.svg){: class="plot"}
 
 
 <h3>Q signals</h3>
