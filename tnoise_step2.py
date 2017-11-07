@@ -7,6 +7,7 @@ from datetime import datetime
 import logging as log
 import os
 from shutil import copyfile
+import sys
 from typing import Any, Dict
 
 import emcee
@@ -277,14 +278,17 @@ def extract_average_values(polarimeter_name, raw_data, test_db, tnoise1_results,
     # ID of the PWR output which will be used as "reference" (i.e., we are
     # going to use the regions detected using this PWR output)
     regions = None
+    region_lengths = set()
     for key, val in tnoise1_results['regions'].items():
         if len(val) == num:
             regions = val
             break
+        region_lengths.add(len(val))
 
     if not regions:
-        log.fatal('unable to find {0} temperature steps in the data'
-                  .format(num))
+        log.fatal('unable to find {0} temperature steps in the data, only {1} were available'
+                  .format(num, ', '.join([str(x) for x in region_lengths])))
+        sys.exit(1)
 
     # These are the offsets acquired when the HEMTs were turned off
     offsets = [pol_params['detector_offsets']['PWR{0}_adu'.format(i)]
