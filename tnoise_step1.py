@@ -260,7 +260,7 @@ def main():
     slopes = [slope(time, data[:, i], chunk_len=25 * 60, step=25 * 3)
               for i in range(4)]
 
-    # Find the Â«blindÂ» channel
+    # Find the «blind» channel
     blind_channel, slope_threshold = find_blind_channel(slopes)
     log.info('The blind channel is PWR{0}'.format(blind_channel))
     log.info('The maximum threshold on the slope is {0:.1f} ADU/s'
