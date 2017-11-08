@@ -23,24 +23,26 @@ NAMING_CONVENTION = ['DEM0/Q1', 'DEM1/U1', 'DEM2/U2', 'DEM3/Q2']
 STOKES = ['I', 'Q', 'U']
 
 
-def get_stokes(data):
+def get_stokes(pwr_data, dem_data):
     """
     This function returns the Stokes parameters I, Q, U starting from the demodulated signal of the 
     4 detectors. 
 
     Parameters
     ----------
-    data : numpy array of shape (time*sampling_rate, 4),
-           The demodulated signal of the 4 detectors.
+    pwr_data : numpy array of shape (time*sampling_rate, 4),
+               The total power signal of the 4 detectors.
+    dem_data : numpy array of shape (time*sampling_rate, 4),
+               The demodulated signal of the 4 detectors.
 
     Returns
     -------
     out : numpy array of shape (time*sampling_rate, ), numpy array of shape (time*sampling_rate, ),
           numpy array of shape (time*sampling_rate, )
     """
-    I = np.sum(data, axis=1)
-    Q = (data[:, 0] - data[:, 3]) / 2
-    U = (data[:, 1] - data[:, 2]) / 2
+    I = np.sum(pwr_data, axis=1) / 4
+    Q = (dem_data[:, 0] - dem_data[:, 3]) / 2
+    U = (dem_data[:, 1] - dem_data[:, 2]) / 2
     return np.column_stack((I, Q, U))
 
 
@@ -273,24 +275,29 @@ def main():
 
     # Load from the text file only the columns containing the output of the four detectors
     log.info('Loading file "{0}"'.format(args.input_file_path))
-    data = np.loadtxt(args.input_file_path, skiprows=1, usecols=(3, 4, 5, 6))
-    duration = len(data) / SAMPLING_FREQUENCY_HZ # sec
+    dataDEM = np.loadtxt(args.input_file_path, skiprows=1, usecols=(3, 4, 5, 6))
+    durationDEM = len(dataDEM) / SAMPLING_FREQUENCY_HZ # sec
+    dataPWR = np.loadtxt(args.input_file_path, skiprows=1, usecols=(7, 8, 9, 10))
+    durationPWR = len(dataPWR) / SAMPLING_FREQUENCY_HZ # sec
 
-    log.info('File loaded, {0} samples found'.format(len(data[:, 0])))
+    assert durationPWR == durationDEM
+    duration = durationDEM
+
+    log.info('File loaded, {0} samples found'.format(duration*SAMPLING_FREQUENCY_HZ))
 
     # Calculate the PSD
     log.info(
         'Computing PSD with number-of-chunks {0}, 1/f-upper-frequency {1}, WN-lower-frequency{2}'
         .format(args.n_chunks, args.left_freq, args.right_freq))
     
-    freq, fftDEM = get_fft(SAMPLING_FREQUENCY_HZ, data, args.n_chunks)   
+    freq, fftDEM = get_fft(SAMPLING_FREQUENCY_HZ, dataDEM, args.n_chunks)   
     fit_parDEM, fkneeDEM, alphaDEM, WN_levelDEM = get_fknee(
         freq, fftDEM, args.left_freq, args.right_freq)
     [log.info('Computed fknee, alpha, WN_level for' + nam + ' outputs') for nam in
      NAMING_CONVENTION]
     
     # Calculate the PSD for the combinations of the 4 detector outputs that returns I, Q, U
-    IQU = get_stokes(data)
+    IQU = get_stokes(dataPWR, dataDEM)
     fftIQU = get_fft(SAMPLING_FREQUENCY_HZ, IQU, args.n_chunks)[-1]
     fit_parIQU, fkneeIQU, alphaIQU, WN_levelIQU = get_fknee(
         freq, fftIQU, args.left_freq, args.right_freq)

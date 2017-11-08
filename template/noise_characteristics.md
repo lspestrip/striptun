@@ -43,7 +43,7 @@ outputs.
 ![](${polarimeter_name}_PSD_DEM3_Q2.svg){: class="plot"} 
 
 
-DETECTOR  | f knee [mHz]         | alpha [#]           | white noise level [mA] 
+DETECTOR  | f knee [mHz]         | alpha [#]           | white noise level [ADU^2/Hz] 
 --------- |:--------------------:|:-------------------:|:----------------------:
 DEM0/Q1   | ${'{0:.2f}'.format(DEM0Q1['f_knee'])} | ${'{0:.2f}'.format(DEM0Q1['slope'])} | ${'{0:.2f}'.format(DEM0Q1['WN_level'])} 
 DEM1/U1   | ${'{0:.2f}'.format(DEM1U1['f_knee'])} | ${'{0:.2f}'.format(DEM1U1['slope'])} | ${'{0:.2f}'.format(DEM1U1['WN_level'])} 
@@ -58,7 +58,7 @@ demodulated detector outputs, which provides the Stokes parameters.
 
 The following combinations of the detector outputs have been used:
 
-I = DEM0/Q1 + DEM1/U1 + DEM2/U2 + DEM3/Q2 
+I = (PWR0/Q1 + PWR1/U1 + PWR2/U2 + PWR3/Q2) / 4
 
 Q = (DEM0/Q1 - DEM3/Q2) / 2 
 
@@ -68,7 +68,7 @@ U = (DEM1/U1 - DEM2/U2) / 2
 ![](${polarimeter_name}_PSD_Q.svg){: class="plot"}
 ![](${polarimeter_name}_PSD_U.svg){: class="plot"}
 
-SIGNAL  | f knee [mHz]   | alpha [#]     | white noise level [mA] 
+SIGNAL  | f knee [mHz]   | alpha [#]     | white noise level [ADU^2/Hz] 
 ------- |:--------------:|:-------------:|:----------------------:
 I       | ${'{0:.2f}'.format(I['f_knee'])} | ${'{0:.2f}'.format(I['slope'])} | ${'{0:.2f}'.format(I['WN_level'])} 
 Q       | ${'{0:.2f}'.format(Q['f_knee'])} | ${'{0:.2f}'.format(Q['slope'])} | ${'{0:.2f}'.format(Q['WN_level'])} 
