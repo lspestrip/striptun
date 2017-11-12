@@ -113,8 +113,8 @@ def get_fknee(freq, fft, left_freq, right_freq):
     return fit_par, fknee, -a, np.e**c 
 
 
-def create_plots(polarimeter_name, freq, fftDEM, fftIQU, fit_parDEM, fit_parIQU, output_path,
-                 **kwargs):
+def create_plots(polarimeter_name, freq, fftDEM, fftIQU, fit_parDEM, fit_parIQU,
+                 labelsDEM, lablesIQU, output_path, **kwargs):
     """
     This function shows the fft data.
 
@@ -126,13 +126,17 @@ def create_plots(polarimeter_name, freq, fftDEM, fftIQU, fit_parDEM, fit_parIQU,
                        The frequency domain ranging from 1 / (total duration of the test) to 
                        (sampling rate / 2) Hz. It will be plotted on the x axis.  
     fftDEM           : numpy array of shape (time*sampling_rate // 2, 4),
-                       It is the power spectrum of the data. 
+                       It is the power spectrum of the demodulated data. 
     fftIQU           : numpy array of shape (time*sampling_rate // 2, 3),
                        It is the power spectrum of the combined data to form I, Q, U. 
     fit_parDEM       : numpy array of shape (3, 4),
                        The parameters for the fit of the DEM outputs.
     fit_parIQU       : numpy array of shape (3, 3),
                        The parameters for the fit of the combined data to form I, Q, U.
+    labelsDEM        : list of string of len(3),
+                       The labels of the demodulated data that will be shown.
+    labelsPWR        : list of string of len(3),
+                       The labels of the total power data that will be shown.
     output_path      : string,
                        Path to the directory that will contain the report.
     """ 
@@ -305,7 +309,7 @@ def main():
     
     # Produce the plots
     create_plots(args.polarimeter_name, freq, fftDEM, fftIQU, fit_parDEM, fit_parIQU,
-                 args.output_path)
+                 NAMING_CONVENTION, STOKES, args.output_path)
         
     params = build_dict_from_results(args.polarimeter_name, duration, args.left_freq,
                                      args.right_freq, args.n_chunks, fkneeDEM, alphaDEM,
