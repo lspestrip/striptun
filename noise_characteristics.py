@@ -14,10 +14,8 @@ import os
 
 SAMPLING_FREQUENCY_HZ = 25.0 # Hz
 
-DEFAULT_LEFT_FREQ = 0.033 # Hz
+DEFAULT_LEFT_FREQ = 0.05 # Hz
 DEFAULT_RIGHT_FREQ = 1 # Hz
-
-N_CHUNKS = 6
 
 NAMING_CONVENTION = ['DEM0/Q1', 'DEM1/U1', 'DEM2/U2', 'DEM3/Q2']
 STOKES = ['I', 'Q', 'U']
@@ -225,9 +223,9 @@ def parse_arguments():
                         help='''Lower frequency for white noise estimation
                         (default: {0})'''.format(DEFAULT_RIGHT_FREQ))
     parser.add_argument('--number-of-chunks', dest='n_chunks',
-                        type=int, default=N_CHUNKS,
+                        type=int,
                         help='''Number of chunks used for the estimation of the PSD 
-                        (default: {0})'''.format(N_CHUNKS))
+                        (default: duration [hours] * 12)''')
     parser.add_argument('polarimeter_name', type=str,
                         help='''Name of the polarimeter (any text string
                         is ok, it is used in the reports)''')
@@ -287,7 +285,10 @@ def main():
     assert durationPWR == durationDEM
     duration = durationDEM
 
-    log.info('File loaded, {0} samples found'.format(duration*SAMPLING_FREQUENCY_HZ))
+    if args.n_chunks is None:
+        args.n_chunks = np.int(duration / 60 / 60 * 12)
+
+    log.info('File loaded, {0} samples found'.format(duration * SAMPLING_FREQUENCY_HZ))
 
     # Calculate the PSD
     log.info(
