@@ -21,7 +21,7 @@ implement it in the code.
 
 The original data samples have been divided into ${n_chunks} segments of equal length. 
 For each of them, the periodogram has been estimated and then the average at each 
-frequency has been computed.
+frequency has been computed. Each segment has been detrended by subtracting a ${detrend} fit of the data.
 
 <h2>White noise and 1/f estimation</h2>
 
