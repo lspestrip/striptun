@@ -44,7 +44,7 @@ def get_stokes(pwr_data, dem_data):
     return np.column_stack((I, Q, U))
 
 
-def get_fft(sampling_frequency, data, n_chunks, **kwargs):
+def get_fft(sampling_frequency, data, n_chunks, detrend='linear', **kwargs):
     """
     This function returns the power spectral density (PSD) of a given array of data. The function 
     exploits the scipy function: signal.welch.
@@ -56,8 +56,13 @@ def get_fft(sampling_frequency, data, n_chunks, **kwargs):
     data               : numpy array of shape (time*sampling_rate, 4),
                          It is the demodulated output power of the 4 detectors.
     n_chunks           : integer, 
-                         The number of chuncks in which the data will be devided. 
-
+                         The number of chuncks in which the data will be devided.
+    detrend            : str or function or `False`, optional
+                         Specifies how to detrend each segment. If `detrend` is a string, it is 
+                         passed as the `type` argument to the `detrend` function. If it is a 
+                         function, it takes a segment and returns a detrended segment. If `detrend` 
+                         is `False`, no detrending is done. Defaults to 'linear'.
+ 
     Returns
     -------
     out : numpy array of shape (time*sampling_rate // 2, ), 
@@ -67,7 +72,8 @@ def get_fft(sampling_frequency, data, n_chunks, **kwargs):
     cdata = data[0:(len(data)//2)*2]
     
     N = len(cdata)
-    freq, fft = signal.welch(cdata, sampling_frequency, nperseg=N/n_chunks, axis=0, **kwargs)
+    freq, fft = signal.welch(cdata, sampling_frequency, nperseg=N/n_chunks, axis=0, detrend=detrend,
+                             **kwargs)
     return freq[1:], fft[1:]
 
 
@@ -214,6 +220,10 @@ def parse_arguments():
     - ``output_path``
     '''
     parser = ArgumentParser(description=__doc__)
+    parser.add_argument('--detrend', dest='detrend',
+                        type=str, default='linear',
+                        help='''Specifies how to detrend each segment
+                        (default: linear)''')
     parser.add_argument('--1/f-upper-frequency', dest='left_freq',
                         type=float, default=DEFAULT_LEFT_FREQ,
                         help='''Upper frequency for 1/f estimation
@@ -237,16 +247,17 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def build_dict_from_results(pol_name, duration, left_freq, right_freq, n_chuncks, fkneeDEM,
+def build_dict_from_results(pol_name, duration, left_freq, right_freq, n_chuncks, detrend, fkneeDEM,
                             alphaDEM, WN_levelDEM, fkneeIQU, alphaIQU, WN_levelIQU):
     results = {
         'polarimeter_name': pol_name,
         'title': 'Noise characteristics of polarimeter {0}'.format(pol_name),
         'sampling_frequency': SAMPLING_FREQUENCY_HZ,
-        'test_duration' : duration / 60 / 60,
-        'left_freq' : left_freq,
+        'test_duration': duration / 60 / 60,
+        'left_freq': left_freq,
         'right_freq': right_freq,
-        'n_chunks': n_chuncks}
+        'n_chunks': n_chuncks,
+        'detrend': detrend}
     
     for i, nam in enumerate(NAMING_CONVENTION):
         nam = nam.replace("/", "")
@@ -286,16 +297,16 @@ def main():
     duration = durationDEM
 
     if args.n_chunks is None:
-        args.n_chunks = np.int(duration / 60 / 60 * 12)
+        args.n_chunks = np.int(duration / 60 / 60 * 12) # each chunk lasts 5 minutes by default
 
     log.info('File loaded, {0} samples found'.format(duration * SAMPLING_FREQUENCY_HZ))
 
     # Calculate the PSD
     log.info(
-        'Computing PSD with number-of-chunks {0}, 1/f-upper-frequency {1}, WN-lower-frequency{2}'
-        .format(args.n_chunks, args.left_freq, args.right_freq))
+        'Computing PSD with number-of-chunks {0}, 1/f-upper-frequency {1}, WN-lower-frequency{2}' +
+        ', detrend {3}'.format(args.n_chunks, args.left_freq, args.right_freq, args.detrend))
     
-    freq, fftDEM = get_fft(SAMPLING_FREQUENCY_HZ, dataDEM, args.n_chunks)   
+    freq, fftDEM = get_fft(SAMPLING_FREQUENCY_HZ, dataDEM, args.n_chunks, detrend=args.detrend)   
     fit_parDEM, fkneeDEM, alphaDEM, WN_levelDEM = get_fknee(
         freq, fftDEM, args.left_freq, args.right_freq)
     [log.info('Computed fknee, alpha, WN_level for' + nam + ' outputs') for nam in
@@ -303,7 +314,7 @@ def main():
     
     # Calculate the PSD for the combinations of the 4 detector outputs that returns I, Q, U
     IQU = get_stokes(dataPWR, dataDEM)
-    fftIQU = get_fft(SAMPLING_FREQUENCY_HZ, IQU, args.n_chunks)[-1]
+    fftIQU = get_fft(SAMPLING_FREQUENCY_HZ, IQU, args.n_chunks, detrend=args.detrend)[-1]
     fit_parIQU, fkneeIQU, alphaIQU, WN_levelIQU = get_fknee(
         freq, fftIQU, args.left_freq, args.right_freq)
     log.info('Computed fknee, alpha, WN_level for I, Q, U')
@@ -313,8 +324,8 @@ def main():
                  NAMING_CONVENTION, STOKES, args.output_path)
         
     params = build_dict_from_results(args.polarimeter_name, duration, args.left_freq,
-                                     args.right_freq, args.n_chunks, fkneeDEM, alphaDEM,
-                                     WN_levelDEM, fkneeIQU, alphaIQU, WN_levelIQU)
+                                     args.right_freq, args.n_chunks, args.detrend, fkneeDEM,
+                                     alphaDEM, WN_levelDEM, fkneeIQU, alphaIQU, WN_levelIQU)
 
     save_parameters_to_json(params=params,
                             output_file_name=os.path.join(args.output_path,
