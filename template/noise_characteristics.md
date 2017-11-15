@@ -13,8 +13,8 @@ This test has been performed with a sampling frequency of ${sampling_frequency} 
 
 <h2>Results</h2>
 
-The Power Spectral Densities (PSD) of the four demodulated detector outputs and of 
-thier combinations I, Q, U have been estimated using Welch's method as described in 
+The Power Spectral Densities (PSD) of the four detector outputs and of 
+thier opportune combinations I, Q, U have been estimated using Welch's method as described in 
 "Numerical recipes - The art of Scientific Computing", W.H. Press et al., Third edition
 , pp.652-662. The function "signal.welch" of the Python library "scipy" has been used to 
 implement it in the code.
@@ -53,8 +53,8 @@ DEM3/Q2   | ${'{0:.2f}'.format(DEM3Q2['f_knee'])} | ${'{0:.2f}'.format(DEM3Q2['s
 
 <h3>Stokes parameters signals</h3>
 
-In this section are reported the results of the analysis for the combinations of the four 
-demodulated detector outputs, which provides the Stokes parameters.
+In this section are reported the results of the analysis for the opportune combinations of the four 
+detector outputs, which provides the Stokes parameters.
 
 The following combinations of the detector outputs have been used:
 
@@ -75,19 +75,24 @@ Q       | ${'{0:.2f}'.format(Q['f_knee'])} | ${'{0:.2f}'.format(Q['slope'])} | $
 U       | ${'{0:.2f}'.format(U['f_knee'])} | ${'{0:.2f}'.format(U['slope'])} | ${'{0:.2f}'.format(U['WN_level'])} 
 
 
+The 1/f noise is reduced of a factor about ${'{0:1.0}'.format(reduction_1f)}.
+
 <h2>Spectra comparison</h2>
 
 In this section spectra are compared in order to highlight possible similarities or discrepancies.
 
-<h3>Demodolated detector outputs</h3>
+<h3>Demodolated and total power detector outputs</h3>
 
-![](${polarimeter_name}_PSD_all_detectors.svg){: class="plot"}
+![](${polarimeter_name}_PSD_all_detector_outputs.svg){: class="plot"}
 
 
 <h3>Stokes parameters signals</h3>
 
 ![](${polarimeter_name}_PSD_I_Q_U.svg){: class="plot"}
 
+<h3>I signals</h3>
+
+![](${polarimeter_name}_PSD_PWR0_Q1_PWR1_U1_PWR2_U2_PWR3_Q2_I.svg){: class="plot"}
 
 <h3>Q signals</h3>
 
