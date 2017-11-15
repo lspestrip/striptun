@@ -17,9 +17,11 @@ SAMPLING_FREQUENCY_HZ = 25.0 # Hz
 DEFAULT_LEFT_FREQ = 0.05 # Hz
 DEFAULT_RIGHT_FREQ = 1 # Hz
 
-NAMING_CONVENTION = ['DEM0/Q1', 'DEM1/U1', 'DEM2/U2', 'DEM3/Q2']
+DEM = ['DEM0/Q1', 'DEM1/U1', 'DEM2/U2', 'DEM3/Q2']
+PWR = ['PWR0/Q1', 'PWR1/U1', 'PWR2/U2', 'PWR3/Q2']
 STOKES = ['I', 'Q', 'U']
 
+FIGSIZE = (10, 7)
 
 def get_stokes(pwr_data, dem_data):
     """
@@ -77,9 +79,10 @@ def get_fft(sampling_frequency, data, n_chunks, detrend='linear', **kwargs):
     return freq[1:], fft[1:]
 
 
-def get_fknee(freq, fft, left_freq, right_freq):
+def get_noise_characteristics(freq, fft, left_freq, right_freq, totalPWR=False):
     """
-    This functions returns an estimation of the knee frequency of the noise power spectrum. 
+    This functions returns an estimation of the slope of the pink spectrum, of the white noise level
+    and of the knee frequency of noise power spectrum. 
     The left and right part of the spectrum will be fitted with two lines (in logarithmic
     coordinates) whose parameters will be returned as well. In particular, it will return the slope 
     of the left fit (alpha) and the white noise (WN) median level. 
@@ -96,29 +99,46 @@ def get_fknee(freq, fft, left_freq, right_freq):
                  The frequency below which is fitted the left part of the plot.  
     right_freq : float,
                  The frequency above which is fitted the right part of the plot.
+    totalPWR   : string or boolean,
+                 If True only the slope of the pink spectrum is returned. If `first`... 
+                 Defaults to False.
 
     Returns
     -------
     out : numpy array of shape (4, ), numpy array of shape (3, 4), numpy array of shape (4, ),
-          numpy array of shape (4, )
+          numpy array of shape (4, ) 
+          or, if totalPWR is True: numpy array of shape (4, )
     """
-   
-    f_idx_left = np.argwhere((freq - left_freq) > 0)[0, 0] 
-    f_idx_right = np.argwhere((freq - right_freq) > 0)[0, 0]
+    def get_parameters(freq, fft, left_freq, right_freq, totalPWR):
+        if totalPWR:
+            left_freq += 5
+        f_idx_left = np.argwhere((freq - left_freq) > 0)[0, 0] 
+        f_idx_right = np.argwhere((freq - right_freq) > 0)[0, 0]
 
-    # fit the left part of the spectrum with a line
-    a, b = np.polyfit(np.log(freq[:f_idx_left]), np.log(fft[:f_idx_left]), 1)
+        # fit the left part of the spectrum with a line
+        a, b = np.polyfit(np.log(freq[:f_idx_left]), np.log(fft[:f_idx_left]), 1)
+        
+        # calculate median value of the right part of the spectrum
+        if totalPWR:
+            c, fknee = (np.full_like(a, np.NaN), np.full_like(a, np.NaN))
+        else:
+            c = np.median(np.log(fft[f_idx_right:]), axis=0)
+            fknee = np.exp((c - b) / a)
+        fit_par = np.row_stack([a, b, c])
+        return fit_par, fknee, -a, np.e**c
     
-    # calculate median value of the right part of the spectrum
-    c = np.median(np.log(fft[f_idx_right:]), axis=0)
-    
-    fknee = np.exp((c - b) / a)
-    fit_par = np.row_stack([a, b, c])
-    return fit_par, fknee, -a, np.e**c 
+    if totalPWR == 'stokes':
+        fit_parI, fkneeI, alphaI, WN_levelI = get_parameters(
+            freq, fft[:, 0][..., None], left_freq, right_freq, totalPWR=True)
+        fit_parQU, fkneeQU, alphaQU, WN_levelQU = get_parameters(
+            freq, fft[:, 1:], left_freq, right_freq, totalPWR=False)
+        return (np.column_stack((fit_parI, fit_parQU)), np.append(fkneeI, fkneeQU),
+                np.append(alphaI, alphaQU), np.append(WN_levelI, WN_levelQU))
+    return get_parameters(freq, fft, left_freq, right_freq, totalPWR)
 
 
-def create_plots(polarimeter_name, freq, fftDEM, fftIQU, fit_parDEM, fit_parIQU,
-                 labelsDEM, lablesIQU, output_path, **kwargs):
+def create_plots(polarimeter_name, freq, fftDEM, fit_parDEM, labelsDEM, fftPWR, fit_parPWR,
+                 labelsPWR, fftIQU, fit_parIQU, labelsSTOKES, output_path, **kwargs):
     """
     This function shows the fft data.
 
@@ -131,19 +151,25 @@ def create_plots(polarimeter_name, freq, fftDEM, fftIQU, fit_parDEM, fit_parIQU,
                        (sampling rate / 2) Hz. It will be plotted on the x axis.  
     fftDEM           : numpy array of shape (time*sampling_rate // 2, 4),
                        It is the power spectrum of the demodulated data. 
-    fftIQU           : numpy array of shape (time*sampling_rate // 2, 3),
-                       It is the power spectrum of the combined data to form I, Q, U. 
     fit_parDEM       : numpy array of shape (3, 4),
                        The parameters for the fit of the DEM outputs.
-    fit_parIQU       : numpy array of shape (3, 3),
-                       The parameters for the fit of the combined data to form I, Q, U.
     labelsDEM        : list of string of len(3),
                        The labels of the demodulated data that will be shown.
+    fftPWR           : numpy array of shape (time*sampling_rate // 2, 4),
+                       It is the power spectrum of the total power data. 
+    fit_parPWR       : numpy array of shape (3, 4),
+                       The parameters for the fit of the PWR outputs.
     labelsPWR        : list of string of len(3),
                        The labels of the total power data that will be shown.
+    fftIQU           : numpy array of shape (time*sampling_rate // 2, 3),
+                       It is the power spectrum of the combined data to form I, Q, U. 
+    fit_parIQU       : numpy array of shape (3, 3),
+                       The parameters for the fit of the combined data to form I, Q, U.
+    labelsIQU        : list of string of len(3),
+                       The labels of the combined data to form I, Q, U that will be shown.
     output_path      : string,
                        Path to the directory that will contain the report.
-    """ 
+    """
 
     def axis_labels():
         plt.ylabel('Power Spectrum ' + r'$[ADU^2 / Hz]$', fontsize=20)
@@ -164,7 +190,7 @@ def create_plots(polarimeter_name, freq, fftDEM, fftIQU, fit_parDEM, fit_parIQU,
         return title
     
     def comulative_plots(title, freq, fft, legend_labels, output_path):
-        plt.figure(figsize=(8, 6))
+        plt.figure(figsize=FIGSIZE)
         plt.title(title, fontsize=22)
         data = plt.loglog(freq, fft, **kwargs)
         plt.legend(data, legend_labels, loc='best', fontsize=16)
@@ -173,7 +199,7 @@ def create_plots(polarimeter_name, freq, fftDEM, fftIQU, fit_parDEM, fit_parIQU,
         
     def single_plots(title_, freq, fft, fit_par, output_path):
         for i in range(fft.shape[-1]):
-            plt.figure(figsize=(8, 6))
+            plt.figure(figsize=FIGSIZE)
             title = polarimeter_name + ' PSD - ' + title_[i]
             plt.title(title, fontsize=22)
             plt.loglog(freq, fft[:, i], **kwargs)
@@ -184,30 +210,55 @@ def create_plots(polarimeter_name, freq, fftDEM, fftIQU, fit_parDEM, fit_parIQU,
             save_plot(replace(title), output_path)
 
     # Plot DEM outputs separately        
-    single_plots(NAMING_CONVENTION, freq, fftDEM, fit_parDEM, output_path)
-
-    # Plot DEM outputs together        
-    title = polarimeter_name + ' PSD - all detectors'
-    comulative_plots(title, freq, fftDEM, NAMING_CONVENTION, output_path)
+    single_plots(labelsDEM, freq, fftDEM, fit_parDEM, output_path)
 
     # Plot I, Q, U separately 
-    single_plots(STOKES, freq, fftIQU, fit_parIQU, output_path)
+    single_plots(labelsSTOKES, freq, fftIQU, fit_parIQU, output_path)
+
+    # Plot DEM and PWR outputs together        
+    title = polarimeter_name + ' PSD - all detector outputs'
+    legend_labels = labelsDEM + labelsPWR
+    comulative_plots(title, freq, np.column_stack((fftDEM, fftPWR)), legend_labels, output_path)
 
     # Plot I, Q, U together
     title = polarimeter_name + ' PSD - I Q U'
-    comulative_plots(title, freq, fftIQU, STOKES, output_path)
+    comulative_plots(title, freq, fftIQU, labelsSTOKES, output_path)
 
+    # Plot PWR and I
+    title = polarimeter_name + ' PSD - ' + ' '.join(labelsPWR) + ' ' + labelsSTOKES[0]
+    fftQ1Q2Q = np.column_stack((fftPWR, fftIQU[:, 0]))
+    legend_labels = labelsPWR + [labelsSTOKES[0]]
+    comulative_plots(title, freq, fftQ1Q2Q, legend_labels, output_path)
+    
     # Plot Q1, Q2 and Q
-    title = polarimeter_name + ' PSD - DEM0/Q1 DEM3/Q2 Q'
+    title = polarimeter_name + ' PSD - ' + ' '.join(labelsDEM[0::3]) + ' ' + labelsSTOKES[1]
     fftQ1Q2Q = np.column_stack((fftDEM[:, 0], fftDEM[:, 3], fftIQU[:, 1]))
-    legend_labels = ['DEM0/Q1', 'DEM3/Q2', 'Q']
+    legend_labels = labelsDEM[0::3] + [labelsSTOKES[1]]
     comulative_plots(title, freq, fftQ1Q2Q, legend_labels, output_path)
 
     # Plot U1, U2 and U
-    title = polarimeter_name + ' PSD - DEM1/U1 DEM2/U2 U'
+    title = polarimeter_name + ' PSD - ' + ' '.join(labelsDEM[1:3]) + ' ' + labelsSTOKES[2]
     fftU1U2U = np.column_stack((fftDEM[:, 1], fftDEM[:, 2], fftIQU[:, 2]))
-    legend_labels = ['DEM1/U1', 'DEM2/U2', 'U']
+    legend_labels = labelsDEM[1:3] + [labelsSTOKES[2]]
     comulative_plots(title, freq, fftU1U2U, legend_labels, output_path)
+
+
+def get_y_intercept_1_f_reduction(freq, fit_par):
+    '''Compute the value of the y-intercept and return an estimation of the mean value of 1/f 
+       reduction.
+
+    Parameters
+    ----------
+    freq       : numpy array of shape (time*sampling_rate // 2, ),
+                 The frequency domain ranging from 1 / (total duration of the test) to (sampling 
+                 rate / 2) Hz.
+    fit_parDEM : numpy array of shape (3, 4),
+                 The parameters for the fit of the DEM outputs.
+
+    '''
+    y_intercepts = np.exp(fit_par[0] * np.log(freq.min()) + fit_par[1])
+    reduction1_f = np.mean([y_intercepts[0] / y_intercepts[1], y_intercepts[0] / y_intercepts[2]])
+    return reduction1_f 
 
 
 def parse_arguments():
@@ -248,7 +299,8 @@ def parse_arguments():
 
 
 def build_dict_from_results(pol_name, duration, left_freq, right_freq, n_chuncks, detrend, fkneeDEM,
-                            alphaDEM, WN_levelDEM, fkneeIQU, alphaIQU, WN_levelIQU):
+                            alphaDEM, WN_levelDEM, fkneePWR, alphaPWR, WN_levelPWR, fkneeIQU,
+                            alphaIQU, WN_levelIQU, reduction1_f):
     results = {
         'polarimeter_name': pol_name,
         'title': 'Noise characteristics of polarimeter {0}'.format(pol_name),
@@ -257,14 +309,21 @@ def build_dict_from_results(pol_name, duration, left_freq, right_freq, n_chuncks
         'left_freq': left_freq,
         'right_freq': right_freq,
         'n_chunks': n_chuncks,
-        'detrend': detrend}
+        'detrend': detrend,
+        'reduction_1f': reduction1_f}
     
-    for i, nam in enumerate(NAMING_CONVENTION):
+    for i, nam in enumerate(DEM):
         nam = nam.replace("/", "")
         results[nam] = {'f_knee' : fkneeDEM[i] * 1000,
                         'slope' : alphaDEM[i],
                         'WN_level' : WN_levelDEM[i]}
 
+    for i, pwr in enumerate(PWR):
+        pwr = pwr.replace("/", "")
+        results[pwr] = {'f_knee' : fkneePWR[i] * 1000,
+                        'slope' : alphaPWR[i],
+                        'WN_level' : WN_levelPWR[i]}
+        
     for i, stokes in enumerate(STOKES):
         results[stokes] = {'f_knee' : fkneeIQU[i] * 1000,
                            'slope' : alphaIQU[i],
@@ -307,25 +366,33 @@ def main():
         ', detrend {3}'.format(args.n_chunks, args.left_freq, args.right_freq, args.detrend))
     
     freq, fftDEM = get_fft(SAMPLING_FREQUENCY_HZ, dataDEM, args.n_chunks, detrend=args.detrend)   
-    fit_parDEM, fkneeDEM, alphaDEM, WN_levelDEM = get_fknee(
+    fit_parDEM, fkneeDEM, alphaDEM, WN_levelDEM = get_noise_characteristics(
         freq, fftDEM, args.left_freq, args.right_freq)
-    [log.info('Computed fknee, alpha, WN_level for' + nam + ' outputs') for nam in
-     NAMING_CONVENTION]
+    [log.info('Computed fknee, alpha, WN_level for' + nam + ' outputs') for nam in DEM]
+
+    fftPWR = get_fft(SAMPLING_FREQUENCY_HZ, dataPWR, args.n_chunks, detrend=args.detrend)[-1]   
+    fit_parPWR, fkneePWR, alphaPWR, WN_levelPWR = get_noise_characteristics(
+        freq, fftPWR, args.left_freq, args.right_freq, totalPWR=True)
+    [log.info('Computed alpha for' + pwr + ' outputs') for pwr in PWR]
     
     # Calculate the PSD for the combinations of the 4 detector outputs that returns I, Q, U
     IQU = get_stokes(dataPWR, dataDEM)
     fftIQU = get_fft(SAMPLING_FREQUENCY_HZ, IQU, args.n_chunks, detrend=args.detrend)[-1]
-    fit_parIQU, fkneeIQU, alphaIQU, WN_levelIQU = get_fknee(
-        freq, fftIQU, args.left_freq, args.right_freq)
+    fit_parIQU, fkneeIQU, alphaIQU, WN_levelIQU = get_noise_characteristics(
+        freq, fftIQU, args.left_freq, args.right_freq, totalPWR='stokes')
     log.info('Computed fknee, alpha, WN_level for I, Q, U')
+
+    # Get an approximate estimation of the 1/f reduction factor
+    reduction1_f = get_y_intercept_1_f_reduction(freq, fit_parIQU)  
     
     # Produce the plots
-    create_plots(args.polarimeter_name, freq, fftDEM, fftIQU, fit_parDEM, fit_parIQU,
-                 NAMING_CONVENTION, STOKES, args.output_path)
+    create_plots(args.polarimeter_name, freq, fftDEM, fit_parDEM, DEM, fftPWR, fit_parPWR, PWR,
+                 fftIQU, fit_parIQU, STOKES, args.output_path)
         
     params = build_dict_from_results(args.polarimeter_name, duration, args.left_freq,
                                      args.right_freq, args.n_chunks, args.detrend, fkneeDEM,
-                                     alphaDEM, WN_levelDEM, fkneeIQU, alphaIQU, WN_levelIQU)
+                                     alphaDEM, WN_levelDEM, fkneePWR, alphaPWR, WN_levelPWR,
+                                     fkneeIQU, alphaIQU, WN_levelIQU, reduction1_f)
 
     save_parameters_to_json(params=params,
                             output_file_name=os.path.join(args.output_path,
