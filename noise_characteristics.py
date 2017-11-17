@@ -116,24 +116,55 @@ def get_noise_characteristics(freq, fft, left_freq, right_freq, totalPWR=False):
         f_idx_right = np.argwhere((freq - right_freq) > 0)[0, 0]
 
         # fit the left part of the spectrum with a line
-        a, b = np.polyfit(np.log(freq[:f_idx_left]), np.log(fft[:f_idx_left]), 1)
+        ab, cov = np.polyfit(np.log(freq[:f_idx_left]), np.log(fft[:f_idx_left]), 1, cov=True)
+        a, b = ab
+        delta_a, delta_b = (cov[0, 0], cov[1, 1])
         
         # calculate median value of the right part of the spectrum
         if totalPWR:
-            c, fknee = (np.full_like(a, np.NaN), np.full_like(a, np.NaN))
+            c, fknee_ = (np.full_like(a, np.NaN), np.full_like(a, np.NaN))
         else:
             c = np.median(np.log(fft[f_idx_right:]), axis=0)
-            fknee = np.exp((c - b) / a)
+            fknee_ = np.exp((c - b) / a)
         fit_par = np.row_stack([a, b, c])
-        return fit_par, fknee, -a, np.e**c
+
+        # uncertanties estimation
+        def get_right_number_of_decimals(x, delta_x):
+            def get_new_x(x, new_num_dec):
+                new_x = np.array([np.around(x[i], decimals=dec) for i, dec in
+                                  enumerate(new_num_dec)])
+                new_x[new_num_dec==1] = np.around(new_x[new_num_dec==1], decimals=1)
+                return new_x
+            new_num_dec = np.int_(np.ceil(np.abs(np.log10(delta_x))))
+            return get_new_x(x, new_num_dec), get_new_x(delta_x, new_num_dec)
+
+        delta_c = np.sum(np.abs(np.log(fft[f_idx_right:]) - c), axis=0) / len(fft[f_idx_right:])
+        delta_fknee_ = fknee_ / np.abs(a) * np.sqrt(((c - b) / a)**2 * delta_a**2 + delta_b**2 +
+                                                    delta_c**2)
+        delta_median_ = np.exp(c) * delta_c
+
+        if totalPWR:
+            fknee, delta_fknee = (np.full_like(fknee_, np.NaN), np.full_like(delta_fknee_, np.NaN))
+            median, delta_median = (np.full_like(c, np.NaN), np.full_like(delta_median_, np.NaN))
+        else:
+            fknee, delta_fknee = get_right_number_of_decimals(fknee_, delta_fknee_)
+            median, delta_median = get_right_number_of_decimals(np.exp(c), delta_median_)
+        slope, delta_slope = get_right_number_of_decimals(-a, delta_a)
+        
+        return fit_par, fknee, delta_fknee, slope, delta_slope, median, delta_median
+                
     
     if totalPWR == 'stokes':
-        fit_parI, fkneeI, alphaI, WN_levelI = get_parameters(
+        (fit_parI, fkneeI, delta_fkneeI, alphaI, delta_alphaI, WN_levelI,
+         delta_WN_levelI) = get_parameters(
             freq, fft[:, 0][..., None], left_freq, right_freq, totalPWR=True)
-        fit_parQU, fkneeQU, alphaQU, WN_levelQU = get_parameters(
-            freq, fft[:, 1:], left_freq, right_freq, totalPWR=False)
+        (fit_parQU, fkneeQU, delta_fkneeQU, alphaQU, delta_alphaQU, WN_levelQU,
+         delta_WN_levelQU) = get_parameters(
+             freq, fft[:, 1:], left_freq, right_freq, totalPWR=False)
         return (np.column_stack((fit_parI, fit_parQU)), np.append(fkneeI, fkneeQU),
-                np.append(alphaI, alphaQU), np.append(WN_levelI, WN_levelQU))
+                np.append(delta_fkneeI, delta_fkneeQU), np.append(alphaI, alphaQU),
+                np.append(delta_alphaI, delta_alphaQU), np.append(WN_levelI, WN_levelQU),
+                np.append(delta_WN_levelI, delta_WN_levelQU))
     return get_parameters(freq, fft, left_freq, right_freq, totalPWR)
 
 
@@ -258,7 +289,7 @@ def get_y_intercept_1_f_reduction(freq, fit_par):
     '''
     y_intercepts = np.exp(fit_par[0] * np.log(freq.min()) + fit_par[1])
     reduction1_f = np.mean([y_intercepts[0] / y_intercepts[1], y_intercepts[0] / y_intercepts[2]])
-    return reduction1_f 
+    return np.int(np.log10(reduction1_f))
 
 
 def parse_arguments():
@@ -298,9 +329,12 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def build_dict_from_results(pol_name, duration, left_freq, right_freq, n_chuncks, detrend, fkneeDEM,
-                            alphaDEM, WN_levelDEM, fkneePWR, alphaPWR, WN_levelPWR, fkneeIQU,
-                            alphaIQU, WN_levelIQU, reduction1_f):
+def build_dict_from_results(pol_name, duration, left_freq, right_freq, n_chuncks, detrend,
+                            reduction1_f, fkneeDEM, delta_fkneeDEM, alphaDEM, delta_alphaDEM,
+                            WN_levelDEM, delta_WN_levelDEM, fkneePWR, delta_fkneePWR, alphaPWR,
+                            delta_alphaPWR, WN_levelPWR, delta_WN_levelPWR, fkneeIQU,
+                            delta_fkneeIQU, alphaIQU, delta_alphaIQU, WN_levelIQU,
+                            delta_WN_levelIQU):
     results = {
         'polarimeter_name': pol_name,
         'title': 'Noise characteristics of polarimeter {0}'.format(pol_name),
@@ -314,21 +348,29 @@ def build_dict_from_results(pol_name, duration, left_freq, right_freq, n_chuncks
     
     for i, nam in enumerate(DEM):
         nam = nam.replace("/", "")
-        results[nam] = {'f_knee' : fkneeDEM[i] * 1000,
+        results[nam] = {'f_knee' : fkneeDEM[i],
+                        'delta_f_knee' : delta_fkneeDEM[i],
                         'slope' : alphaDEM[i],
-                        'WN_level' : WN_levelDEM[i]}
+                        'delta_slope' : delta_alphaDEM[i],
+                        'WN_level' : WN_levelDEM[i],
+                        'delta_WN_level' : delta_WN_levelDEM[i]}
 
     for i, pwr in enumerate(PWR):
         pwr = pwr.replace("/", "")
         results[pwr] = {'f_knee' : fkneePWR[i] * 1000,
+                        'delta_f_knee' : delta_fkneePWR[i],
                         'slope' : alphaPWR[i],
-                        'WN_level' : WN_levelPWR[i]}
-        
-    for i, stokes in enumerate(STOKES):
-        results[stokes] = {'f_knee' : fkneeIQU[i] * 1000,
-                           'slope' : alphaIQU[i],
-                           'WN_level' : WN_levelIQU[i]}
+                        'delta_slope' : delta_alphaPWR[i],
+                        'WN_level' : WN_levelPWR[i],
+                        'delta_WN_level' : delta_WN_levelPWR[i]}
 
+    for i, stokes in enumerate(STOKES):
+        results[stokes] = {'f_knee' : fkneeIQU[i],
+                        'delta_f_knee' : delta_fkneeIQU[i],
+                        'slope' : alphaIQU[i],
+                        'delta_slope' : delta_alphaIQU[i],
+                        'WN_level' : WN_levelIQU[i],
+                        'delta_WN_level' : delta_WN_levelIQU[i]}
     return results
 
             
@@ -366,19 +408,22 @@ def main():
         ', detrend {3}'.format(args.n_chunks, args.left_freq, args.right_freq, args.detrend))
     
     freq, fftDEM = get_fft(SAMPLING_FREQUENCY_HZ, dataDEM, args.n_chunks, detrend=args.detrend)   
-    fit_parDEM, fkneeDEM, alphaDEM, WN_levelDEM = get_noise_characteristics(
+    (fit_parDEM, fkneeDEM, delta_fkneeDEM, alphaDEM, delta_alphaDEM, WN_levelDEM,
+     delta_WN_levelDEM) = get_noise_characteristics(
         freq, fftDEM, args.left_freq, args.right_freq)
     [log.info('Computed fknee, alpha, WN_level for' + nam + ' outputs') for nam in DEM]
 
     fftPWR = get_fft(SAMPLING_FREQUENCY_HZ, dataPWR, args.n_chunks, detrend=args.detrend)[-1]   
-    fit_parPWR, fkneePWR, alphaPWR, WN_levelPWR = get_noise_characteristics(
+    (fit_parPWR, fkneePWR, delta_fkneePWR, alphaPWR, delta_alphaPWR, WN_levelPWR,
+     delta_WN_levelPWR) = get_noise_characteristics(
         freq, fftPWR, args.left_freq, args.right_freq, totalPWR=True)
     [log.info('Computed alpha for' + pwr + ' outputs') for pwr in PWR]
     
     # Calculate the PSD for the combinations of the 4 detector outputs that returns I, Q, U
     IQU = get_stokes(dataPWR, dataDEM)
     fftIQU = get_fft(SAMPLING_FREQUENCY_HZ, IQU, args.n_chunks, detrend=args.detrend)[-1]
-    fit_parIQU, fkneeIQU, alphaIQU, WN_levelIQU = get_noise_characteristics(
+    (fit_parIQU, fkneeIQU, delta_fkneeIQU, alphaIQU, delta_alphaIQU, WN_levelIQU,
+     delta_WN_levelIQU) = get_noise_characteristics(
         freq, fftIQU, args.left_freq, args.right_freq, totalPWR='stokes')
     log.info('Computed fknee, alpha, WN_level for I, Q, U')
 
@@ -390,9 +435,12 @@ def main():
                  fftIQU, fit_parIQU, STOKES, args.output_path)
         
     params = build_dict_from_results(args.polarimeter_name, duration, args.left_freq,
-                                     args.right_freq, args.n_chunks, args.detrend, fkneeDEM,
-                                     alphaDEM, WN_levelDEM, fkneePWR, alphaPWR, WN_levelPWR,
-                                     fkneeIQU, alphaIQU, WN_levelIQU, reduction1_f)
+                                     args.right_freq, args.n_chunks, args.detrend, reduction1_f,
+                                     fkneeDEM, delta_fkneeDEM, alphaDEM, delta_alphaDEM,
+                                     WN_levelDEM, delta_WN_levelDEM, fkneePWR, delta_fkneePWR,
+                                     alphaPWR, delta_alphaPWR, WN_levelPWR, delta_WN_levelPWR,
+                                     fkneeIQU, delta_fkneeIQU, alphaIQU, delta_alphaIQU,
+                                     WN_levelIQU, delta_WN_levelIQU)
 
     save_parameters_to_json(params=params,
                             output_file_name=os.path.join(args.output_path,
