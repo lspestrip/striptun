@@ -45,10 +45,10 @@ outputs.
 
 DETECTOR  | f knee [mHz]         | alpha [#]           | white noise level [ADU<sup>2</sup>/Hz]*
 --------- |:--------------------:|:-------------------:|:----------------------:
-DEM0/Q1   | ${'{:0.0f}'.format(DEM0Q1['f_knee'] * 1000)} &#177; ${'{:0.0f}'.format(DEM0Q1['delta_f_knee'] * 1000)} | ${DEM0Q1['slope']} &#177; ${DEM0Q1['delta_slope']} | ${DEM0Q1['WN_level']} &#177; ${DEM0Q1['delta_WN_level']}
-DEM1/U1   | ${'{:0.0f}'.format(DEM1U1['f_knee'] * 1000)} &#177; ${'{:0.0f}'.format(DEM1U1['delta_f_knee'] * 1000)} | ${DEM1U1['slope']} &#177; ${DEM1U1['delta_slope']} | ${DEM1U1['WN_level']} &#177; ${DEM1U1['delta_WN_level']}
-DEM2/U2   | ${'{:0.0f}'.format(DEM2U2['f_knee'] * 1000)} &#177; ${'{:0.0f}'.format(DEM2U2['delta_f_knee'] * 1000)} | ${DEM2U2['slope']} &#177; ${DEM2U2['delta_slope']} | ${DEM2U2['WN_level']} &#177; ${DEM2U2['delta_WN_level']}
-DEM3/Q2   | ${'{:0.0f}'.format(DEM3Q2['f_knee'] * 1000)} &#177; ${'{:0.0f}'.format(DEM3Q2['delta_f_knee'] * 1000)} | ${DEM3Q2['slope']} &#177; ${DEM3Q2['delta_slope']} | ${DEM3Q2['WN_level']} &#177; ${DEM3Q2['delta_WN_level']}
+DEM0/Q1   | ${'{:0.0f}'.format(DEM0Q1['f_knee_hz'] * 1000)} &#177; ${'{:0.0f}'.format(DEM0Q1['delta_f_knee_hz'] * 1000)} | ${DEM0Q1['slope']} &#177; ${DEM0Q1['delta_slope']} | ${DEM0Q1['WN_level_adu2_hz']} &#177; ${DEM0Q1['delta_WN_level_adu2_hz']}
+DEM1/U1   | ${'{:0.0f}'.format(DEM1U1['f_knee_hz'] * 1000)} &#177; ${'{:0.0f}'.format(DEM1U1['delta_f_knee_hz'] * 1000)} | ${DEM1U1['slope']} &#177; ${DEM1U1['delta_slope']} | ${DEM1U1['WN_level_adu2_hz']} &#177; ${DEM1U1['delta_WN_level_adu2_hz']}
+DEM2/U2   | ${'{:0.0f}'.format(DEM2U2['f_knee_hz'] * 1000)} &#177; ${'{:0.0f}'.format(DEM2U2['delta_f_knee_hz'] * 1000)} | ${DEM2U2['slope']} &#177; ${DEM2U2['delta_slope']} | ${DEM2U2['WN_level_adu2_hz']} &#177; ${DEM2U2['delta_WN_level_adu2_hz']}
+DEM3/Q2   | ${'{:0.0f}'.format(DEM3Q2['f_knee_hz'] * 1000)} &#177; ${'{:0.0f}'.format(DEM3Q2['delta_f_knee_hz'] * 1000)} | ${DEM3Q2['slope']} &#177; ${DEM3Q2['delta_slope']} | ${DEM3Q2['WN_level_adu2_hz']} &#177; ${DEM3Q2['delta_WN_level_adu2_hz']}
 
 
 *To estimate the uncertainty on the white noise level has been used the median deviation.
@@ -73,9 +73,9 @@ U = (DEM1/U1 - DEM2/U2) / 2
 
 SIGNAL  | f knee [mHz]   | alpha [#]     | white noise level [ADU<sup>2</sup>/Hz]* 
 ------- |:--------------:|:-------------:|:----------------------:
-I       | ${'{:0.0f}'.format(I['f_knee']* 1000)} &#177; ${'{:0.0f}'.format(I['delta_f_knee'] * 1000)} | ${I['slope']} &#177; ${'{:0.5f}'.format(I['delta_slope'])} | ${I['WN_level']} &#177; ${I['delta_WN_level']}
-Q       | ${'{:0.0f}'.format(Q['f_knee']* 1000)} &#177; ${'{:0.0f}'.format(Q['delta_f_knee'] * 1000)} | ${Q['slope']} &#177; ${Q['delta_slope']} | ${Q['WN_level']} &#177; ${Q['delta_WN_level']}
-U       | ${'{:0.0f}'.format(U['f_knee']* 1000)} &#177; ${'{:0.0f}'.format(U['delta_f_knee'] * 1000)} | ${U['slope']} &#177; ${U['delta_slope']} | ${U['WN_level']} &#177; ${U['delta_WN_level']}
+I       | ${'{:0.0f}'.format(I['f_knee_hz']* 1000)} &#177; ${'{:0.0f}'.format(I['delta_f_knee_hz'] * 1000)} | ${I['slope']} &#177; ${'{:0.5f}'.format(I['delta_slope'])} | ${I['WN_level_adu2_hz']} &#177; ${I['delta_WN_level_adu2_hz']}
+Q       | ${'{:0.0f}'.format(Q['f_knee_hz']* 1000)} &#177; ${'{:0.0f}'.format(Q['delta_f_knee_hz'] * 1000)} | ${Q['slope']} &#177; ${Q['delta_slope']} | ${Q['WN_level_adu2_hz']} &#177; ${Q['delta_WN_level_adu2_hz']}
+U       | ${'{:0.0f}'.format(U['f_knee_hz']* 1000)} &#177; ${'{:0.0f}'.format(U['delta_f_knee_hz'] * 1000)} | ${U['slope']} &#177; ${U['delta_slope']} | ${U['WN_level_adu2_hz']} &#177; ${U['delta_WN_level_adu2_hz']}
 
 
 The 1/f noise is reduced of a factor about 10<sup>${reduction_1f}</sup>.
