@@ -8,8 +8,8 @@ the Strip polarimeter ${polarimeter_name}.
 The report has been generated on ${date} using striptun v${striptun_version}
 (commit `${latest_git_commit}`). 
 
-This test has been performed with a sampling frequency of ${sampling_frequency} [Hz]
- and lasted ${'{0:.2f}'.format(test_duration)} [hours].
+This test has been performed with a sampling frequency of ${sampling_frequency_hz} [Hz]
+ and lasted ${'{0:.2f}'.format(test_duration_hz)} [hours].
 
 <h2>Results</h2>
 
@@ -26,9 +26,9 @@ frequency has been computed. Each segment has been detrended by subtracting a ${
 <h2>White noise and 1/f estimation</h2>
 
 The white noise level has been estimated calculating the median value of the spectrum starting 
-from ${right_freq} [Hz]. 
+from ${right_freq_hz} [Hz]. 
 The slope of the pink spectrum has been extracted with a linear fit of the data until 
-${left_freq} [Hz]. 
+${left_freq_hz} [Hz]. 
 The knee frequency has been estimated by doing the intersection between the median of the right
 part of the spectrum and the linear fit of the left part of the spectrum.
 
@@ -78,7 +78,7 @@ Q       | ${'{:0.0f}'.format(Q['f_knee_hz']* 1000)} &#177; ${'{:0.0f}'.format(Q[
 U       | ${'{:0.0f}'.format(U['f_knee_hz']* 1000)} &#177; ${'{:0.0f}'.format(U['delta_f_knee_hz'] * 1000)} | ${U['slope']} &#177; ${U['delta_slope']} | ${U['WN_level_adu2_hz']} &#177; ${U['delta_WN_level_adu2_hz']}
 
 
-The 1/f noise is reduced of a factor about 10<sup>${reduction_1f}</sup>.
+The 1/f noise is reduced of a factor about 10<sup>${reduction_factor_1f}</sup>.
 
 *To estimate the uncertainty on the white noise level has been used the median deviation.
 

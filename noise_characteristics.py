@@ -339,12 +339,12 @@ def build_dict_from_results(pol_name, duration, left_freq, right_freq, n_chuncks
         'polarimeter_name': pol_name,
         'title': 'Noise characteristics of polarimeter {0}'.format(pol_name),
         'sampling_frequency_hz': SAMPLING_FREQUENCY_HZ,
-        'test_duration': duration / 60 / 60,
-        'left_freq': left_freq,
-        'right_freq': right_freq,
+        'test_duration_hz': duration / 60 / 60,
+        'left_freq_hz': left_freq,
+        'right_freq_hz': right_freq,
         'n_chunks': n_chuncks,
         'detrend': detrend,
-        'reduction_1f': reduction1_f}
+        'reduction_factor_1f': reduction1_f}
     
     for i, nam in enumerate(DEM):
         nam = nam.replace("/", "")
