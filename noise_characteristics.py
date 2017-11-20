@@ -338,39 +338,39 @@ def build_dict_from_results(pol_name, duration, left_freq, right_freq, n_chuncks
     results = {
         'polarimeter_name': pol_name,
         'title': 'Noise characteristics of polarimeter {0}'.format(pol_name),
-        'sampling_frequency': SAMPLING_FREQUENCY_HZ,
-        'test_duration': duration / 60 / 60,
-        'left_freq': left_freq,
-        'right_freq': right_freq,
+        'sampling_frequency_hz': SAMPLING_FREQUENCY_HZ,
+        'test_duration_hz': duration / 60 / 60,
+        'left_freq_hz': left_freq,
+        'right_freq_hz': right_freq,
         'n_chunks': n_chuncks,
         'detrend': detrend,
-        'reduction_1f': reduction1_f}
+        'reduction_factor_1f': reduction1_f}
     
     for i, nam in enumerate(DEM):
         nam = nam.replace("/", "")
-        results[nam] = {'f_knee' : fkneeDEM[i],
-                        'delta_f_knee' : delta_fkneeDEM[i],
+        results[nam] = {'f_knee_hz' : fkneeDEM[i],
+                        'delta_f_knee_hz' : delta_fkneeDEM[i],
                         'slope' : alphaDEM[i],
                         'delta_slope' : delta_alphaDEM[i],
-                        'WN_level' : WN_levelDEM[i],
-                        'delta_WN_level' : delta_WN_levelDEM[i]}
+                        'WN_level_adu2_hz' : WN_levelDEM[i],
+                        'delta_WN_level_adu2_hz' : delta_WN_levelDEM[i]}
 
     for i, pwr in enumerate(PWR):
         pwr = pwr.replace("/", "")
-        results[pwr] = {'f_knee' : fkneePWR[i] * 1000,
-                        'delta_f_knee' : delta_fkneePWR[i],
+        results[pwr] = {'f_knee_hz' : fkneePWR[i],
+                        'delta_f_knee_hz' : delta_fkneePWR[i],
                         'slope' : alphaPWR[i],
                         'delta_slope' : delta_alphaPWR[i],
-                        'WN_level' : WN_levelPWR[i],
-                        'delta_WN_level' : delta_WN_levelPWR[i]}
+                        'WN_level_adu2_hz' : WN_levelPWR[i],
+                        'delta_WN_level_adu2_hz' : delta_WN_levelPWR[i]}
 
     for i, stokes in enumerate(STOKES):
-        results[stokes] = {'f_knee' : fkneeIQU[i],
-                        'delta_f_knee' : delta_fkneeIQU[i],
+        results[stokes] = {'f_knee_hz' : fkneeIQU[i],
+                        'delta_f_knee_hz' : delta_fkneeIQU[i],
                         'slope' : alphaIQU[i],
                         'delta_slope' : delta_alphaIQU[i],
-                        'WN_level' : WN_levelIQU[i],
-                        'delta_WN_level' : delta_WN_levelIQU[i]}
+                        'WN_level_adu2_hz' : WN_levelIQU[i],
+                        'delta_WN_level_adu2_hz' : delta_WN_levelIQU[i]}
     return results
 
             
