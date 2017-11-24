@@ -1,6 +1,7 @@
 ---
 STRIP47:
   -
+    polarimeter_number: 47
     date: 2017-03-22
     operators:
       - Claudio Pincella
@@ -36,6 +37,7 @@ STRIP47:
 
 STRIP15:
   -
+    polarimeter_number: 15
     date: 2017-03-29
     operators:
       - Claudio Pincella
@@ -71,6 +73,7 @@ STRIP15:
 
 STRIP08:
   -
+    polarimeter_number: 8
     date: 2017-03-31
     operators:
       - Mario Zannoni
@@ -82,6 +85,7 @@ STRIP08:
 
 STRIP16:
   -
+    polarimeter_number: 16
     date: 2017-04-04
     operators:
       - Federico Incardona
@@ -93,6 +97,7 @@ STRIP16:
 
 STRIP24:
   -
+    polarimeter_number: 24
     date: 2017-04-07
     operators:
       - Federico Incardona
@@ -104,6 +109,7 @@ STRIP24:
 
 STRIP27:
   -
+    polarimeter_number: 27
     date: 2017-04-13
     operators:
       - Silvia Caprioli
@@ -140,6 +146,7 @@ STRIP27:
 
 STRIP29:
   -
+    polarimeter_number: 29
     date: 2017-04-19
     operators:
       - Claudio Pincella
@@ -150,6 +157,7 @@ STRIP29:
 
 STRIP31:
   -
+    polarimeter_number: 31
     date: 2017-04-21
     operators:
       - Silvia Caprioli
@@ -186,6 +194,7 @@ STRIP31:
 
 STRIP41:
   -
+    polarimeter_number: 41
     date: 2017-04-28
     operators:
       - Silvia Caprioli
@@ -222,6 +231,7 @@ STRIP41:
 
 STRIP48:
   -
+    polarimeter_number: 48
     date: 2017-05-04
     operators:
       - Paola Battaglia
@@ -259,6 +269,7 @@ STRIP48:
 
 STRIP50:
   -
+    polarimeter_number: 50
     date: 2017-05-10
     operators:
       - Claudio Pincella
@@ -295,6 +306,7 @@ STRIP50:
 
 STRIP55:
   -
+    polarimeter_number: 55
     date: 2017-05-16
     operators:
       - Claudio Pincella
@@ -330,6 +342,7 @@ STRIP55:
 
 STRIP53:
   -
+    polarimeter_number: 53
     date: 2017-05-18
     operators:
       - Paola Battaglia
@@ -344,6 +357,7 @@ STRIP53:
 
 STRIP62:
   -
+    polarimeter_number: 62
     date: 2017-05-25
     operators:
       - Paola Battaglia
@@ -355,6 +369,7 @@ STRIP62:
 
 STRIP52:
   -
+    polarimeter_number: 52
     date: 2017-05-25
     operators:
       - Paola Battaglia
@@ -366,6 +381,7 @@ STRIP52:
 
 STRIP54:
   -
+    polarimeter_number: 54
     date: 2017-05-30
     operators:
       - Claudio Pincella
@@ -377,6 +393,7 @@ STRIP54:
 
 STRIP56:
   -
+    polarimeter_number: 56
     date: 2017-05-31
     operators:
       - Silvia Caprioli
@@ -469,6 +486,7 @@ STRIP56:
 
 STRIP21:
   -
+    polarimeter_number: 21
     date: 2017-06-08
     operators:
       - Claudio Pincella
@@ -481,6 +499,7 @@ STRIP21:
 
 STRIP57:
   -
+    polarimeter_number: 57
     date: 2017-06-06
     operators:
       - Claudio Pincella
@@ -522,6 +541,7 @@ STRIP57:
 
 STRIP21:
   -
+    polarimeter_number: 21
     date: 2017-06-08
     operators:
       - Claudio Pincella
@@ -534,6 +554,7 @@ STRIP21:
 
 STRIP58:
   -
+    polarimeter_number: 58
     date: 2017-06-09
     operators:
       - Paola Battaglia
@@ -574,6 +595,7 @@ STRIP58:
 
 STRIP04:
   -
+    polarimeter_number: 4
     date: 2017-06-12
     operators:
       - Federico Incardona
@@ -619,6 +641,7 @@ STRIP04:
 
 STRIP58:
   -
+    polarimeter_number: 58
     date: 2017-06-12
     operators:
       - Paola Battaglia
@@ -664,6 +687,7 @@ STRIP58:
 
 STRIP30:
   -
+    polarimeter_number: 30
     date: 2017-06-16
     operators:
       - Paola Battaglia
@@ -709,6 +733,7 @@ STRIP30:
 
 STRIP30:
   -
+    polarimeter_number: 30
     date: 2017-06-21
     operators:
       - Claudio Pincella
@@ -754,6 +779,7 @@ STRIP30:
 
 STRIP36:
   -
+    polarimeter_number: 36
     date: 2017-06-20
     operators:
       - Claudio Pincella
@@ -795,6 +821,7 @@ STRIP36:
 
 STRIP30:
   -
+    polarimeter_number: 30
     date: 2017-06-21
     operators:
       - Claudio Pincella
@@ -840,6 +867,7 @@ STRIP30:
 
 STRIP37:
   -
+    polarimeter_number: 37
     date: 2017-06-22
     operators:
       - Paola Battaglia
@@ -861,6 +889,7 @@ STRIP37:
 
 STRIP37:
   -
+    polarimeter_number: 37
     date: 2017-06-23
     operators:
       - Federico Incardona
@@ -906,6 +935,7 @@ STRIP37:
 
 STRIP38:
   -
+    polarimeter_number: 38
     date: 2017-06-27
     operators:
       - Claudio Pincella
@@ -942,6 +972,7 @@ STRIP38:
 
 STRIP70:
   -
+    polarimeter_number: 70
     date: 2017-06-29
     operators:
       - Paola Battaglia
@@ -988,6 +1019,7 @@ STRIP70:
 
 STRIP68:
   -
+    polarimeter_number: 68
     date: 2017-07-03
     operators:
       - Paola Battaglia
@@ -1085,6 +1117,7 @@ STRIP68:
 
 STRIP67:
   -
+    polarimeter_number: 67
     date: 2017-07-05
     operators:
       - Silvia Caprioli
@@ -1182,6 +1215,7 @@ STRIP67:
 
 STRIP69:
   -
+    polarimeter_number: 69
     date: 2017-07-10
     operators:
       - Federico Incardona
@@ -1279,6 +1313,7 @@ STRIP69:
 
 STRIP61:
   -
+    polarimeter_number: 61
     date: 2017-07-11
     operators:
       - Paola Battaglia
@@ -1376,6 +1411,7 @@ STRIP61:
 
 STRIP59:
   -
+    polarimeter_number: 59
     date: 2017-07-14
     operators:
       - Silvia Caprioli
@@ -1473,6 +1509,7 @@ STRIP59:
 
 STRIP66:
   -
+    polarimeter_number: 66
     date: 2017-07-20
     operators:
       - Paola Battaglia
@@ -1570,6 +1607,7 @@ STRIP66:
 
 STRIP64:
   -
+    polarimeter_number: 66
     date: 2017-07-27
     operators:
       - Federico Incardona
@@ -1667,6 +1705,7 @@ STRIP64:
 
 STRIP63:
   -
+    polarimeter_number: 63
     date: 2017-08-30
     operators:
       - Claudio Pincella
@@ -1764,6 +1803,7 @@ STRIP63:
 
 STRIP33:
   -
+    polarimeter_number: 33
     date: 2017-09-22
     operators:
       - Paola Battaglia
@@ -1862,6 +1902,7 @@ STRIP33:
 
 STRIP35:
   -
+    polarimeter_number: 35
     date: 2017-09-25
     operators:
       - Silvia Caprioli
@@ -1908,6 +1949,7 @@ STRIP35:
 
 STRIP07:
   -
+    polarimeter_number: 07
     date: 2017-09-29
     operators:
       - Federico Incardona
@@ -2005,6 +2047,7 @@ STRIP07:
 
 STRIP44:
   -
+    polarimeter_number: 44
     date: 2017-10-02
     operators:
       - Silvia Caprioli
@@ -2102,6 +2145,7 @@ STRIP44:
 
 STRIP49:
   -
+    polarimeter_number: 49
     date: 2017-10-04
     operators:
       - Federico Incardona
@@ -2189,6 +2233,7 @@ STRIP49:
 
 STRIP02:
   -
+    polarimeter_number: 2
     date: 2017-10-11
     operators:
       - Paola Battaglia
@@ -2276,6 +2321,7 @@ STRIP02:
 
 STRIP43:
   -
+    polarimeter_number: 43
     date: 2017-10-13
     operators:
       - Federico Incardona
