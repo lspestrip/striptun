@@ -22,6 +22,7 @@ matplotlib.use('Agg')
 import matplotlib.pylab as plt
 from corner import corner
 
+from file_access import load_timestream
 from reports import create_report
 
 NUM_OF_PARAMS = 3
@@ -263,7 +264,7 @@ def extract_polarimeter_params(test_db: Dict[str, Any],
     return pol_params
 
 
-def extract_average_values(polarimeter_name, raw_data, test_db, tnoise1_results, num):
+def extract_average_values(power_data, metadata, tnoise1_results, num):
     '''Compute statistics of PWR output for each temperature step
 
     Tries to find `num` temperature steps by cycling over the statistics of the
@@ -272,8 +273,6 @@ def extract_average_values(polarimeter_name, raw_data, test_db, tnoise1_results,
     Return a pair (VOLT, STD). Both VOLT and STD are 4-element lists of NumPy
     arrays (one per each PWR output), each containing the voltages (VOLT) and
     standard deviations (STD) for each temperature step.'''
-
-    pol_params = extract_polarimeter_params(test_db, polarimeter_name)
 
     # ID of the PWR output which will be used as "reference" (i.e., we are
     # going to use the regions detected using this PWR output)
@@ -291,8 +290,8 @@ def extract_average_values(polarimeter_name, raw_data, test_db, tnoise1_results,
         sys.exit(1)
 
     # These are the offsets acquired when the HEMTs were turned off
-    offsets = [pol_params['detector_offsets']['PWR{0}_adu'.format(i)]
-               for i in range(4)]
+    offsets = [metadata['detector_outputs'][-1]['{0}_adu'.format(det)]
+               for det in ('q1', 'u1', 'u2', 'q2')]
 
     voltages = [np.empty(len(regions)) for i in range(4)]
     voltage_std = [np.empty(len(regions)) for i in range(4)]
@@ -300,14 +299,14 @@ def extract_average_values(polarimeter_name, raw_data, test_db, tnoise1_results,
         start, stop = [cur_region[x] for x in ('index0', 'index1')]
 
         for i in range(4):
-            arr = raw_data[start:stop, 7 + i]
+            arr = power_data[start:stop, i]
             voltages[i][idx] = np.mean(arr) - offsets[i]
             voltage_std[i][idx] = np.std(arr)
 
     return voltages, voltage_std
 
 
-def extract_temperatures(test_db, polarimeter_name):
+def extract_temperatures(test_metadata):
     '''Return the temperatures of the two loads as seen by the polarimeter
 
     This function loads the housekeeping temperatures from the test database for
@@ -316,9 +315,8 @@ def extract_temperatures(test_db, polarimeter_name):
 
     Return a pair (TEMP_A, TEMP_B), where both TEMP_A and TEMP_B are NumPy
     arrays.'''
-    pol_params = extract_polarimeter_params(test_db, polarimeter_name)
 
-    steps = pol_params['noise_temperature_steps_up']
+    steps = test_metadata['temperatures']
     temperatures_a = np.empty(len(steps))
     temperatures_b = np.empty(len(steps))
     for idx, cur_step in enumerate(steps):
@@ -550,21 +548,19 @@ def main():
         test_db = yaml.load(yaml_file)
 
     log.info('reading file "%s"', args.raw_file)
-    raw_data = np.loadtxt(args.raw_file, skiprows=1)
+    metadata, data = load_timestream(args.raw_file)
 
     if not args.polarimeter_name in test_db:
         log.fatal('polarimeter "%s" not present in the test database',
                   args.polarimeter_name)
 
-    temperatures_a, temperatures_b = extract_temperatures(
-        test_db, args.polarimeter_name)
+    temperatures_a, temperatures_b = extract_temperatures(metadata)
     log.info('temperatures for load A: %s',
              str(temperatures_a))
     log.info('temperatures for load B: %s',
              str(temperatures_b))
 
-    voltages, voltage_std = extract_average_values(args.polarimeter_name, raw_data,
-                                                   test_db, tnoise1_results,
+    voltages, voltage_std = extract_average_values(data.power, metadata, tnoise1_results,
                                                    num=len(temperatures_a))
     for idx, arr in enumerate(voltages):
         log.info('voltages for PWR%d: %s',

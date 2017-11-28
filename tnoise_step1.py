@@ -18,6 +18,8 @@ import matplotlib.pylab as plt
 from matplotlib.patches import Rectangle
 import matplotlib.transforms as transforms
 
+from file_access import load_timestream
+
 SAMPLING_FREQUENCY_HZ = 25.0
 
 
@@ -176,15 +178,15 @@ def parse_arguments():
     The field accessible from the object returned by this function are the following:
 
     - ``polarimeter_name``
-    - ``input_file_path``
+    - ``input_url``
     - ``output_path``
     '''
     parser = ArgumentParser(description=__doc__)
     parser.add_argument('polarimeter_name', type=str,
                         help='''Name of the polarimeter (any text string
                                 is ok, it is used in the reports)''')
-    parser.add_argument('input_file_path', type=str,
-                        help='''Name of the file containing the data being saved''')
+    parser.add_argument('input_url', type=str,
+                        help='''File/URL containing the data being saved''')
     parser.add_argument('output_path', type=str,
                         help='''Path to the directory that will contain the
                         report. If the path does not exist, it will be created''')
@@ -215,9 +217,9 @@ def assemble_region_info(time, value, regions: List[Region]) -> List[RegionInfor
                                         time1_s=cur_r.time1_s,
                                         index0=index0,
                                         index1=index1,
-                                        mean_output_adu=np.mean(
-                                            value[index0:index1 + 1]),
-                                        rms_output_adu=np.std(value[index0:index1 + 1])))
+                                        mean_output_adu=float(np.mean(
+                                            value[index0:index1 + 1])),
+                                        rms_output_adu=float(np.std(value[index0:index1 + 1]))))
 
     return result
 
@@ -244,20 +246,21 @@ def main():
     args = parse_arguments()
 
     log.info('Tuning radiometer "%s"', args.polarimeter_name)
-    log.info('Reading data from file "%s"', args.input_file_path)
+    log.info('Reading data from file "%s"', args.input_url)
     log.info('Writing the report into "%s"', args.output_path)
 
     # Create the directory that will contain the report
     os.makedirs(args.output_path, exist_ok=True)
 
     # Load from the text file only the columns containing the output of the four detectors
-    log.info('Loading file "{0}"'.format(args.input_file_path))
-    data = np.loadtxt(args.input_file_path, skiprows=1)[:, 7:11]
+    log.info('Loading data from "{0}"'.format(args.input_url))
+    timestream = load_timestream(args.input_url)[1]
+    power = timestream.power
 
-    log.info('File loaded, {0} samples found'.format(len(data[:, 0])))
+    log.info('File loaded, {0} samples found'.format(len(power[:, 0])))
 
-    time = np.arange(len(data[:, 0])) / SAMPLING_FREQUENCY_HZ
-    slopes = [slope(time, data[:, i], chunk_len=25 * 60, step=25 * 3)
+    time = np.arange(len(power[:, 0])) / SAMPLING_FREQUENCY_HZ
+    slopes = [slope(time, power[:, i], chunk_len=25 * 60, step=25 * 3)
               for i in range(4)]
 
     # Find the blind channel
@@ -295,14 +298,15 @@ def main():
         else:
             curve_regions = regions[curve_idx]
 
-        save_plot(time, data[:, curve_idx], slopes[curve_idx],
+        save_plot(time, power[:, curve_idx], slopes[curve_idx],
                   curve_regions, slope_threshold, output_file_name)
 
     params = build_dict_from_results(pol_name=args.polarimeter_name,
                                      blind_channel=blind_channel,
                                      time=time,
-                                     data=data,
+                                     data=power,
                                      regions=regions)
+    params['data_url'] = args.input_url
     save_parameters_to_json(params=params,
                             output_file_name=os.path.join(args.output_path,
                                                           'tnoise_step1_results.json'))
