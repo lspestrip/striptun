@@ -25,7 +25,7 @@ def get_latest_git_commit(error_value='<unknown>') -> str:
             'log',
             '-n', '1',
             '--pretty=format:"%H"'
-        ], shell=True, stdout=subprocess.PIPE)
+        ], stdout=subprocess.PIPE)
 
         # The [1:-1] are needed to strip the quotation marks
         return result.stdout.decode('utf-8').strip()[1:-1]
