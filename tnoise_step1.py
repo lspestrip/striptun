@@ -100,13 +100,20 @@ Region = namedtuple('Region', [
 def find_stable_regions(slopes: List[SlopeInformation],
                         slope_threshold_adu_s: float,
                         duration_threshold_s: float,
-                        clipping_s: float = 5.0) -> List[Region]:
+                        clipping_s: float = 5.0,
+                        first_region_length: float = None) -> List[Region]:
 
     mask = np.array([x.abs_slope_adu_s
                      for x in slopes]) < slope_threshold_adu_s
+
     regions = contiguous_regions(mask)
 
-    result = []  # Type: List[Region]
+    if first_region_length:
+        assert(first_region_length > 0.0)
+        result = [Region(time0_s=0.0, time1_s=first_region_length)]
+    else:
+        result = []  # Type: List[Region]
+
     for start_idx, stop_idx in list(regions):
         assert np.alltrue(mask[start_idx:stop_idx])
         if stop_idx < len(mask):
@@ -114,7 +121,7 @@ def find_stable_regions(slopes: List[SlopeInformation],
 
         time0_s = slopes[start_idx].time0_s + clipping_s
         time1_s = slopes[stop_idx - 1].time1_s - clipping_s
-        if time1_s - time0_s < duration_threshold_s:
+        if (time1_s - time0_s < duration_threshold_s):
             continue
 
         if result:
@@ -129,6 +136,11 @@ def find_stable_regions(slopes: List[SlopeInformation],
                 continue
 
         result.append(Region(time0_s=time0_s, time1_s=time1_s))
+
+    log.info('%d regions found:', len(result))
+    for region in result:
+        log.info('  %.1f s − %.1f s, duration: %.1f s',
+                 region.time0_s, region.time1_s, region.time1_s - region.time0_s)
 
     return result
 
@@ -190,6 +202,13 @@ def parse_arguments():
     parser.add_argument('output_path', type=str,
                         help='''Path to the directory that will contain the
                         report. If the path does not exist, it will be created''')
+    parser.add_argument('--first-region-length', type=float, default=None,
+                        help='''Specify that the first region to be analyzed should
+                        cover the first N seconds of data in the test. This is
+                        useful when the first step lasted for a very short period of
+                        time before the user changed the temperature of the load, and
+                        the code is not able to detect that the instrument was stable at
+                        the beginning.''')
     return parser.parse_args()
 
 
@@ -280,7 +299,8 @@ def main():
             find_stable_regions(slopes=slopes[curve_idx],
                                 slope_threshold_adu_s=slope_threshold,
                                 duration_threshold_s=60.0,
-                                clipping_s=15.0)
+                                clipping_s=15.0,
+                                first_region_length=args.first_region_length)
         if not num_of_regions:
             num_of_regions = len(regions[curve_idx])
         else:
