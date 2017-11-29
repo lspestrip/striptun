@@ -10,20 +10,18 @@ from shutil import copyfile
 import sys
 from typing import Any, Dict
 
-import emcee
 import simplejson as json
 import numpy as np
-import scipy
+import scipy.optimize as opt
 import yaml
 from json_save import save_parameters_to_json
 
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pylab as plt
-from corner import corner
 
 from file_access import load_timestream
-from reports import create_report
+from reports import create_report, get_code_version_params
 
 NUM_OF_PARAMS = 3
 PARAMETER_NAMES = ('average_gain', 'gain_prod', 'tnoise')
@@ -118,8 +116,7 @@ class LogLikelihood:
 
     This class is used as a container for the arrays to be used in the search
     for the best estimate of the gain and noise temperature. It is never used
-    directly, only as a base class for two derived classes
-    ("LogLikelihoodForFit" and "LogLikelihoodForMCMC").'''
+    directly, only as a base class for "LogLikelihoodForFit".'''
 
     def __init__(self, blind_channel, voltages, voltage_std,
                  temperatures_a, temperatures_b):
@@ -152,62 +149,6 @@ class LogLikelihood:
                 (-1.0, 0.0),
                 (+1.0, 1.0),
             ]
-
-
-class LogLikelihoodForMCMC(LogLikelihood):
-    '''Callable class to compute the likelihood for a MCMC analysis
-
-    This class implements the calculation of the likelihood and the priors
-    needed to find the optimal estimate for the gain and noise temperature
-    through a MCMC analysis.
-    '''
-
-    def __init__(self, blind_channel, voltages, voltage_std,
-                 temperatures_a, temperatures_b):
-        super().__init__(blind_channel, voltages, voltage_std,
-                         temperatures_a, temperatures_b)
-
-    @staticmethod
-    def lnprior(theta):
-        # Destructure the parameters
-        params = Parameters(*theta)
-
-        if params.average_gain < 0.0 or params.gain_prod < 0.0 or params.tnoise <= 0.0:
-            return -np.inf
-
-        return 0.0
-
-    def __call__(self, theta):
-        result = self.lnprior(theta)
-        if not np.isfinite(result):
-            return -np.inf
-
-        # Destructure the parameters
-        params = Parameters(*theta)
-
-        # This term is the same for all the four PWR outputs
-        fixed_term = (
-            params.average_gain *
-            (self.temperatures_a + self.temperatures_b + 2.0 * params.tnoise)
-        )
-
-        diff_term = params.gain_prod * \
-            (self.temperatures_a - self.temperatures_b)
-
-        # Cycle over the four PWR outputs
-        for set_idx, set_params in enumerate(self.pwr_constants):
-            sign, phi = set_params
-            estimates = -0.25 * (
-                fixed_term +
-                sign * phi * diff_term
-            )
-            std = self.voltage_std[set_idx]
-
-            result += -0.5 * \
-                np.sum(((self.voltages[set_idx] - estimates) / std) ** 2 +
-                       np.log(2.0 * np.pi * std**2))
-
-        return result
 
 
 class LogLikelihoodForFit(LogLikelihood):
@@ -347,7 +288,7 @@ def assemble_results(polarimeter_name: str, log_ln: LogLikelihood, popt, pcov):
         'polarimeter_name': polarimeter_name,
         'title': ('Noise temperature analysis for polarimeter {0}'
                   .format(polarimeter_name)),
-        'mcmc': False,
+        'analysis_method': 'non-linear fit',
         'steps': [{
             't_load_a_K': log_ln.temperatures_a[idx],
             't_load_b_K': log_ln.temperatures_b[idx],
@@ -391,39 +332,6 @@ def estimate_statistics(arr) -> Dict['str', float]:
         'lower_err_95CL': median - lower,
         'upper_err_95CL': upper - median,
     }
-
-
-def assemble_results_for_MCMC(sampler, burn_in: int):
-    'Work like "assemble_results", but the information is related to a MCMC analysis'
-
-    # Perform an autocorrelation analysis to properly pick the samples from the MC
-    try:
-        autocorr_lengths = []
-        autocorr_length = int(np.max(sampler.get_autocorr_time()) * 2)
-        log.info('the autocorrelation time of the series is %.1f',
-                 autocorr_length)
-    except emcee.autocorr.AutocorrError as exc:
-        log.warning('unable to find a good autocorrelation time, '
-                    'setting it to one (%s)', exc)
-        autocorr_length = 1
-
-    series = sampler.chain[:, burn_in::autocorr_length,
-                           :].reshape(-1, NUM_OF_PARAMS)
-
-    result = {
-        'num_of_walkers': sampler.chain.shape[0],
-        'num_of_iterations': sampler.chain.shape[1],
-        'burn_in_length': burn_in,
-        'autocorrelation_length': autocorr_length,
-        'num_of_samples': series.shape[0],
-        'mcmc': True,
-    }
-
-    for param_idx, param_name in enumerate(PARAMETER_NAMES):
-        result['mcmc_' + param_name] = \
-            estimate_statistics(series[:, param_idx])
-
-    return result
 
 
 def create_plots(log_ln, params, output_path: str):
@@ -476,21 +384,6 @@ def create_plots(log_ln, params, output_path: str):
              lincorr_plot_file_path)
 
 
-def create_MCMC_plots(log_ln, params, chain, output_path: str):
-    # Corner plot
-    fig = plt.figure()
-    samples = chain[:,
-                    params['burn_in_length']::params['autocorrelation_length'],
-                    :].reshape(-1, NUM_OF_PARAMS)
-    fig = plt.figure()
-    corner(samples, bins=50, labels=('$\\frac{1}{2}(g_a^2 + g_b^2)$',
-                                     '$g_a \\times g_b$',
-                                     '$T_n$'))
-    corner_plot_file_path = os.path.join(output_path, 'tnoise_corner_plot.svg')
-    plt.savefig(corner_plot_file_path, bbox_inches='tight')
-    log.info('corner plot saved to file "%s"', corner_plot_file_path)
-
-
 def parse_arguments():
     '''Return a class containing the values of the command-line arguments.
 
@@ -502,9 +395,6 @@ def parse_arguments():
     - ``output_path``
     '''
     parser = ArgumentParser(description=__doc__)
-    parser.add_argument('--mcmc', action='store_true',
-                        help='''Run a MCMC analysis on the data as well
-                        (usually not needed)''')
     parser.add_argument('--num-of-walkers', dest='walkers',
                         type=int, default=DEFAULT_WALKERS,
                         help='''Number of walkers to use in the simulation
@@ -574,7 +464,7 @@ def main():
                                  temperatures_a=temperatures_a,
                                  temperatures_b=temperatures_b)
 
-    popt, pcov = scipy.optimize.curve_fit(
+    popt, pcov = opt.curve_fit(
         log_ln, None, np.array(voltages).flatten(),
         p0=np.array([1e4, 1e4, 30.0]),
         sigma=np.array(voltage_std).flatten())
@@ -586,54 +476,7 @@ def main():
     params = assemble_results(args.polarimeter_name,
                               log_ln, popt, pcov)
 
-    if args.mcmc:
-        log.info('running a MCMC analysis with %d walkers for %d steps',
-                 args.walkers, args.iterations)
-
-        # Overwrite log_ln (which was of type LogLikelihoodForFit) with a new
-        # object
-        log_ln = LogLikelihoodForMCMC(blind_channel=tnoise1_results['blind_channel'],
-                                      voltages=voltages,
-                                      voltage_std=voltage_std,
-                                      temperatures_a=temperatures_a,
-                                      temperatures_b=temperatures_b)
-
-        sampler = emcee.EnsembleSampler(nwalkers=args.walkers,
-                                        dim=NUM_OF_PARAMS,
-                                        lnpostfn=log_ln)
-
-        # Reuse the results of the fitting to initialize the starting points of
-        # the MCMC walkers
-        starting_point = emcee.utils.sample_ball(popt,
-                                                 std=np.sqrt(np.diag(pcov)),
-                                                 size=args.walkers)
-        for idx, _ in enumerate(sampler.sample(starting_point,
-                                               iterations=args.iterations)):
-            if idx % 1000 == 0 and idx > 0:
-                log.info('Running step %d/%d (%.1f%%)',
-                         idx, args.iterations,
-                         (idx * 100.0) / args.iterations)
-
-        # Save the chain of samples: this is *pure gold* for debugging!
-        chain_file_path = os.path.join(args.output_path,
-                                       'tnoise_mcmc_chain.npy')
-        np.save(chain_file_path, sampler.chain)
-        log.info('chain of MCMC samples saved in file "%s"',
-                 chain_file_path)
-
-        log.info('analyzing the MCMC data, burn-in length is %d',
-                 args.burn_in)
-
-        # Merge the "params" dictionary with the return value of
-        # "assemble_results_for_MCMCM"
-        params = {
-            **params,
-            **assemble_results_for_MCMC(sampler, args.burn_in)
-        }
-
-        create_MCMC_plots(log_ln, params, sampler.chain, args.output_path)
-
-    save_parameters_to_json(params=params,
+    save_parameters_to_json(params=dict(params, **get_code_version_params()),
                             output_file_name=os.path.join(args.output_path,
                                                           'tnoise_step2_results.json'))
 

@@ -33,6 +33,14 @@ def get_latest_git_commit(error_value='<unknown>') -> str:
         return error_value
 
 
+def get_code_version_params():
+    return {
+        'striptun_version': VERSION,
+        'analysis_date': datetime.now().strftime('%Y-%m-%d'),
+        'latest_git_commit': get_latest_git_commit(),
+    }
+
+
 def create_report(params: Dict[str, Any],
                   md_template_file: str,
                   md_report_file: str,
@@ -56,11 +64,7 @@ def create_report(params: Dict[str, Any],
     report_template = Template(filename=template_file_name)
 
     # Fill the template and save the report in Markdown format
-    extended_params = dict(params, **{
-        'striptun_version': VERSION,
-        'date': datetime.now().strftime('%d %b %Y, %H:%M:%S'),
-        'latest_git_commit': get_latest_git_commit(),
-    })
+    extended_params = dict(params, **get_code_version_params())
     md_report = report_template.render_unicode(**extended_params)
     md_report_path = os.path.join(output_path, md_report_file)
     with open(md_report_path, 'wt', encoding='utf-8') as md_file:

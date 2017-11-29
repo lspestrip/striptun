@@ -5,9 +5,9 @@
 This document contains the result of the tuning of the six amplifiers in
 polarimeter ${polarimeter}.
 
-The report has been generated on ${date} using striptun v${striptun_version}
-(commit `${latest_git_commit}`). The tuning procedure used the user-defined
-constraints:
+The report has been generated on ${analysis_date} using striptun
+v${striptun_version} (commit `${latest_git_commit}`). The tuning procedure used
+the user-defined constraints:
 
 Parameter | Value
 --------- |:-----:
