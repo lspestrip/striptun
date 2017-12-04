@@ -73,7 +73,7 @@ U = (DEM1/U1 - DEM2/U2) / 2
 
 SIGNAL  | f knee [mHz]   | alpha [#]     | white noise level [ADU<sup>2</sup>/Hz]* 
 ------- |:--------------:|:-------------:|:----------------------:
-I       | ${'{:0.0f}'.format(I['f_knee_hz']* 1000)} &#177; ${'{:0.0f}'.format(I['delta_f_knee_hz'] * 1000)} | ${I['slope']} &#177; ${'{:0.5f}'.format(I['delta_slope'])} | ${I['WN_level_adu2_hz']} &#177; ${I['delta_WN_level_adu2_hz']}
+I       | ${'{:0.0f}'.format(I['f_knee_hz']* 1000)} &#177; ${'{:0.0f}'.format(I['delta_f_knee_hz'] * 1000)} | ${I['slope']} &#177; ${I['delta_slope']} | ${I['WN_level_adu2_hz']} &#177; ${I['delta_WN_level_adu2_hz']}
 Q       | ${'{:0.0f}'.format(Q['f_knee_hz']* 1000)} &#177; ${'{:0.0f}'.format(Q['delta_f_knee_hz'] * 1000)} | ${Q['slope']} &#177; ${Q['delta_slope']} | ${Q['WN_level_adu2_hz']} &#177; ${Q['delta_WN_level_adu2_hz']}
 U       | ${'{:0.0f}'.format(U['f_knee_hz']* 1000)} &#177; ${'{:0.0f}'.format(U['delta_f_knee_hz'] * 1000)} | ${U['slope']} &#177; ${U['delta_slope']} | ${U['WN_level_adu2_hz']} &#177; ${U['delta_WN_level_adu2_hz']}
 
