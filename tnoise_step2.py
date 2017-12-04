@@ -27,13 +27,6 @@ NUM_OF_PARAMS = 3
 PARAMETER_NAMES = ('average_gain', 'gain_prod', 'tnoise')
 Parameters = namedtuple('Parameters', PARAMETER_NAMES)
 
-# These are default values, the user can update them using command-line switches
-DEFAULT_WALKERS = 100
-DEFAULT_BURN_IN = 3000
-DEFAULT_ITERATIONS = 100000
-TEST_DB_PATH = os.path.join(os.path.dirname(__file__),
-                            'polarimeter_info.yaml')
-
 # List of housekeeping temperatures used to estimate the temperature of the two
 # loads. They are usually load from the test database
 Housekeepings = namedtuple('Housekeepings', [
@@ -183,26 +176,6 @@ class LogLikelihoodForFit(LogLikelihood):
             result = np.concatenate((result, estimates))
 
         return result
-
-
-def extract_polarimeter_params(test_db: Dict[str, Any],
-                               polarimeter_name: str) -> Dict[str, Any]:
-    '''Return information about a polarimeter
-
-    Search for tests related to the polarimeter in the test database (this is
-    usually loaded from a YAML file). Return the part of the database that
-    contains details about the test for this polarimeter.
-    '''
-    if len(test_db[polarimeter_name]) != 1:
-        log.fatal('I expected just one test for polarimeter %s, but I found %d of them',
-                  polarimeter_name, len(test_db[polarimeter_name]))
-
-    pol_params = test_db[polarimeter_name][0]
-    if pol_params['defective']:
-        log.fatal('Polarimeter %s seems to be defective',
-                  polarimeter_name)
-
-    return pol_params
 
 
 def extract_average_values(power_data, metadata, tnoise1_results, num):
@@ -395,20 +368,6 @@ def parse_arguments():
     - ``output_path``
     '''
     parser = ArgumentParser(description=__doc__)
-    parser.add_argument('--num-of-walkers', dest='walkers',
-                        type=int, default=DEFAULT_WALKERS,
-                        help='''Number of walkers to use in the simulation
-                        (default: {0})'''.format(DEFAULT_WALKERS))
-    parser.add_argument('--num-of-iterations', dest='iterations',
-                        type=int, default=DEFAULT_ITERATIONS,
-                        help='''Number of walkers to use in the simulation
-                        (default: {0})'''.format(DEFAULT_ITERATIONS))
-    parser.add_argument('--burn-in', type=int, default=DEFAULT_BURN_IN,
-                        help='''Number of samples at the beginning to exclude
-                        (default: {0})'''.format(DEFAULT_ITERATIONS))
-    parser.add_argument('--test-db-path', default=TEST_DB_PATH, type=str,
-                        help='''Path to the test database YAML file
-                        (default is "{0}")'''.format(TEST_DB_PATH))
     parser.add_argument('polarimeter_name', type=str,
                         help='''Name of the polarimeter (must match the name
                         in the test database)''')
@@ -433,16 +392,8 @@ def main():
     with open(args.tnoise1_results, 'rt') as json_file:
         tnoise1_results = json.load(json_file)
 
-    log.info('reading file "%s"', args.test_db_path)
-    with open(args.test_db_path, 'rt') as yaml_file:
-        test_db = yaml.load(yaml_file)
-
     log.info('reading file "%s"', args.raw_file)
     metadata, data = load_timestream(args.raw_file)
-
-    if not args.polarimeter_name in test_db:
-        log.fatal('polarimeter "%s" not present in the test database',
-                  args.polarimeter_name)
 
     temperatures_a, temperatures_b = extract_temperatures(metadata)
     log.info('temperatures for load A: %s',
