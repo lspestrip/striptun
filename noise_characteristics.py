@@ -3,14 +3,16 @@
 
 '''Estimates the noise characteristics of a given polarimeter.'''
 
-from json_save import save_parameters_to_json
 from argparse import ArgumentParser
-from scipy import signal
+from file_access import load_timestream
+from json_save import save_parameters_to_json
 from reports import create_report
+from scipy import signal
 import logging as log
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+
 
 SAMPLING_FREQUENCY_HZ = 25.0 # Hz
 
@@ -22,6 +24,7 @@ PWR = ['PWR0/Q1', 'PWR1/U1', 'PWR2/U2', 'PWR3/Q2']
 STOKES = ['I', 'Q', 'U']
 
 FIGSIZE = (10, 7)
+
 
 def get_stokes(pwr_data, dem_data):
     """
@@ -348,29 +351,29 @@ def build_dict_from_results(pol_name, duration, left_freq, right_freq, n_chuncks
     
     for i, nam in enumerate(DEM):
         nam = nam.replace("/", "")
-        results[nam] = {'f_knee_hz' : fkneeDEM[i],
-                        'delta_f_knee_hz' : delta_fkneeDEM[i],
-                        'slope' : alphaDEM[i],
-                        'delta_slope' : delta_alphaDEM[i],
-                        'WN_level_adu2_hz' : WN_levelDEM[i],
-                        'delta_WN_level_adu2_hz' : delta_WN_levelDEM[i]}
+        results[nam] = {'f_knee_hz' : float(fkneeDEM[i]),
+                        'delta_f_knee_hz' : float(delta_fkneeDEM[i]),
+                        'slope' : float(alphaDEM[i]),
+                        'delta_slope' : float(delta_alphaDEM[i]),
+                        'WN_level_adu2_hz' : float(WN_levelDEM[i]),
+                        'delta_WN_level_adu2_hz' : float(delta_WN_levelDEM[i])}
 
     for i, pwr in enumerate(PWR):
         pwr = pwr.replace("/", "")
-        results[pwr] = {'f_knee_hz' : fkneePWR[i],
-                        'delta_f_knee_hz' : delta_fkneePWR[i],
-                        'slope' : alphaPWR[i],
-                        'delta_slope' : delta_alphaPWR[i],
-                        'WN_level_adu2_hz' : WN_levelPWR[i],
-                        'delta_WN_level_adu2_hz' : delta_WN_levelPWR[i]}
+        results[pwr] = {'f_knee_hz' : float(fkneePWR[i]),
+                        'delta_f_knee_hz' : float(delta_fkneePWR[i]),
+                        'slope' : float(alphaPWR[i]),
+                        'delta_slope' : float(delta_alphaPWR[i]),
+                        'WN_level_adu2_hz' : float(WN_levelPWR[i]),
+                        'delta_WN_level_adu2_hz' : float(delta_WN_levelPWR[i])}
 
     for i, stokes in enumerate(STOKES):
-        results[stokes] = {'f_knee_hz' : fkneeIQU[i],
-                        'delta_f_knee_hz' : delta_fkneeIQU[i],
-                        'slope' : alphaIQU[i],
-                        'delta_slope' : delta_alphaIQU[i],
-                        'WN_level_adu2_hz' : WN_levelIQU[i],
-                        'delta_WN_level_adu2_hz' : delta_WN_levelIQU[i]}
+        results[stokes] = {'f_knee_hz' : float(fkneeIQU[i]),
+                        'delta_f_knee_hz' : float(delta_fkneeIQU[i]),
+                        'slope' : float(alphaIQU[i]),
+                        'delta_slope' : float(delta_alphaIQU[i]),
+                        'WN_level_adu2_hz' : float(WN_levelIQU[i]),
+                        'delta_WN_level_adu2_hz' : float(delta_WN_levelIQU[i])}
     return results
 
             
@@ -389,9 +392,9 @@ def main():
 
     # Load from the text file only the columns containing the output of the four detectors
     log.info('Loading file "{0}"'.format(args.input_file_path))
-    dataDEM = np.loadtxt(args.input_file_path, skiprows=1, usecols=(3, 4, 5, 6))
+    metadata, data = load_timestream(args.input_file_path)
+    dataDEM, dataPWR = data.demodulated, data.power
     durationDEM = len(dataDEM) / SAMPLING_FREQUENCY_HZ # sec
-    dataPWR = np.loadtxt(args.input_file_path, skiprows=1, usecols=(7, 8, 9, 10))
     durationPWR = len(dataPWR) / SAMPLING_FREQUENCY_HZ # sec
 
     assert durationPWR == durationDEM
@@ -411,13 +414,13 @@ def main():
     (fit_parDEM, fkneeDEM, delta_fkneeDEM, alphaDEM, delta_alphaDEM, WN_levelDEM,
      delta_WN_levelDEM) = get_noise_characteristics(
         freq, fftDEM, args.left_freq, args.right_freq)
-    [log.info('Computed fknee, alpha, WN_level for' + nam + ' outputs') for nam in DEM]
+    [log.info('Computed fknee, alpha, WN_level for ' + nam + ' outputs') for nam in DEM]
 
     fftPWR = get_fft(SAMPLING_FREQUENCY_HZ, dataPWR, args.n_chunks, detrend=args.detrend)[-1]   
     (fit_parPWR, fkneePWR, delta_fkneePWR, alphaPWR, delta_alphaPWR, WN_levelPWR,
      delta_WN_levelPWR) = get_noise_characteristics(
         freq, fftPWR, args.left_freq, args.right_freq, totalPWR=True)
-    [log.info('Computed alpha for' + pwr + ' outputs') for pwr in PWR]
+    [log.info('Computed alpha for ' + pwr + ' outputs') for pwr in PWR]
     
     # Calculate the PSD for the combinations of the 4 detector outputs that returns I, Q, U
     IQU = get_stokes(dataPWR, dataDEM)
