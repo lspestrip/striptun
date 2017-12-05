@@ -3,34 +3,33 @@
 <h1>${title}</h1>
 
 This document contains a preliminary analysis of the noise characteristics for
-the Strip polarimeter ${polarimeter_name}.
+the Strip polarimeter **${polarimeter_name}**.
 
 The report has been generated on ${date} using striptun v${striptun_version}
 (commit `${latest_git_commit}`). 
 
-This test has been performed with a sampling frequency of ${sampling_frequency_hz} [Hz]
- and lasted ${'{0:.2f}'.format(test_duration_hz)} [hours].
+This test has been performed with a **sampling frequency of ${sampling_frequency_hz} [Hz]**
+ and **lasted ${'{0:.2f}'.format(test_duration_hz)} [hours]**.
 
 <h2>Results</h2>
 
 The Power Spectral Densities (PSD) of the four detector outputs and of 
 thier opportune combinations I, Q, U have been estimated using Welch's method as described in 
 "Numerical recipes - The art of Scientific Computing", W.H. Press et al., Third edition
-, pp.652-662. The function "signal.welch" of the Python library "scipy" has been used to 
+, pp.652-662. The function `signal.welch` of the Python library `scipy` has been used to 
 implement it in the code.
 
-The original data samples have been divided into ${n_chunks} segments of equal length. 
+The original data samples have been divided into **${n_chunks} segments** of equal length. 
 For each of them, the periodogram has been estimated and then the average at each 
-frequency has been computed. Each segment has been detrended by subtracting a ${detrend} fit of the data.
+frequency has been computed. Each segment has been **detrended** by subtracting a *${detrend} fit* of the data.
 
 <h2>White noise and 1/f estimation</h2>
 
-The white noise level has been estimated calculating the median value of the spectrum starting 
-from ${right_freq_hz} [Hz]. 
-The slope of the pink spectrum has been extracted with a linear fit of the data until 
-${left_freq_hz} [Hz]. 
-The knee frequency has been estimated by doing the intersection between the median of the right
-part of the spectrum and the linear fit of the left part of the spectrum.
+The *white noise level* has been estimated calculating the median value of the spectrum starting 
+**from ${right_freq_hz} [Hz]** up to the higher frequency. 
+The *slope of the pink spectrum* has been extracted with a linear fit of the left part of the spectrum **until ${left_freq_hz} [Hz]**. 
+The *knee frequency* has been estimated by doing the intersection between the linear fit of the left part of the spectrum 
+and the median of the right part of the spectrum.
 
 <h3>Demodolated detector outputs</h3>
 
@@ -52,7 +51,6 @@ DEM3/Q2   | ${'{:0.0f}'.format(DEM3Q2['f_knee_hz'] * 1000)} &#177; ${'{:0.0f}'.f
 
 
 *To estimate the uncertainty on the white noise level has been used the median deviation.
-
 
 <h3>Stokes parameters signals</h3>
 
@@ -78,10 +76,16 @@ Q       | ${'{:0.0f}'.format(Q['f_knee_hz']* 1000)} &#177; ${'{:0.0f}'.format(Q[
 U       | ${'{:0.0f}'.format(U['f_knee_hz']* 1000)} &#177; ${'{:0.0f}'.format(U['delta_f_knee_hz'] * 1000)} | ${U['slope']} &#177; ${U['delta_slope']} | ${U['WN_level_adu2_hz']} &#177; ${U['delta_WN_level_adu2_hz']}
 
 
-The 1/f noise is reduced of a factor about 10<sup>${reduction_factor_1f}</sup>.
+The 1/f noise is *reduced* of a factor about 10<sup>${reduction_factor_1f}</sup>.
 
 *To estimate the uncertainty on the white noise level has been used the median deviation.
 
+
+</h2>Spectrograms</h2>
+
+![](${polarimeter_name}_spectrogram_DEM.svg){: class="plot"} 
+![](${polarimeter_name}_spectrogram_PWR.svg){: class="plot"}
+![](${polarimeter_name}_spectrogram_IQU.svg){: class="plot"}
 
 <h2>Spectra comparison</h2>
 
