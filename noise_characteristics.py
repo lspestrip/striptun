@@ -6,7 +6,7 @@
 from argparse import ArgumentParser
 from file_access import load_timestream
 from json_save import save_parameters_to_json
-from reports import create_report
+from reports import create_report, get_code_version_params
 from scipy import signal
 import logging as log
 import matplotlib.pyplot as plt
@@ -484,7 +484,7 @@ def main():
                                      fkneeIQU, delta_fkneeIQU, alphaIQU, delta_alphaIQU,
                                      WN_levelIQU, delta_WN_levelIQU)
 
-    save_parameters_to_json(params=params,
+    save_parameters_to_json(params=dict(params, **get_code_version_params()),
                             output_file_name=os.path.join(args.output_path,
                                                           'noise_characteristics_results.json'))
 
