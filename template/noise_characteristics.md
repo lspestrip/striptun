@@ -5,7 +5,7 @@
 This document contains a preliminary analysis of the noise characteristics for
 the Strip polarimeter **${polarimeter_name}**.
 
-The report has been generated on ${date} using striptun v${striptun_version}
+The report has been generated on ${date} using *striptun v${striptun_version}*
 (commit `${latest_git_commit}`). 
 
 This test has been performed with a **sampling frequency of ${sampling_frequency_hz} [Hz]**
@@ -81,12 +81,6 @@ The 1/f noise is *reduced* of a factor about 10<sup>${reduction_factor_1f}</sup>
 *To estimate the uncertainty on the white noise level has been used the median deviation.
 
 
-</h2>Spectrograms</h2>
-
-![](${polarimeter_name}_spectrogram_DEM.svg){: class="plot"} 
-![](${polarimeter_name}_spectrogram_PWR.svg){: class="plot"}
-![](${polarimeter_name}_spectrogram_IQU.svg){: class="plot"}
-
 <h2>Spectra comparison</h2>
 
 In this section spectra are compared in order to highlight possible similarities or discrepancies.
@@ -112,5 +106,12 @@ In this section spectra are compared in order to highlight possible similarities
 <h3>U signals</h3>
 
 ![](${polarimeter_name}_PSD_DEM1_U1_DEM2_U2_U.svg){: class="plot"}
+
+
+<h3>Spectrograms</h3>
+
+![](${polarimeter_name}_spectrogram_DEM.png){: class="plot"} 
+![](${polarimeter_name}_spectrogram_PWR.png){: class="plot"}
+![](${polarimeter_name}_spectrogram_IQU.png){: class="plot"}
 
 

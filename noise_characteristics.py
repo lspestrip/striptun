@@ -77,10 +77,11 @@ def get_fft(sampling_frequency, data, n_chunks, detrend='linear', **kwargs):
     cdata = data[0:(len(data)//2)*2]
     
     N = len(cdata)
-    freq, fft = signal.welch(cdata, sampling_frequency, nperseg=N/n_chunks, axis=0, detrend=detrend,
+    nperseg = np.int(N/n_chunks)
+    freq, fft = signal.welch(cdata, sampling_frequency, nperseg=nperseg, axis=0, detrend=detrend,
                              **kwargs)
-    spectrogram = signal.spectrogram(cdata, sampling_frequency, window='hanning',
-                                     nperseg=N/n_chunks, axis=0, detrend=detrend, **kwargs)
+    spectrogram = signal.spectrogram(cdata, sampling_frequency, window='hanning', nperseg=nperseg,
+                                     axis=0, detrend=detrend, **kwargs)
     return freq[1:], fft[1:], spectrogram
 
 
@@ -216,8 +217,10 @@ def create_plots(polarimeter_name, freq, fftDEM, fit_parDEM, labelsDEM, fftPWR, 
         plt.xticks(fontsize=16)
         plt.yticks(fontsize=16)
 
-    def save_plot(title, output_path):
+    def save_plot(title, output_path, spectrogram=False):
         plot_file_path = os.path.join(output_path, title + '.svg')
+        if spectrogram is True:
+            plot_file_path = os.path.join(output_path, title)
         plt.savefig(plot_file_path, bbox_inches='tight')
         log.info('Saving plot into file "%s"', plot_file_path)
 
@@ -260,7 +263,7 @@ def create_plots(polarimeter_name, freq, fftDEM, fit_parDEM, labelsDEM, fftPWR, 
             ax.set_title(tit)
         fig.text(0.5, 0.04, 'Time [sec]', ha='center', fontsize=20)
         fig.text(0.04, 0.5, 'Frequency [Hz]', va='center', rotation='vertical', fontsize=20)
-        save_plot(replace(title), output_path) 
+        save_plot(replace(title), output_path, spectrogram=True) 
 
         
     # Plot DEM outputs separately        
@@ -448,7 +451,7 @@ def main():
      delta_WN_levelDEM) = get_noise_characteristics(
         freq, fftDEM, args.left_freq, args.right_freq)
     [log.info('Computed fknee, alpha, WN_level for ' + nam + ' outputs') for nam in DEM]
-
+    
     fftPWR, spectrogramPWR = get_fft(SAMPLING_FREQUENCY_HZ, dataPWR, args.n_chunks,
                                      detrend=args.detrend)[1:]   
     (fit_parPWR, fkneePWR, delta_fkneePWR, alphaPWR, delta_alphaPWR, WN_levelPWR,
