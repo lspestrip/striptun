@@ -106,22 +106,22 @@ def load_hdf5_file(input_file):
         if 'time_series' in h5_file:
             dataset = h5_file['time_series']
             return dict(h5_file.attrs.items()), Timestream(
-                time_s=dataset['time_s'],
-                pctime=dataset['pctime'],
-                phb=dataset['phb'],
-                record=dataset['record'],
-                demodulated=np.vstack([dataset[x] for x in (
+                time_s=dataset['time_s'].astype(np.float),
+                pctime=dataset['pctime'].astype(np.float),
+                phb=dataset['phb'].astype(np.int),
+                record=dataset['record'].astype(np.int),
+                demodulated=np.vstack([dataset[x].astype(np.float) for x in (
                     'dem_Q1_ADU',
                     'dem_U1_ADU',
                     'dem_U2_ADU',
                     'dem_Q2_ADU')]).transpose(),
-                power=np.vstack([dataset[x] for x in (
+                power=np.vstack([dataset[x].astype(np.float) for x in (
                     'pwr_Q1_ADU',
                     'pwr_U1_ADU',
                     'pwr_U2_ADU',
                     'pwr_Q2_ADU')]).transpose(),
-                rfpower_db=dataset['rfpower_dB'],
-                freq_hz=dataset['freq_Hz'],
+                rfpower_db=dataset['rfpower_dB'].astype(np.float),
+                freq_hz=dataset['freq_Hz'].astype(np.float),
             )
         else:
             return None, None
