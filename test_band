@@ -1,0 +1,36 @@
+blind_idx = ...
+mask = np.array([0, 0, 0, 0])
+mask[blind_idx] = 1
+
+mask = np.arange(4) == blind_idx
+central_nu_det = np.ma.masked_array(central_nu_det, mask=mask)
+
+
+def test_calculations():
+
+#square band
+    bandwidth = 7.0
+    central_frequency = 43.0
+    min_freq = 38.0
+    max_freq = 50.0
+    num_of_points = 121
+
+    nu = np.linspace(min_freq, max_freq, num_of_points)
+    band = np.zeros(num_of_points)
+    band[np.abs(nu - central_frequency) <= bandwidth / 2] = 1.0
+
+    computed_cfreq, computed_bwidth = get_central_nu_bandwidth(nu, band)
+    assertAlmostEqual(computed_cfreq, central_frequency)
+    assertAlmostEqual(np.abs(computed_bwidth - bandwidth) < 2*(max_freq-min_freq)/num_of_points)
+
+#triangular band
+    min_freq = 38.0
+    max_freq = 50.0
+    num_of_points = 121
+
+    nu = np.linspace(min_freq, max_freq, num_of_points)
+    band = np.zeros(num_of_points)
+    band = (nu-min_freq)/(max_freq-min_freq)
+    computed_cfreq, computed_bwidth = get_central_nu_bandwidth(nu, band)
+
+    assertAlmostEqual(np.abs(computed_bwidth - bandwidth) < 2*(max_freq-min_freq)/num_of_points)
