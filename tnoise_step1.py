@@ -10,7 +10,7 @@ from shutil import copyfile
 from typing import Any, Dict, List, Tuple
 
 from json_save import save_parameters_to_json
-from reports import create_report
+from reports import create_report, get_code_version_params
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
@@ -327,7 +327,7 @@ def main():
                                      data=power,
                                      regions=regions)
     params['data_url'] = args.input_url
-    save_parameters_to_json(params=params,
+    save_parameters_to_json(params=dict(params, **get_code_version_params()),
                             output_file_name=os.path.join(args.output_path,
                                                           'tnoise_step1_results.json'))
 
