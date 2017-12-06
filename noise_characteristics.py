@@ -3,14 +3,16 @@
 
 '''Estimates the noise characteristics of a given polarimeter.'''
 
-from json_save import save_parameters_to_json
 from argparse import ArgumentParser
+from file_access import load_timestream
+from json_save import save_parameters_to_json
+from reports import create_report, get_code_version_params
 from scipy import signal
-from reports import create_report
 import logging as log
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+
 
 SAMPLING_FREQUENCY_HZ = 25.0 # Hz
 
@@ -22,6 +24,7 @@ PWR = ['PWR0/Q1', 'PWR1/U1', 'PWR2/U2', 'PWR3/Q2']
 STOKES = ['I', 'Q', 'U']
 
 FIGSIZE = (10, 7)
+
 
 def get_stokes(pwr_data, dem_data):
     """
@@ -74,9 +77,12 @@ def get_fft(sampling_frequency, data, n_chunks, detrend='linear', **kwargs):
     cdata = data[0:(len(data)//2)*2]
     
     N = len(cdata)
-    freq, fft = signal.welch(cdata, sampling_frequency, nperseg=N/n_chunks, axis=0, detrend=detrend,
+    nperseg = np.int(N/n_chunks)
+    freq, fft = signal.welch(cdata, sampling_frequency, nperseg=nperseg, axis=0, detrend=detrend,
                              **kwargs)
-    return freq[1:], fft[1:]
+    spectrogram = signal.spectrogram(cdata, sampling_frequency, window='hanning', nperseg=nperseg,
+                                     axis=0, detrend=detrend, **kwargs)
+    return freq[1:], fft[1:], spectrogram
 
 
 def get_noise_characteristics(freq, fft, left_freq, right_freq, totalPWR=False):
@@ -120,13 +126,18 @@ def get_noise_characteristics(freq, fft, left_freq, right_freq, totalPWR=False):
         a, b = ab
         delta_a, delta_b = (cov[0, 0], cov[1, 1])
         
-        # calculate median value of the right part of the spectrum
+        # calculate median value of the right part of the spectrum and the knee frequency
         if totalPWR:
             c, fknee_ = (np.full_like(a, np.NaN), np.full_like(a, np.NaN))
         else:
             c = np.median(np.log(fft[f_idx_right:]), axis=0)
             fknee_ = np.exp((c - b) / a)
         fit_par = np.row_stack([a, b, c])
+
+        delta_c = np.sum(np.abs(np.log(fft[f_idx_right:]) - c), axis=0) / len(fft[f_idx_right:])
+        delta_fknee_ = fknee_ / np.abs(a) * np.sqrt(((c - b) / a)**2 * delta_a**2 + delta_b**2 +
+                                                    delta_c**2)
+        delta_median_ = np.exp(c) * delta_c
 
         # uncertanties estimation
         def get_right_number_of_decimals(x, delta_x):
@@ -138,19 +149,15 @@ def get_noise_characteristics(freq, fft, left_freq, right_freq, totalPWR=False):
             new_num_dec = np.int_(np.ceil(np.abs(np.log10(delta_x))))
             return get_new_x(x, new_num_dec), get_new_x(delta_x, new_num_dec)
 
-        delta_c = np.sum(np.abs(np.log(fft[f_idx_right:]) - c), axis=0) / len(fft[f_idx_right:])
-        delta_fknee_ = fknee_ / np.abs(a) * np.sqrt(((c - b) / a)**2 * delta_a**2 + delta_b**2 +
-                                                    delta_c**2)
-        delta_median_ = np.exp(c) * delta_c
-
         if totalPWR:
             fknee, delta_fknee = (np.full_like(fknee_, np.NaN), np.full_like(delta_fknee_, np.NaN))
             median, delta_median = (np.full_like(c, np.NaN), np.full_like(delta_median_, np.NaN))
         else:
             fknee, delta_fknee = get_right_number_of_decimals(fknee_, delta_fknee_)
+            delta_fknee[fknee < freq.min()], fknee[fknee < freq.min()] = np.NaN, np.NaN
             median, delta_median = get_right_number_of_decimals(np.exp(c), delta_median_)
         slope, delta_slope = get_right_number_of_decimals(-a, delta_a)
-        
+            
         return fit_par, fknee, delta_fknee, slope, delta_slope, median, delta_median
                 
     
@@ -169,7 +176,8 @@ def get_noise_characteristics(freq, fft, left_freq, right_freq, totalPWR=False):
 
 
 def create_plots(polarimeter_name, freq, fftDEM, fit_parDEM, labelsDEM, fftPWR, fit_parPWR,
-                 labelsPWR, fftIQU, fit_parIQU, labelsSTOKES, output_path, **kwargs):
+                 labelsPWR, fftIQU, fit_parIQU, labelsSTOKES, spectrogramDEM, spectrogramPWR,
+                 spectrogramIQU, output_path, **kwargs):
     """
     This function shows the fft data.
 
@@ -209,8 +217,10 @@ def create_plots(polarimeter_name, freq, fftDEM, fit_parDEM, labelsDEM, fftPWR, 
         plt.xticks(fontsize=16)
         plt.yticks(fontsize=16)
 
-    def save_plot(title, output_path):
+    def save_plot(title, output_path, spectrogram=False):
         plot_file_path = os.path.join(output_path, title + '.svg')
+        if spectrogram is True:
+            plot_file_path = os.path.join(output_path, title)
         plt.savefig(plot_file_path, bbox_inches='tight')
         log.info('Saving plot into file "%s"', plot_file_path)
 
@@ -236,10 +246,26 @@ def create_plots(polarimeter_name, freq, fftDEM, fit_parDEM, labelsDEM, fftPWR, 
             plt.loglog(freq, fft[:, i], **kwargs)
             a, b, c = fit_par[:, i]
             plt.loglog(freq, freq**a * np.e**b, 'r', lw=2)
+            plt.loglog(freq, np.full_like(freq, 2*np.exp(c)), 'r--', lw=2)
             plt.loglog(freq, np.full_like(freq, np.exp(c)), 'r', lw=2)
             axis_labels()
             save_plot(replace(title), output_path)
 
+    def plot_spectrogram(title, spectrogram, labels, output_path):
+        f, t, Sxx = spectrogram
+        Sxx_all = (Sxx[:, i, :] for i in range(Sxx.shape[-2]))
+        fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(2, 2, sharex='col', sharey='row',
+                                                     figsize=FIGSIZE)
+        fig.suptitle(title, fontsize=22)
+        axis = (ax0, ax1, ax2, ax3)
+        for ax, sxx, tit in zip(axis, Sxx_all, labels):
+            ax.pcolormesh(t, f, sxx)
+            ax.set_title(tit)
+        fig.text(0.5, 0.04, 'Time [sec]', ha='center', fontsize=20)
+        fig.text(0.04, 0.5, 'Frequency [Hz]', va='center', rotation='vertical', fontsize=20)
+        save_plot(replace(title), output_path, spectrogram=True) 
+
+        
     # Plot DEM outputs separately        
     single_plots(labelsDEM, freq, fftDEM, fit_parDEM, output_path)
 
@@ -273,7 +299,19 @@ def create_plots(polarimeter_name, freq, fftDEM, fit_parDEM, labelsDEM, fftPWR, 
     legend_labels = labelsDEM[1:3] + [labelsSTOKES[2]]
     comulative_plots(title, freq, fftU1U2U, legend_labels, output_path)
 
+    # Plot spectrogram DEM
+    title = polarimeter_name + ' spectrogram DEM'
+    plot_spectrogram(title, spectrogramDEM, labelsDEM, output_path)
+    
+    # Plot spectrogram PWR
+    title = polarimeter_name + ' spectrogram PWR'
+    plot_spectrogram(title, spectrogramPWR, labelsPWR, output_path)
+    
+    # Plot spectrogram IQU
+    title = polarimeter_name + ' spectrogram IQU'
+    plot_spectrogram(title, spectrogramIQU, labelsSTOKES, output_path)
 
+    
 def get_y_intercept_1_f_reduction(freq, fit_par):
     '''Compute the value of the y-intercept and return an estimation of the mean value of 1/f 
        reduction.
@@ -389,9 +427,9 @@ def main():
 
     # Load from the text file only the columns containing the output of the four detectors
     log.info('Loading file "{0}"'.format(args.input_file_path))
-    dataDEM = np.loadtxt(args.input_file_path, skiprows=1, usecols=(3, 4, 5, 6))
+    metadata, data = load_timestream(args.input_file_path)
+    dataDEM, dataPWR = data.demodulated, data.power
     durationDEM = len(dataDEM) / SAMPLING_FREQUENCY_HZ # sec
-    dataPWR = np.loadtxt(args.input_file_path, skiprows=1, usecols=(7, 8, 9, 10))
     durationPWR = len(dataPWR) / SAMPLING_FREQUENCY_HZ # sec
 
     assert durationPWR == durationDEM
@@ -407,21 +445,24 @@ def main():
         'Computing PSD with number-of-chunks {0}, 1/f-upper-frequency {1}, WN-lower-frequency{2}' +
         ', detrend {3}'.format(args.n_chunks, args.left_freq, args.right_freq, args.detrend))
     
-    freq, fftDEM = get_fft(SAMPLING_FREQUENCY_HZ, dataDEM, args.n_chunks, detrend=args.detrend)   
+    freq, fftDEM, spectrogramDEM = get_fft(SAMPLING_FREQUENCY_HZ, dataDEM, args.n_chunks,
+                                          detrend=args.detrend)   
     (fit_parDEM, fkneeDEM, delta_fkneeDEM, alphaDEM, delta_alphaDEM, WN_levelDEM,
      delta_WN_levelDEM) = get_noise_characteristics(
         freq, fftDEM, args.left_freq, args.right_freq)
-    [log.info('Computed fknee, alpha, WN_level for' + nam + ' outputs') for nam in DEM]
-
-    fftPWR = get_fft(SAMPLING_FREQUENCY_HZ, dataPWR, args.n_chunks, detrend=args.detrend)[-1]   
+    [log.info('Computed fknee, alpha, WN_level for ' + nam + ' outputs') for nam in DEM]
+    
+    fftPWR, spectrogramPWR = get_fft(SAMPLING_FREQUENCY_HZ, dataPWR, args.n_chunks,
+                                     detrend=args.detrend)[1:]   
     (fit_parPWR, fkneePWR, delta_fkneePWR, alphaPWR, delta_alphaPWR, WN_levelPWR,
      delta_WN_levelPWR) = get_noise_characteristics(
         freq, fftPWR, args.left_freq, args.right_freq, totalPWR=True)
-    [log.info('Computed alpha for' + pwr + ' outputs') for pwr in PWR]
+    [log.info('Computed alpha for ' + pwr + ' outputs') for pwr in PWR]
     
     # Calculate the PSD for the combinations of the 4 detector outputs that returns I, Q, U
     IQU = get_stokes(dataPWR, dataDEM)
-    fftIQU = get_fft(SAMPLING_FREQUENCY_HZ, IQU, args.n_chunks, detrend=args.detrend)[-1]
+    fftIQU, spectrogramIQU = get_fft(SAMPLING_FREQUENCY_HZ, IQU, args.n_chunks,
+                                     detrend=args.detrend)[1:]
     (fit_parIQU, fkneeIQU, delta_fkneeIQU, alphaIQU, delta_alphaIQU, WN_levelIQU,
      delta_WN_levelIQU) = get_noise_characteristics(
         freq, fftIQU, args.left_freq, args.right_freq, totalPWR='stokes')
@@ -432,7 +473,8 @@ def main():
     
     # Produce the plots
     create_plots(args.polarimeter_name, freq, fftDEM, fit_parDEM, DEM, fftPWR, fit_parPWR, PWR,
-                 fftIQU, fit_parIQU, STOKES, args.output_path)
+                 fftIQU, fit_parIQU, STOKES, spectrogramDEM, spectrogramPWR, spectrogramIQU,
+                 args.output_path)
         
     params = build_dict_from_results(args.polarimeter_name, duration, args.left_freq,
                                      args.right_freq, args.n_chunks, args.detrend, reduction1_f,
@@ -442,7 +484,7 @@ def main():
                                      fkneeIQU, delta_fkneeIQU, alphaIQU, delta_alphaIQU,
                                      WN_levelIQU, delta_WN_levelIQU)
 
-    save_parameters_to_json(params=params,
+    save_parameters_to_json(params=dict(params, **get_code_version_params()),
                             output_file_name=os.path.join(args.output_path,
                                                           'noise_characteristics_results.json'))
 
