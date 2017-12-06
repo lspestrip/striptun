@@ -5,8 +5,8 @@
 This document contains a preliminary analysis of the noise characteristics for
 the Strip polarimeter **${polarimeter_name}**.
 
-The report has been generated on ${date} using *striptun v${striptun_version}*
-(commit `${latest_git_commit}`). 
+The report has been generated on ${analysis_date} using striptun
+v${striptun_version} (commit `${latest_git_commit}`). 
 
 This test has been performed with a **sampling frequency of ${sampling_frequency_hz} [Hz]**
  and **lasted ${'{0:.2f}'.format(test_duration_hz)} [hours]**.

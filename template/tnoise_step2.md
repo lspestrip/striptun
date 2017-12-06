@@ -5,8 +5,8 @@
 This document contains a preliminary analysis of the noise temperature for
 the Strip polarimeter ${polarimeter_name}.
 
-The report has been generated on ${date} using striptun v${striptun_version}
-(commit `${latest_git_commit}`).
+The report has been generated on ${analysis_date} using striptun
+v${striptun_version} (commit `${latest_git_commit}`).
 
 <h2>Results</h2>
 
