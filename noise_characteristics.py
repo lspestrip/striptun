@@ -259,7 +259,7 @@ def create_plots(polarimeter_name, freq, fftDEM, fit_parDEM, labelsDEM, fftPWR, 
         fig.suptitle(title, fontsize=22)
         axis = (ax0, ax1, ax2, ax3)
         for ax, sxx, tit in zip(axis, Sxx_all, labels):
-            ax.pcolormesh(t, f, sxx)
+            ax.pcolormesh(t, f, np.log10(sxx))
             ax.set_title(tit)
         fig.text(0.5, 0.04, 'Time [sec]', ha='center', fontsize=20)
         fig.text(0.04, 0.5, 'Frequency [Hz]', va='center', rotation='vertical', fontsize=20)
