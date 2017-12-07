@@ -8,7 +8,16 @@ the Strip polarimeter ${polarimeter_name}.
 The report has been generated on ${analysis_date} using striptun
 v${striptun_version} (commit `${latest_git_commit}`).
 
+Data have been taken from
+% if 'http' in test_file_name:
+[${test_file_name}](${test_file_name})
+% else:
+${test_file_name}
+% endif
+
 <h2>Results</h2>
+
+![](temperature_timestream.svg){: class="plot"}
 
   Parameter | Gaussian estimat
 :----------:| -----------------:

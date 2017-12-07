@@ -309,10 +309,32 @@ def assemble_results(polarimeter_name: str, log_ln: LogLikelihood, popt, pcov):
     return result
 
 
+def save_plot(output_dir, file_name):
+    file_path = os.path.join(output_dir, file_name)
+    plt.savefig(file_path, bbox_inches='tight')
+    log.info('plot saved to file "%s"', file_path)
+
+
 def create_plots(log_ln, params, output_path: str):
     fig = plt.figure()
     temperatures_a = np.array([x['t_load_a_K'] for x in params['steps']])
     temperatures_b = np.array([x['t_load_b_K'] for x in params['steps']])
+
+    if np.var(temperatures_a) > np.var(temperatures_b):
+        varying_t = temperatures_a
+    else:
+        varying_t = temperatures_b
+
+    for pwr in (0, 1, 2, 3):
+        plt.plot(varying_t, [log_ln.voltages[pwr][i] for i in range(len(log_ln.temperatures_a))],
+                 '-o', label='PWR{0}'.format(pwr))
+
+    plt.legend()
+    plt.xlabel('Temperature of the load [K]')
+    plt.ylabel('Output [ADU]')
+    save_plot(output_path, 'temperature_timestream.svg')
+
+    fig = plt.figure()
 
     pol_gain, gain_prod = \
         [params[x]['mean'] for x in ('average_gain', 'gain_prod')]
@@ -356,11 +378,7 @@ def create_plots(log_ln, params, output_path: str):
     # visually pleasant)
     plt.axes().set_aspect('equal')
 
-    lincorr_plot_file_path = os.path.join(
-        output_path, 'tnoise_linear_correlation.svg')
-    plt.savefig(lincorr_plot_file_path, bbox_inches='tight')
-    log.info('linear correlation plot saved to file "%s"',
-             lincorr_plot_file_path)
+    save_plot(output_path, 'tnoise_linear_correlation.svg')
 
 
 def parse_arguments():
@@ -436,6 +454,7 @@ def main():
 
     params = assemble_results(args.polarimeter_name,
                               log_ln, popt, pcov)
+    params['test_file_name'] = args.raw_file
 
     save_parameters_to_json(params=dict(params, **get_code_version_params()),
                             output_file_name=os.path.join(args.output_path,
