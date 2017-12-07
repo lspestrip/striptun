@@ -23,6 +23,8 @@ import matplotlib.pylab as plt
 from file_access import load_timestream
 from reports import create_report, get_code_version_params
 
+SAMPLING_FREQUENCY_HZ = 25.0
+
 NUM_OF_PARAMS = 3
 PARAMETER_NAMES = ('average_gain', 'gain_prod', 'tnoise')
 Parameters = namedtuple('Parameters', PARAMETER_NAMES)
@@ -111,7 +113,7 @@ class LogLikelihood:
     for the best estimate of the gain and noise temperature. It is never used
     directly, only as a base class for "LogLikelihoodForFit".'''
 
-    def __init__(self, blind_channel, voltages, voltage_std,
+    def __init__(self, blind_channel, voltages, voltage_std, wn_level,
                  temperatures_a, temperatures_b):
         assert len(voltages) == 4, '''
             "voltages" must be an array of 4 elements, one for each PWR output'''
@@ -122,6 +124,7 @@ class LogLikelihood:
 
         self.voltages = voltages
         self.voltage_std = voltage_std
+        self.wn_level = wn_level
         self.temperatures_a = temperatures_a
         self.temperatures_b = temperatures_b
 
@@ -151,9 +154,9 @@ class LogLikelihoodForFit(LogLikelihood):
     optimal estimate for the gain and noise temperature by direct minimization.
     '''
 
-    def __init__(self, blind_channel, voltages, voltage_std,
+    def __init__(self, blind_channel, voltages, voltage_std, wn_level,
                  temperatures_a, temperatures_b):
-        super().__init__(blind_channel, voltages, voltage_std,
+        super().__init__(blind_channel, voltages, voltage_std, wn_level,
                          temperatures_a, temperatures_b)
 
     def __call__(self, xdata, average_gain, prod_gain, tnoise):
@@ -178,7 +181,17 @@ class LogLikelihoodForFit(LogLikelihood):
         return result
 
 
-def extract_average_values(power_data, metadata, tnoise1_results, num):
+def calc_wn_level(values):
+    from scipy.signal import welch
+
+    _, psd = welch(values, fs=SAMPLING_FREQUENCY_HZ,
+                   window='hann', nperseg=2.0 * SAMPLING_FREQUENCY_HZ,
+                   detrend='linear')
+
+    return float(np.median(psd))
+
+
+def extract_average_values(power_data, dem_data, metadata, tnoise1_results, num):
     '''Compute statistics of PWR output for each temperature step
 
     Tries to find `num` temperature steps by cycling over the statistics of the
@@ -209,6 +222,7 @@ def extract_average_values(power_data, metadata, tnoise1_results, num):
 
     voltages = [np.empty(len(regions)) for i in range(4)]
     voltage_std = [np.empty(len(regions)) for i in range(4)]
+    wn_level = [np.empty(len(regions)) for i in range(4)]
     for idx, cur_region in enumerate(regions):
         start, stop = [cur_region[x] for x in ('index0', 'index1')]
 
@@ -216,8 +230,9 @@ def extract_average_values(power_data, metadata, tnoise1_results, num):
             arr = power_data[start:stop, i]
             voltages[i][idx] = np.mean(arr) - offsets[i]
             voltage_std[i][idx] = np.std(arr)
+            wn_level[i][idx] = calc_wn_level(dem_data[start:stop, i])
 
-    return voltages, voltage_std
+    return voltages, voltage_std, wn_level
 
 
 def extract_temperatures(test_metadata):
@@ -267,12 +282,16 @@ def assemble_results(polarimeter_name: str, log_ln: LogLikelihood, popt, pcov):
             't_load_b_K': log_ln.temperatures_b[idx],
             'pwr0_adu': log_ln.voltages[0][idx],
             'pwr0_rms_adu': log_ln.voltage_std[0][idx],
+            'pwr0_wn_level': log_ln.wn_level[0][idx],
             'pwr1_adu': log_ln.voltages[1][idx],
             'pwr1_rms_adu': log_ln.voltage_std[1][idx],
+            'pwr1_wn_level': log_ln.wn_level[1][idx],
             'pwr2_adu': log_ln.voltages[2][idx],
             'pwr2_rms_adu': log_ln.voltage_std[2][idx],
+            'pwr2_wn_level': log_ln.wn_level[2][idx],
             'pwr3_adu': log_ln.voltages[3][idx],
             'pwr3_rms_adu': log_ln.voltage_std[3][idx],
+            'pwr3_wn_level': log_ln.wn_level[3][idx],
         } for idx in range(len(log_ln.temperatures_a))],
     }
 
@@ -290,21 +309,10 @@ def assemble_results(polarimeter_name: str, log_ln: LogLikelihood, popt, pcov):
     return result
 
 
-def estimate_statistics(arr) -> Dict['str', float]:
-    'Small helper function to compute some statistics for an array'
-
-    mean = np.mean(arr)
-    std = np.std(arr)
-
-    lower, median, upper = np.percentile(arr, (2.5, 50, 97.5))
-
-    return {
-        'mean': mean,
-        'std': std,
-        'median': median,
-        'lower_err_95CL': median - lower,
-        'upper_err_95CL': upper - median,
-    }
+def save_plot(output_dir, file_name):
+    file_path = os.path.join(output_dir, file_name)
+    plt.savefig(file_path, bbox_inches='tight')
+    log.info('plot saved to file "%s"', file_path)
 
 
 def create_plots(log_ln, params, output_path: str):
@@ -312,10 +320,28 @@ def create_plots(log_ln, params, output_path: str):
     temperatures_a = np.array([x['t_load_a_K'] for x in params['steps']])
     temperatures_b = np.array([x['t_load_b_K'] for x in params['steps']])
 
+    if np.var(temperatures_a) > np.var(temperatures_b):
+        varying_t = temperatures_a
+    else:
+        varying_t = temperatures_b
+
+    for pwr in (0, 1, 2, 3):
+        plt.plot(varying_t, [log_ln.voltages[pwr][i] for i in range(len(log_ln.temperatures_a))],
+                 '-o', label='PWR{0}'.format(pwr))
+
+    plt.legend()
+    plt.xlabel('Temperature of the load [K]')
+    plt.ylabel('Output [ADU]')
+    save_plot(output_path, 'temperature_timestream.svg')
+
+    fig = plt.figure()
+
     pol_gain, gain_prod = \
         [params[x]['mean'] for x in ('average_gain', 'gain_prod')]
 
+    # These two variables are used to draw the y=x blue line
     min_volt, max_volt = None, None
+
     for pwr_idx, pwr_params in enumerate(log_ln.pwr_constants):
         sign, trig = pwr_params
         estimates = -0.25 * (
@@ -326,6 +352,8 @@ def create_plots(log_ln, params, output_path: str):
 
         label = 'pwr{0}_adu'.format(pwr_idx)
         voltages = np.array([x[label] for x in params['steps']])
+
+        # Update min_volt and max_volt
         if pwr_idx == 0:
             min_volt, max_volt = np.min(voltages), np.max(voltages)
         else:
@@ -350,11 +378,7 @@ def create_plots(log_ln, params, output_path: str):
     # visually pleasant)
     plt.axes().set_aspect('equal')
 
-    lincorr_plot_file_path = os.path.join(
-        output_path, 'tnoise_linear_correlation.svg')
-    plt.savefig(lincorr_plot_file_path, bbox_inches='tight')
-    log.info('linear correlation plot saved to file "%s"',
-             lincorr_plot_file_path)
+    save_plot(output_path, 'tnoise_linear_correlation.svg')
 
 
 def parse_arguments():
@@ -401,17 +425,21 @@ def main():
     log.info('temperatures for load B: %s',
              str(temperatures_b))
 
-    voltages, voltage_std = extract_average_values(data.power, metadata, tnoise1_results,
-                                                   num=len(temperatures_a))
+    voltages, voltage_std, wn_level = \
+        extract_average_values(data.power, data.demodulated, metadata, tnoise1_results,
+                               num=len(temperatures_a))
     for idx, arr in enumerate(voltages):
         log.info('voltages for PWR%d: %s',
                  idx, ', '.join(['{0:.1f}'.format(x) for x in arr]))
         log.info('voltage RMS for PWR%d: %s',
                  idx, ', '.join(['{0:.1f}'.format(x) for x in voltage_std[idx]]))
+        log.info('WN for PWR%d: %s',
+                 idx, ', '.join(['{0:.1f}'.format(x) for x in wn_level[idx]]))
 
     log_ln = LogLikelihoodForFit(blind_channel=tnoise1_results['blind_channel'],
                                  voltages=voltages,
                                  voltage_std=voltage_std,
+                                 wn_level=wn_level,
                                  temperatures_a=temperatures_a,
                                  temperatures_b=temperatures_b)
 
@@ -426,6 +454,7 @@ def main():
 
     params = assemble_results(args.polarimeter_name,
                               log_ln, popt, pcov)
+    params['test_file_name'] = args.raw_file
 
     save_parameters_to_json(params=dict(params, **get_code_version_params()),
                             output_file_name=os.path.join(args.output_path,
