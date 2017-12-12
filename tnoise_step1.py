@@ -297,7 +297,7 @@ def main():
 
         regions[curve_idx] = \
             find_stable_regions(slopes=slopes[curve_idx],
-                                slope_threshold_adu_s=slope_threshold,
+                                slope_threshold_adu_s=1.5 * slope_threshold,
                                 duration_threshold_s=60.0,
                                 clipping_s=15.0,
                                 first_region_length=args.first_region_length)
