@@ -9,6 +9,7 @@ from typing import Any, Dict
 
 from mako.template import Template
 from markdown import markdown
+import mdx_mathjax
 
 from version import VERSION
 
@@ -78,6 +79,12 @@ def create_report(params: Dict[str, Any],
         <title>{title}</title>
         <meta charset="UTF-8">
         <link rel="stylesheet" href="report_style.css" type="text/css" />
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML'></script>
+        <script type="text/javascript">
+            MathJax.Hub.Config({{
+                "tex2jax": {{ inlineMath: [ [ '$', '$' ] ] }}
+            }});
+        </script>
     </head>
     <body>
         <div id="main">
@@ -89,7 +96,8 @@ def create_report(params: Dict[str, Any],
            contents=markdown(md_report, extensions=[
                'markdown.extensions.attr_list',
                'markdown.extensions.tables',
-               'markdown.extensions.toc']
+               'markdown.extensions.toc',
+               'mathjax']
     ))
 
     html_report_path = os.path.join(output_path, html_report_file)

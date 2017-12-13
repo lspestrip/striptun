@@ -147,19 +147,22 @@ class LogLikelihood:
                 (1.0, 0.0, 1.0),
             ]
 
+    def load_temp_at_detector(self, pwr_idx, unbalance):
+        ta_weight, tb_weight, cross_weight = self.ta_tb_weights[pwr_idx]
+        return (
+            ta_weight * self.temperatures_a +
+            tb_weight * self.temperatures_b +
+            cross_weight * (self.temperatures_a +
+                            self.temperatures_b) / 2 * unbalance
+        )
+
     def __call__(self, xdata, gain_q1, gain_u1, gain_u2, gain_q2, unbalance, tnoise):
         del xdata  # We're not going to use it
 
         result = np.array([])
-        for gain, weights in zip((gain_q1, gain_u1, gain_u2, gain_q2), self.ta_tb_weights):
-            ta_weight, tb_weight, cross_weight = weights
-            temperature = (
-                ta_weight * self.temperatures_a +
-                tb_weight * self.temperatures_b +
-                cross_weight * (self.temperatures_a +
-                                self.temperatures_b) / 2 * unbalance
-            )
-            estimates = -gain * (temperature * (1 + unbalance) + tnoise)
+        for pwr_idx, gain in enumerate((gain_q1, gain_u1, gain_u2, gain_q2)):
+            temperature = self.load_temp_at_detector(pwr_idx, unbalance)
+            estimates = -gain * (temperature + tnoise)
             result = np.concatenate((result, estimates))
 
         return result
@@ -293,6 +296,7 @@ def assemble_results(polarimeter_name: str, log_ln: LogLikelihood, popt, pcov):
         'title': ('Noise temperature analysis for polarimeter {0}'
                   .format(polarimeter_name)),
         'analysis_method': 'non-linear fit',
+        'phsw_state': log_ln.phsw_state,
         'steps': [{
             't_load_a_K': log_ln.temperatures_a[idx],
             't_load_b_K': log_ln.temperatures_b[idx],
