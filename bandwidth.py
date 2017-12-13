@@ -141,7 +141,7 @@ def get_central_nu_bandwidth(nu, data):
      -------
      out : numpy array of shape (4, ), numpy array of shape (4, )
      """
-    if np.allclose((nu[1:] - nu[:-1]), (nu[1:] - nu[:-1])[0]) is False:
+    if not np.allclose((nu[1:] - nu[:-1]), (nu[1:] - nu[:-1])[0], rtol=1e-3):
         raise ValueError('The frequency steps are not uniform! Check out!')
     if data.shape[-1] == len(data):
         data = data[..., None]
@@ -243,16 +243,22 @@ def build_dict_from_results(pol_name, duration, PSStatus, central_nu_det, bandwi
         'final_bandwidth_err': final_bandwidth_err,
     }
 
+    detailed_results = []
+
     for j, pss in enumerate(PSStatus):
+        cur_results = {}
         results['PSStatus' + '_' + str(j)] = pss
-        results['ps' + pss + '_' + str(j)] = {}
+        cur_results['PSStatus'] = pss
         for i, nam in enumerate(NAMING_CONVENTION):
             nam = nam.replace("/", "")
             if(pss == '0101' and i == 3 or pss == '0110' and i == 0):
                 central_nu_det[j, i] = 0
                 bandwidth_det[j, i] = 0
-            results['ps' + pss + '_' + str(j)][nam] = {'central_nu': central_nu_det[j, i],
-                                                       'bandwidth': bandwidth_det[j, i]}
+            cur_results[nam] = {'central_nu': central_nu_det[j, i],
+                                'bandwidth': bandwidth_det[j, i]}
+        detailed_results.append(cur_results)
+
+    results['detailed_results'] = detailed_results
     return results
 
 
@@ -290,7 +296,6 @@ def AnalyzeBandTest(polarimeter_name, file_name, output_path):
     nooffdata = remove_offset(nu, data)
     new_nu, new_data, new_std_dev = get_frequency_range_and_data(
         nu, nooffdata)
-    # new_data = remove_offset(new_nu, new_data)
 
     # Setting to zero non physical values with negative gain
     new_data[new_data > 0] = 0
