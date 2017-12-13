@@ -56,6 +56,20 @@ ChamberTemperatures = namedtuple('ChamberTemperatures', [
 ])
 
 
+def detector_name(pwr_idx):
+    'Given a number 0..3, return a string containing the name of the polarimetric detector'
+    if pwr_idx == 0:
+        return 'Q1 (PWR0)'
+    elif pwr_idx == 1:
+        return 'U1 (PWR1)'
+    elif pwr_idx == 2:
+        return 'U2 (PWR2)'
+    elif pwr_idx == 3:
+        return 'Q2 (PWR3)'
+    else:
+        raise ValueError('invalid channel number {0}'.format(pwr_idx))
+
+
 def compute_T_load_attenuations(temperatures: Housekeepings,
                                 t_ambient: float = 300.0,
                                 wg_att: float = 0.110,
@@ -267,7 +281,7 @@ def y_factor_pairs(num_of_steps):
 def estimate_tnoise_and_gain(temp_a, temp_b, out_a, out_b):
     'Compute the noise temperature and gain from two temperature steps'
 
-    if temp_a == temp_b:
+    if np.abs(temp_a - temp_b) < 1.0:
         return 0.0, 0.0
 
     # The equation of the line is given by: y == out_a + gain * (x - temp_a)
@@ -277,12 +291,35 @@ def estimate_tnoise_and_gain(temp_a, temp_b, out_a, out_b):
     return noise_temp, gain
 
 
-def y_factor_estimates(log_ln):
+def y_factor_estimates(log_ln, unbalance):
     result = []
 
-    for idx_a, idx_b in y_factor_pairs(len(log_ln.temperatures_a)):
+    for idx1, idx2 in y_factor_pairs(len(log_ln.temperatures_a)):
         for pwr_idx in (0, 1, 2, 3):
-            pass
+            temperatures = log_ln.load_temp_at_detector(
+                pwr_idx=pwr_idx, unbalance=unbalance)
+            tnoise, gain = estimate_tnoise_and_gain(temp_a=temperatures[idx1],
+                                                    temp_b=temperatures[idx2],
+                                                    out_a=log_ln.voltages[pwr_idx][idx1],
+                                                    out_b=log_ln.voltages[pwr_idx][idx2])
+            if tnoise > 0.0:
+                result.append({
+                    'detector_idx': pwr_idx,
+                    'detector_name': detector_name(pwr_idx),
+                    'step_1_idx': idx1,
+                    'step_2_idx': idx2,
+                    'temperature_1': temperatures[idx1],
+                    'temperature_2': temperatures[idx2],
+                    'output_1': log_ln.voltages[pwr_idx][idx1],
+                    'output_2': log_ln.voltages[pwr_idx][idx2],
+                    'tnoise': tnoise,
+                    'gain': gain,
+                })
+
+    result.sort(key=lambda x: (x['detector_idx'],
+                               x['step_1_idx'], x['step_2_idx']))
+
+    return result
 
 
 def assemble_results(polarimeter_name: str, log_ln: LogLikelihood, popt, pcov):
@@ -313,7 +350,6 @@ def assemble_results(polarimeter_name: str, log_ln: LogLikelihood, popt, pcov):
             'pwr3_rms_adu': log_ln.voltage_std[3][idx],
             'pwr3_wn_level': log_ln.wn_level[3][idx],
         } for idx in range(len(log_ln.temperatures_a))],
-        'y_factor_estimates': y_factor_estimates(log_ln),
     }
 
     # Save the average and RMS of the fitting parameters
@@ -322,6 +358,8 @@ def assemble_results(polarimeter_name: str, log_ln: LogLikelihood, popt, pcov):
             'mean': popt[param_idx],
             'std': np.sqrt(pcov[param_idx, param_idx])
         }
+
+    result['y_factor_estimates'] = y_factor_estimates(log_ln, popt.unbalance)
 
     # Since NumPy matrices cannot be saved in JSON files, we convert it into a
     # straight list of floats
@@ -348,7 +386,7 @@ def create_timestream_plot(log_ln, params, output_path):
 
     for pwr in (0, 1, 2, 3):
         plt.plot(varying_t, [log_ln.voltages[pwr][i] for i in range(len(log_ln.temperatures_a))],
-                 '-o', label='PWR{0}'.format(pwr))
+                 '-o', label=detector_name(pwr))
 
     plt.legend()
     plt.xlabel('Temperature of the load [K]')
@@ -376,7 +414,7 @@ def create_model_match_plot(log_ln, params, output_path):
             max_volt = max(max_volt, np.max(voltages))
 
         plt.scatter(
-            voltages, model_estimates[pwr_idx], label='PWR{0}'.format(pwr_idx))
+            voltages, model_estimates[pwr_idx], label=detector_name(pwr_idx))
 
     # Straight line representing the 1:1 case (perfect match between
     # measurements and model)
@@ -394,9 +432,93 @@ def create_model_match_plot(log_ln, params, output_path):
     save_plot(output_path, 'tnoise_linear_correlation.svg')
 
 
+def create_tnoise_plot(log_ln, params, output_path):
+    _ = plt.figure(figsize=(8, 5))
+
+    best_fit = Parameters(*[params[x]['mean'] for x in PARAMETER_NAMES])
+
+    for pwr_idx in (0, 1, 2, 3):
+        temperature = log_ln.load_temp_at_detector(
+            pwr_idx=pwr_idx, unbalance=best_fit.unbalance)
+        plt.scatter(
+            temperature, log_ln.voltages[pwr_idx], label=detector_name(pwr_idx))
+
+    pwr_colors = {
+        0: '#202020',
+        1: '#606060',
+        2: '#909090',
+        3: '#b0b0b0',
+    }
+    for y_estimate in params['y_factor_estimates']:
+        tnoise, gain, temp1, temp2, out1 = [y_estimate[x] for x in (
+            'tnoise', 'gain', 'temperature_1', 'temperature_2', 'output_1')]
+        if np.abs(temp2 - temp1) < 1.0:
+            continue
+
+        x = np.linspace(-tnoise, np.max([temp1, temp2]), 2)
+        pwr_col = pwr_colors[y_estimate['detector_idx']]
+        plt.plot(x, out1 + gain * (x - temp1), color=pwr_col)
+        plt.scatter(-tnoise, 0.0, color=pwr_col)
+
+    plt.xlabel('Temperature of the load [K]')
+    plt.ylabel('Output [ADU]')
+    plt.legend()
+
+    save_plot(output_path, 'tnoise_estimates_from_y_factor.svg')
+
+
+def create_tnoise_matrix_plot(log_ln, params, output_path):
+
+    y_factor_estimates = params['y_factor_estimates']
+    min_tnoise = np.min([x['tnoise'] for x in y_factor_estimates])
+    max_tnoise = np.max([x['tnoise'] for x in y_factor_estimates])
+    detectors = set([x['detector_name'] for x in y_factor_estimates])
+
+    fig = plt.figure(figsize=(9, 3))
+
+    for cur_idx, cur_det in enumerate(sorted(detectors)):
+        ax = plt.subplot(1, 3, 1 + cur_idx)
+
+        cur_estimates = [x for x in y_factor_estimates
+                         if x['detector_name'] == cur_det]
+        matr_size = np.max(np.matrix(
+            [[x['step_1_idx'], x['step_2_idx']] for x in cur_estimates]).flatten()) + 1
+
+        # Build the strings used to label the ticks along the two axes
+        step_label = []
+        for i in range(matr_size):
+            # Find some temperature whose index matches "i"
+            bunch = [x['temperature_1'] for x in cur_estimates if x['step_1_idx'] == i] \
+                + [x['temperature_2']
+                    for x in cur_estimates if x['step_2_idx'] == i]
+            assert bunch
+            step_label.append('{0:.1f} K'.format(bunch[0]))
+
+        tnoise_matr = np.zeros((matr_size, matr_size))
+        for est in cur_estimates:
+            tnoise_matr[est['step_1_idx'], est['step_2_idx']] = est['tnoise']
+
+        im = ax.matshow(np.ma.masked_equal(tnoise_matr, 0),
+                        cmap=plt.cm.plasma,
+                        vmin=min_tnoise, vmax=max_tnoise)
+
+        # Add an empty string at the beginning in order to skip the
+        # first tick, since this is invisible (it's outside the axes)
+        ax.set_xticklabels([''] + step_label)
+        ax.set_yticklabels([''] + step_label)
+
+        # Appending a '\n' is a quick hack to raise the position of the title
+        ax.set_title(cur_det + '\n')
+
+    plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=1.0)
+    save_plot(output_path, 'tnoise_matrix.svg')
+
+
 def create_plots(*args, **kwargs):
     create_timestream_plot(*args, **kwargs)
     create_model_match_plot(*args, **kwargs)
+    create_tnoise_plot(*args, **kwargs)
+    create_tnoise_matrix_plot(*args, **kwargs)
 
 
 def parse_arguments():
@@ -470,6 +592,7 @@ def main():
         log_ln, None, np.array(voltages).flatten(),
         p0=np.array([1e4, 1e4, 1e4, 1e4, 0.0, 30.0]),
         sigma=np.array(voltage_std).flatten())
+    popt = Parameters(*popt)
     log.info('results of the fit: %s',
              ', '.join(['{0} = {1:.2f} ± {2:.2f}'
                         .format(n, popt[i], np.sqrt(pcov[i, i]))

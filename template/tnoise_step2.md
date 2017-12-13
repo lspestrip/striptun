@@ -6,8 +6,8 @@ This document contains a preliminary analysis of the noise temperature for
 the Strip polarimeter ${polarimeter_name}.
 
 The report has been generated on ${analysis_date} using striptun
-v${striptun_version} (commit `${latest_git_commit}`).
-
+v${striptun_version} (commit
+[${latest_git_commit[0:6]}](https://github.com/lspestrip/striptun/commit/${latest_git_commit})).
 Data have been taken from
 % if 'http' in test_file_name:
 [${test_file_name}](${test_file_name})
@@ -20,10 +20,10 @@ have been balanced, although the level of unbalance should be small. The
 mathematical model used is the following (assuming PHSW state to be
 `${phsw_state}`):
 % if phsw_state in ('0101', '1010'):
-$$ \begin{align} Q_1 & = G_{Q1} \left(T_a + \frac{T_a + T_b}2 \varepsilon + N\right), \\ U_1 & = G_{U1} \left(\frac{T_a + T_b}2 + N\right), \\ U_2 & = G_{U2} \left(\frac{T_a  + T_b}2 + N\right), \\ Q_2 & = G_{Q2} \left(T_b + \frac{T_a + T_b}2 \varepsilon + N\right) \end{align} $$
+$$ \begin{align} Q_1 & = G_{Q1} \left(T_a + \frac{T_a + T_b}2 \varepsilon + N\right), \\ U_1 & = G_{U1} \left(\frac{T_a + T_b}2 + N\right), \\ U_2 & = G_{U2} \left(\frac{T_a  + T_b}2 + N\right), \\ Q_2 & = G_{Q2} \left(T_b + \frac{T_a + T_b}2 \varepsilon + N\right), \end{align} $$
 % else:
 $$ \begin{align} Q_1 & = G_{Q1} \left(T_b + \frac{T_a + T_b}2 \varepsilon + N\right), \\ U_1 & = G_{U1} \left(\frac{T_a + T_b}2 + N\right), \\ U_2 & = G_{U2} \left(\frac{T_a  
-+ T_b}2 + N\right), \\ Q_2 & = G_{Q2} \left(T_a + \frac{T_a + T_b}2 \varepsilon + N\right) \end{align} $$
++ T_b}2 + N\right), \\ Q_2 & = G_{Q2} \left(T_a + \frac{T_a + T_b}2 \varepsilon + N\right), \end{align} $$
 % endif
 where $T_a$ and $T_b$ are the overall temperature signals entering the ports A
 and B of the magic-tee, $\varepsilon$ is the unbalance between the two legs of
@@ -36,6 +36,12 @@ ADU/K) of the four outputs, and $N$ is the noise temperature.
 
 
 <h2>Results of the analysis</h2>
+
+<h3>Overall fit</h3>
+
+In this section we consider the full set of temperature steps. This analysis
+runs a global optimization which produces one estimate for the parameters
+$G_{Q1}$, $G_{Q2}$, $G_{U1}$, $G_{U2}$, $\varepsilon$, and $N$.
 
 # Parameter | Gaussian estimate
 :----------:| -----------------:
@@ -69,3 +75,32 @@ ${ '{0:.0f}'.format(cur_step['pwr3_adu']) } ± ${ '{0:.0f}'.format(cur_step['pwr
 <h3>Linear correlation between measures and the model</h3>
 
 ![](tnoise_linear_correlation.svg){: class="plot"}
+
+
+<h2>Y-factor analysis</h2>
+
+In this section we investigate the result of the classical Y-factor analysis, done on all the
+pairs of temperatures. The outcome of this analysis is no longer one value for $N$, but rather
+as many estimates as the number of pairs. The following plot provides a visual representation
+of all the estimates. They are calculated as the $x$ coordinate of the intersection point
+between the $x$ axis and the line connecting two points on the $T \times \mathrm{PWR}$ plane
+(represented by the horizontally-aligned grey points):
+
+![](tnoise_estimates_from_y_factor.svg){: class="plot"}
+
+The following matrix plot and table detail the pattern of values for the noise temperatures
+$N$ shown above:
+
+![](tnoise_matrix.svg){: class="plot"}
+
+#   | Detector | T<sub>1</sub> [K] | T<sub>2</sub> [K] | PWR<sub>1</sub> | PWR<sub>2</sub> | N [K] | 
+:--:| --------:|------------------:| -----------------:| ---------------:| ---------------:| -----:|
+% for cur_y_estimate in y_factor_estimates:
+${loop.index + 1} | \
+  ${ cur_y_estimate['detector_name'] } | \
+  ${ '{0:.1f}'.format(cur_y_estimate['temperature_1']) } | \
+  ${ '{0:.1f}'.format(cur_y_estimate['temperature_2']) } | \
+  ${ '{0:.0f}'.format(cur_y_estimate['output_1']) } | \
+  ${ '{0:.0f}'.format(cur_y_estimate['output_2']) } | \
+  ${ '{0:.1f}'.format(cur_y_estimate['tnoise']) }
+% endfor
