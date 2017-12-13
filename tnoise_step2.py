@@ -26,7 +26,8 @@ from reports import create_report, get_code_version_params
 SAMPLING_FREQUENCY_HZ = 25.0
 
 NUM_OF_PARAMS = 3
-PARAMETER_NAMES = ('average_gain', 'gain_prod', 'tnoise')
+PARAMETER_NAMES = ('gain_q1', 'gain_u1', 'gain_u2',
+                   'gain_q2', 'unbalance', 'tnoise')
 Parameters = namedtuple('Parameters', PARAMETER_NAMES)
 
 # List of housekeeping temperatures used to estimate the temperature of the two
@@ -107,75 +108,58 @@ def compute_T_load_attenuations(temperatures: Housekeepings,
 
 
 class LogLikelihood:
-    '''Base class for likelihood computation
+    '''Class for likelihood computation
 
     This class is used as a container for the arrays to be used in the search
-    for the best estimate of the gain and noise temperature. It is never used
-    directly, only as a base class for "LogLikelihoodForFit".'''
+    for the best estimate of the gain and noise temperature. It can be passed
+    as a parameter to scipy.optimize.curve_fit.'''
 
-    def __init__(self, blind_channel, voltages, voltage_std, wn_level,
-                 temperatures_a, temperatures_b):
+    def __init__(self, voltages, voltage_std, wn_level,
+                 temperatures_a, temperatures_b, phsw_state):
         assert len(voltages) == 4, '''
             "voltages" must be an array of 4 elements, one for each PWR output'''
-
-        assert blind_channel in (
-            0, 3), 'the blind channel must be either PWR0 or PWR3'
-        self.blind_channel = blind_channel
 
         self.voltages = voltages
         self.voltage_std = voltage_std
         self.wn_level = wn_level
         self.temperatures_a = temperatures_a
         self.temperatures_b = temperatures_b
+        self.phsw_state = phsw_state
 
-        # Each pair contains the sign of the variable term and the value of
-        # cosΔφ/sinΔφ in the analytical expression for the four outputs PWR0-3
-        if self.blind_channel == 0:
-            self.pwr_constants = [
-                (+1.0, 1.0),
-                (+1.0, 0.0),
-                (-1.0, 0.0),
-                (-1.0, 1.0),
+        # Each pair contains the weights applied to the following terms:
+        # 1. T_a
+        # 2. T_b
+        # 3. (T_a + T_b) / 2 * unbalance
+        # in the analytical expression for the four outputs PWR0-3
+        if self.phsw_state in ('0101', '1010'):
+            self.ta_tb_weights = [
+                (1.0, 0.0, 1.0),
+                (0.5, 0.5, 0.0),
+                (0.5, 0.5, 0.0),
+                (0.0, 1.0, 1.0),
             ]
-        else:
+        elif self.phsw_state in ('0110', '1001'):
             # Swap PWR0 (Q1) and PWR3 (Q2) with respect to the other case
-            self.pwr_constants = [
-                (-1.0, 1.0),
-                (+1.0, 0.0),
-                (-1.0, 0.0),
-                (+1.0, 1.0),
+            self.ta_tb_weights = [
+                (0.0, 1.0, 1.0),
+                (0.5, 0.5, 0.0),
+                (0.5, 0.5, 0.0),
+                (1.0, 0.0, 1.0),
             ]
 
-
-class LogLikelihoodForFit(LogLikelihood):
-    '''Callable class to compute the likelihood for a MCMC analysis
-
-    This class implements the calculation of the likelihood needed to find the
-    optimal estimate for the gain and noise temperature by direct minimization.
-    '''
-
-    def __init__(self, blind_channel, voltages, voltage_std, wn_level,
-                 temperatures_a, temperatures_b):
-        super().__init__(blind_channel, voltages, voltage_std, wn_level,
-                         temperatures_a, temperatures_b)
-
-    def __call__(self, xdata, average_gain, prod_gain, tnoise):
+    def __call__(self, xdata, gain_q1, gain_u1, gain_u2, gain_q2, unbalance, tnoise):
         del xdata  # We're not going to use it
 
-        # This term is the same for all the four PWR outputs
-        fixed_term = (
-            average_gain *
-            (self.temperatures_a + self.temperatures_b + 2.0 * tnoise)
-        )
-
-        diff_term = prod_gain * (self.temperatures_a - self.temperatures_b)
-
-        # Cycle over the four PWR outputs
         result = np.array([])
-        for set_params in self.pwr_constants:
-            sign, trig = set_params
-            estimates = -0.25 * (fixed_term + sign * trig * diff_term)
-
+        for gain, weights in zip((gain_q1, gain_u1, gain_u2, gain_q2), self.ta_tb_weights):
+            ta_weight, tb_weight, cross_weight = weights
+            temperature = (
+                ta_weight * self.temperatures_a +
+                tb_weight * self.temperatures_b +
+                cross_weight * (self.temperatures_a +
+                                self.temperatures_b) / 2 * unbalance
+            )
+            estimates = -gain * (temperature * (1 + unbalance) + tnoise)
             result = np.concatenate((result, estimates))
 
         return result
@@ -266,6 +250,38 @@ def extract_temperatures(test_metadata):
     return temperatures_a, temperatures_b
 
 
+def y_factor_pairs(num_of_steps):
+    '''Return a pair of indexes representing two temperature steps for the Y-factor
+
+    Each pair contains the (i, j) indexes of the i-th and j-th temperature
+    step to use in a Y-factor computation.'''
+
+    from itertools import product
+    return [x for x in product(range(num_of_steps), range(num_of_steps))
+            if x[0] < x[1]]
+
+
+def estimate_tnoise_and_gain(temp_a, temp_b, out_a, out_b):
+    'Compute the noise temperature and gain from two temperature steps'
+
+    if temp_a == temp_b:
+        return 0.0, 0.0
+
+    # The equation of the line is given by: y == out_a + gain * (x - temp_a)
+    gain = (out_a - out_b) / (temp_a - temp_b)
+    noise_temp = out_a / gain - temp_a
+
+    return noise_temp, gain
+
+
+def y_factor_estimates(log_ln):
+    result = []
+
+    for idx_a, idx_b in y_factor_pairs(len(log_ln.temperatures_a)):
+        for pwr_idx in (0, 1, 2, 3):
+            pass
+
+
 def assemble_results(polarimeter_name: str, log_ln: LogLikelihood, popt, pcov):
     '''Build a dictionary containing all the relevant results of the analysis
 
@@ -293,6 +309,7 @@ def assemble_results(polarimeter_name: str, log_ln: LogLikelihood, popt, pcov):
             'pwr3_rms_adu': log_ln.voltage_std[3][idx],
             'pwr3_wn_level': log_ln.wn_level[3][idx],
         } for idx in range(len(log_ln.temperatures_a))],
+        'y_factor_estimates': y_factor_estimates(log_ln),
     }
 
     # Save the average and RMS of the fitting parameters
@@ -315,8 +332,8 @@ def save_plot(output_dir, file_name):
     log.info('plot saved to file "%s"', file_path)
 
 
-def create_plots(log_ln, params, output_path: str):
-    fig = plt.figure()
+def create_timestream_plot(log_ln, params, output_path):
+    _ = plt.figure()
     temperatures_a = np.array([x['t_load_a_K'] for x in params['steps']])
     temperatures_b = np.array([x['t_load_b_K'] for x in params['steps']])
 
@@ -334,22 +351,16 @@ def create_plots(log_ln, params, output_path: str):
     plt.ylabel('Output [ADU]')
     save_plot(output_path, 'temperature_timestream.svg')
 
+
+def create_model_match_plot(log_ln, params, output_path):
     fig = plt.figure()
 
-    pol_gain, gain_prod = \
-        [params[x]['mean'] for x in ('average_gain', 'gain_prod')]
+    best_fit = [params[x]['mean'] for x in PARAMETER_NAMES]
 
     # These two variables are used to draw the y=x blue line
     min_volt, max_volt = None, None
-
-    for pwr_idx, pwr_params in enumerate(log_ln.pwr_constants):
-        sign, trig = pwr_params
-        estimates = -0.25 * (
-            pol_gain * (temperatures_a + temperatures_b +
-                        2.0 * params['tnoise']['mean']) +
-            sign * trig * gain_prod * (temperatures_a - temperatures_b)
-        )
-
+    model_estimates = log_ln(None, *best_fit).reshape(-1, 4)
+    for pwr_idx in (0, 1, 2, 3):
         label = 'pwr{0}_adu'.format(pwr_idx)
         voltages = np.array([x[label] for x in params['steps']])
 
@@ -360,10 +371,8 @@ def create_plots(log_ln, params, output_path: str):
             min_volt = min(min_volt, np.min(voltages))
             max_volt = max(max_volt, np.max(voltages))
 
-        label = 'pwr{0}_rms_adu'.format(pwr_idx)
-        voltage_std = np.array([x[label] for x in params['steps']])
-
-        plt.scatter(voltages, estimates, label='PWR{0}'.format(pwr_idx))
+        plt.scatter(
+            voltages, model_estimates[pwr_idx], label='PWR{0}'.format(pwr_idx))
 
     # Straight line representing the 1:1 case (perfect match between
     # measurements and model)
@@ -381,6 +390,11 @@ def create_plots(log_ln, params, output_path: str):
     save_plot(output_path, 'tnoise_linear_correlation.svg')
 
 
+def create_plots(*args, **kwargs):
+    create_timestream_plot(*args, **kwargs)
+    create_model_match_plot(*args, **kwargs)
+
+
 def parse_arguments():
     '''Return a class containing the values of the command-line arguments.
 
@@ -392,6 +406,8 @@ def parse_arguments():
     - ``output_path``
     '''
     parser = ArgumentParser(description=__doc__)
+    parser.add_argument('--phsw', type=str, default=None,
+                        help='State of the PHSW (e.g., "0101")')
     parser.add_argument('polarimeter_name', type=str,
                         help='''Name of the polarimeter (must match the name
                         in the test database)''')
@@ -418,6 +434,10 @@ def main():
 
     log.info('reading file "%s"', args.raw_file)
     metadata, data = load_timestream(args.raw_file)
+    if metadata:
+        phsw_state = metadata['phsw_state']
+    else:
+        phsw_state = args.phsw_state
 
     temperatures_a, temperatures_b = extract_temperatures(metadata)
     log.info('temperatures for load A: %s',
@@ -425,9 +445,8 @@ def main():
     log.info('temperatures for load B: %s',
              str(temperatures_b))
 
-    voltages, voltage_std, wn_level = \
-        extract_average_values(data.power, data.demodulated, metadata, tnoise1_results,
-                               num=len(temperatures_a))
+    voltages, voltage_std, wn_level = extract_average_values(data.power, data.demodulated, metadata, tnoise1_results,
+                                                             num=len(temperatures_a))
     for idx, arr in enumerate(voltages):
         log.info('voltages for PWR%d: %s',
                  idx, ', '.join(['{0:.1f}'.format(x) for x in arr]))
@@ -436,16 +455,16 @@ def main():
         log.info('WN for PWR%d: %s',
                  idx, ', '.join(['{0:.1f}'.format(x) for x in wn_level[idx]]))
 
-    log_ln = LogLikelihoodForFit(blind_channel=tnoise1_results['blind_channel'],
-                                 voltages=voltages,
-                                 voltage_std=voltage_std,
-                                 wn_level=wn_level,
-                                 temperatures_a=temperatures_a,
-                                 temperatures_b=temperatures_b)
+    log_ln = LogLikelihood(voltages=voltages,
+                           voltage_std=voltage_std,
+                           wn_level=wn_level,
+                           temperatures_a=temperatures_a,
+                           temperatures_b=temperatures_b,
+                           phsw_state=phsw_state)
 
     popt, pcov = opt.curve_fit(
         log_ln, None, np.array(voltages).flatten(),
-        p0=np.array([1e4, 1e4, 30.0]),
+        p0=np.array([1e4, 1e4, 1e4, 1e4, 0.0, 30.0]),
         sigma=np.array(voltage_std).flatten())
     log.info('results of the fit: %s',
              ', '.join(['{0} = {1:.2f} ± {2:.2f}'
