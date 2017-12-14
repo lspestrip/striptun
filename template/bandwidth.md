@@ -7,7 +7,7 @@ This document contains a preliminary analysis of the frequency response of the S
 The report has been generated on ${analysis_date} using striptun v${striptun_version} (commit
 [${latest_git_commit[0:6]}](https://github.com/lspestrip/striptun/commit/${latest_git_commit})).
 
-We measured th bandpasses for each detector of the polarimeter.
+We measured the bandpasses for each detector of the polarimeter.
 In particular, we used a signal generator to inject a signal at frequencies in the range 38-50 GHz (steps of 0.1 GHz) into the receiver and measure the output signal as a function of frequency.
 
 <h2>Results</h2>
