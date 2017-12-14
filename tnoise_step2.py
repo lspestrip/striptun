@@ -375,22 +375,45 @@ def save_plot(output_dir, file_name):
 
 
 def create_timestream_plot(log_ln, params, output_path):
-    _ = plt.figure()
+    _ = plt.figure(figsize=(8, 8))
+
     temperatures_a = np.array([x['t_load_a_K'] for x in params['steps']])
     temperatures_b = np.array([x['t_load_b_K'] for x in params['steps']])
 
+    best_fit = Parameters(*[params[x]['mean'] for x in PARAMETER_NAMES])
+    model_estimates = log_ln(None, *best_fit).reshape(-1, 4)
+
     if np.var(temperatures_a) > np.var(temperatures_b):
         varying_t = temperatures_a
+        load_name = 'A'
     else:
         varying_t = temperatures_b
+        load_name = 'B'
 
-    for pwr in (0, 1, 2, 3):
-        plt.plot(varying_t, [log_ln.voltages[pwr][i] for i in range(len(log_ln.temperatures_a))],
-                 '-o', label=detector_name(pwr))
+    plt.subplot(211)
+    pwr = []
+    for pwr_idx in (0, 1, 2, 3):
+        cur_pwr = np.array([log_ln.voltages[pwr_idx][i]
+                            for i in range(len(log_ln.temperatures_a))])
+        base_line, = plt.plot(varying_t, cur_pwr, '-o',
+                              label=detector_name(pwr_idx))
+        plt.plot(varying_t, model_estimates[pwr_idx],
+                 alpha=0.5, color=base_line.get_color())
+        pwr.append(cur_pwr)
 
     plt.legend()
-    plt.xlabel('Temperature of the load [K]')
     plt.ylabel('Output [ADU]')
+
+    plt.subplot(212)
+    for pwr_idx, gain in enumerate((best_fit.gain_q1,
+                                    best_fit.gain_u1,
+                                    best_fit.gain_u2,
+                                    best_fit.gain_q2)):
+        plt.plot(varying_t, (pwr[pwr_idx] - model_estimates[pwr_idx]) / gain,
+                 '-o', linestyle='--')
+
+    plt.ylabel('Measure \u2212 model [K]')
+    plt.xlabel('$T_{0}$ [K]'.format(load_name))
     save_plot(output_path, 'temperature_timestream.svg')
 
 

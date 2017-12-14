@@ -32,6 +32,14 @@ ADU/K) of the four outputs, and $N$ is the noise temperature.
 
 <h2>Test data</h2>
 
+The following plots show the behaviour of the detectors' output when the load is
+varied. The first plot compares the measured output (corrected for the HEMT-off
+biases) with the estimates of the analytical model reported above; the dots and
+strong lines are the measurements, while the faint lines are the expectations
+from the model. The second plot shows the discrepancy between the measured
+output and the analytical model, converted from ADU to K in order to make the
+four lines comparable.
+
 ![](temperature_timestream.svg){: class="plot"}
 
 
@@ -47,13 +55,13 @@ $G_{Q1}$, $G_{Q2}$, $G_{U1}$, $G_{U2}$, $\varepsilon$, and $N$.
 :----------:| -----------------:
 Noise temperature [K] | \
    ${ '{0:.1f}'.format(tnoise['mean']) } &pm; ${ '{0:.1f}'.format(tnoise['std']) }
-Q1 gain (PWR0) [K/ADU] | \
+Q1 gain (PWR0) [ADU/K] | \
    ${ '{0:.0f}'.format(gain_q1['mean']) } &pm; ${ '{0:.0f}'.format(gain_q1['std']) }
-U1 gain (PWR1) [K/ADU] | \
+U1 gain (PWR1) [ADU/K] | \
    ${ '{0:.0f}'.format(gain_u1['mean']) } &pm; ${ '{0:.0f}'.format(gain_u1['std']) }
-U2 gain (PWR2) [K/ADU] | \
+U2 gain (PWR2) [ADU/K] | \
    ${ '{0:.0f}'.format(gain_u2['mean']) } &pm; ${ '{0:.0f}'.format(gain_u2['std']) }
-Q2 gain (PWR3) [K/ADU] | \
+Q2 gain (PWR3) [ADU/K] | \
    ${ '{0:.0f}'.format(gain_q2['mean']) } &pm; ${ '{0:.0f}'.format(gain_q2['std']) }
 Unbalance [%] | \
    ${ '{0:.1f}'.format(unbalance['mean'] * 100.0) } &pm; ${ '{0:.1f}'.format(unbalance['std'] * 100.0) }
