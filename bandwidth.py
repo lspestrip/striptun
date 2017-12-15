@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 # -*- encoding: utf-8 -*-
 
+
 '''Compute the bandwidth and the central frequency of the polarimeter'''
+
 
 from json_save import save_parameters_to_json
 from argparse import ArgumentParser
@@ -17,85 +19,46 @@ SAMPLING_FREQUENCY_HZ = 25.0  # Hz
 NAMING_CONVENTION = ['PW0/Q1', 'PW1/U1', 'PW2/U2', 'PW3/Q2']
 
 
-def get_frequency_range_and_data(nu, data, std_dev=True, rej=1):
+def remove_offset(nu, data):
     """
-    This function does the following:
-    - rejects data outside the frequency range imposed by the RF generator. The
-    acquisition system returns -1 if there are not frequency data associated to the power data.
-    Otherwise, it returns the frequency value.
-    - returns the average value of the power for each frequency provided by the RF generator with the associated standard
-    deviation.
-    -calculate the electronic offset as a straight line from the first to the last point acquired with the RF generator on.
-     In this way we take into account possible drifts in time of the electronics.
+    This function compute the electronic offset and removes it from data.
+    The offset is computed in the following way:
+    - we compute the mean value of the data taken before switching on the RF generator: first_offset
+    - we compute the mean value of the data taken after switching off the RF generator: second_offset
+    (The acquisition system returns -1 if the RF generator is off.
+    Otherwise it returns the frequency value)
+    - we take as offset the linear fit between the points
+     (min RF freq., first_offset) and (max RF freq., second_offset)
+     In this way we take into account possible drifts of the electronics during the test.
+
+    Other approaches for the offset computation are present in the code as comments.
 
     Parameters
     ----------
     nu      : numpy array of shape (time*sampling_rate, ),
               The frequency data.
     data    : numpy array of shape (time*sampling_rate, 4),
-              The power data.
-    std_dev : boolean,
-              If True (default) it will return also the standard deviation of the averaged data.
-    rej     : integer,
-              The number of samples rejected because of frequency uncertainty.
+              The output power of the 4 detectors.
 
     Returns
     -------
-    out : 3 (or 2, if std_dev is False) numpy arrays of shape (number of frequency steps, 4),
-          numpy array of shape (4,)
+    Data with electronic offset removed: 1 numpy array of shape (time*sampling_rate, 4).
+
     """
-    new_nu_, new_data_ = nu[nu > 0], data[nu > 0]
-    new_nu, idx, count = np.unique(
-        new_nu_, return_index=True, return_counts=True)
-    new_data = np.zeros((len(new_nu), data.shape[-1]))
-    new_std_dev = np.zeros((len(new_nu), data.shape[-1]))
-    for (i, j), c in zip(enumerate(idx), count):
-        new_data[i] = np.median(new_data_[j + rej: j + c - rej], axis=0)
-        new_std_dev[i] = np.std(
-            new_data_[j + rej: j + c - rej], axis=0) / np.sqrt(c)
-    if std_dev:
-        return new_nu, new_data, new_std_dev
-    return new_nu, new_data
 
+    # linear offset (RF generator on)
+    # offset = np.zeros((len(nu), data.shape[-1]))
+    # x = [38.0, 50.0]
+    # for i in range(0, 4):
+    # y = [data[:, i][nu == 38.0], data[:, i][nu == 50.0]]
+    # line_coeff = np.polyfit(x, y, 1)
+    # offset[:, i] = nu * line_coeff[0] + line_coeff[1]"""
 
-def remove_offset(nu, data):
-    """
-    This function removes the offset from data.
+    # offset claudio
+    # firsthalf_data = data[:int(len(data)/2)]
+    # firsthalf_nu = nu[:int(len(nu)/2)]
+    # offset = np.mean(firsthalf_data[firsthalf_nu == -1], axis=0)
 
-    Parameters
-    ----------def remove_offset(data, offset):
-
-    This function removes the offset from data.
-
-    Parameters
-    ----------
-    data  : numpy array of shape (time*sampling_rate, 4),
-            It is the output power of the 4 detectors.
-    offset: numpy array of shape (1,4)
-            It is the offset that will be subctrated from data"""
-
-    # offset_low = np.mean(data[(nu >= 38.0) & (nu <= 38.2)], axis=0)
-    # offset_high = np.mean(
-    # data[(nu >= 49.2) & (nu <= 50.0)], axis=0)
-    # offset = np.mean(np.array([offset_low, offset_high]), axis=0)
-    # offset = np.amax(data[(nu >= 38.1) & (nu <= 49.9)], axis=0)
-    # offset = np.mean(data[new_nu == -1], axis=0)
-
-    """#linear offset (RF generator on)
-    offset = np.zeros((len(nu), data.shape[-1]))
-    x = [38.0, 50.0]
-    for i in range(0, 4):
-        y = [data[:, i][nu == 38.0], data[:, i][nu == 50.0]]
-        line_coeff = np.polyfit(x, y, 1)
-        offset[:, i] = nu * line_coeff[0] + line_coeff[1]"""
-
-    """#offset claudio
-    firsthalf_data = data[:int(len(data)/2)]
-    firsthalf_nu = nu[:int(len(nu)/2)]
-    offset = np.mean(firsthalf_data[firsthalf_nu == -1], axis=0)
-    print(offset)
-    """
-    # linear offset (RF generator off)
     firsthalf_data = data[:int(len(data) / 2)]
     firsthalf_nu = nu[:int(len(nu) / 2)]
     first_offset = np.median(firsthalf_data[firsthalf_nu == -1], axis=0)
@@ -114,7 +77,61 @@ def remove_offset(nu, data):
     return data_nooff
 
 
+def get_frequency_range_and_data(nu, data, std_dev=True, rej=1):
+    """
+    This function does the following:
+    - rejects data outside the frequency range imposed by the RF generator (the
+    acquisition system returns -1 if the RF generator is off. Otherwise it returns the frequency value).
+    - returns the mean value of the power output for each RF frequency and the associated standard
+    deviation.
+
+    Parameters
+    ----------
+    nu      : numpy array of shape (time*sampling_rate, ),
+              The frequency data.
+    data    : numpy array of shape (time*sampling_rate, 4),
+              The output power of the 4 detectors.
+    std_dev : boolean,
+              If True (default) it will return also the standard deviation of the averaged data.
+    rej     : integer,
+              The number of samples rejected at each frequency step because of frequency uncertainty.
+
+    Returns
+    -------
+    1 numpy array of shape (number of frequency steps, ) and 2 (or 1, if std_dev is False) numpy arrays of shape (number of frequency steps, 4).
+    """
+    new_nu_, new_data_ = nu[nu > 0], data[nu > 0]
+    new_nu, idx, count = np.unique(
+        new_nu_, return_index=True, return_counts=True)
+    new_nu = np.around(new_nu, decimals=3)
+    new_data = np.zeros((len(new_nu), data.shape[-1]))
+    new_std_dev = np.zeros((len(new_nu), data.shape[-1]))
+
+    for (i, j), c in zip(enumerate(idx), count):
+        new_data[i] = np.median(new_data_[j + rej: j + c - rej], axis=0)
+        new_std_dev[i] = np.std(
+            new_data_[j + rej: j + c - rej], axis=0) / np.sqrt(c)
+    if std_dev:
+        return new_nu, new_data, new_std_dev
+    return new_nu, new_data
+
+
 def find_blind_channel(data):
+    """
+    This function identifies the blind detector and infers the phase-switch status.
+
+    Parameters
+    ----------
+
+    data    : numpy array of shape (time*sampling_rate, 4),
+              The output power of the 4 detectors.
+
+    Returns
+    -------
+    -  the blind detector index
+    -  the phase-switch status
+    """
+
     var_range = np.percentile(data, 95, axis=0) - \
         np.percentile(data, 5, axis=0)
     idx_blind = np.argmin(var_range)
@@ -128,19 +145,22 @@ def find_blind_channel(data):
 
 
 def get_central_nu_bandwidth(nu, data):
-    """This function calculates the bandwidth and the central frequency of the 4 detector bandwidth
-    response. Definition are taken according to Bischoff and Newburgh's PhD Theses.
+    """
+    This function calculates the bandwidth and the central frequency of the input data.
+    Definition are taken according to Bischoff and Newburgh's PhD Theses.
 
-     Parameters
-     ----------
-     nu    : numpy array of shape (time*sampling_rate, ),
-             The frequency data.
-     data  : numpy array of shape (time*sampling_rate, 4),
-             It is the output power of the 4 detectors.
-     Returnsimport matplotlib.lines as llt
-     -------
-     out : numpy array of shape (4, ), numpy array of shape (4, )
-     """
+    Parameters
+    ----------
+    nu    : numpy array of shape (time*sampling_rate, ),
+            The frequency data.
+    data  : numpy array of shape (time*sampling_rate, 4),
+            The output power of the 4 detectors
+    Returns
+    -------
+    out : numpy array of shape (4, ), numpy array of shape (4, )
+
+    """
+
     if not np.allclose((nu[1:] - nu[:-1]), (nu[1:] - nu[:-1])[0], rtol=1e-3):
         raise ValueError('The frequency steps are not uniform! Check out!')
     if data.shape[-1] == len(data):
@@ -229,60 +249,28 @@ def final_plots(polarimeter_name, freq, norm_data, final_band, final_band_err,  
                 final_band_err, labels, output_path)
 
 
-def build_dict_from_results(pol_name, duration, PSStatus, central_nu_det, bandwidth_det,
-                            final_central_nu, final_central_nu_err,
-                            final_bandwidth, final_bandwidth_err):
-    results = {
-        'polarimeter_name': pol_name,
-        'title': 'Bandwidth test for polarimeter {0}'.format(pol_name),
-        'sampling_frequency': SAMPLING_FREQUENCY_HZ,
-        'test_duration': duration / 60 / 60,
-        'final_central_nu': final_central_nu,
-        'final_central_nu_err': final_central_nu_err,
-        'final_bandwidth': final_bandwidth,
-        'final_bandwidth_err': final_bandwidth_err,
-    }
-
-    detailed_results = []
-
-    for j, pss in enumerate(PSStatus):
-        cur_results = {}
-        results['PSStatus' + '_' + str(j)] = pss
-        cur_results['PSStatus'] = pss
-        for i, nam in enumerate(NAMING_CONVENTION):
-            nam = nam.replace("/", "")
-            if(pss == '0101' and i == 3 or pss == '0110' and i == 0):
-                central_nu_det[j, i] = 0
-                bandwidth_det[j, i] = 0
-            cur_results[nam] = {'central_nu': central_nu_det[j, i],
-                                'bandwidth': bandwidth_det[j, i]}
-        detailed_results.append(cur_results)
-
-    results['detailed_results'] = detailed_results
-    return results
-
-
-def parse_arguments():
-    '''Return a class containing the values of the command-line arguments.
-
-    The field accessible from the object returned by this function are the following:
-
-    - ``polarimeter_name``
-    - ``input_file_path``
-    - ``output_path``
-    '''
-    parser = ArgumentParser(description=__doc__)
-    parser.add_argument('polarimeter_name', type=str,
-                        help='''Name of the polarimeter''')
-    parser.add_argument('-FILE', action='append', dest='file_list', default=[],
-                        help='Add all the files you want to analyze. USAGE: python bandwidth.py -FILE "file1.txt" -FILE "file2.txt" -FILE "file3.txt"')
-    parser.add_argument('output_path', type=str,
-                        help='''Path to the directory that will contain the
-                        report. If the path does not exist, it will be created''')
-    return parser.parse_args()
-
-
 def AnalyzeBandTest(polarimeter_name, file_name, output_path):
+    """
+       This function uses previous functions to analize a single bandpass test.
+
+       Parameters
+       ----------
+       polarimeter_name
+       file_name = name of the file to analize
+       output_path = the path to the directory that will contain the report
+
+       Returns
+       -------
+       out :
+       test duration [s]
+       phase-switch status
+       frequencies: numpy array of shape (number of frequency steps, )
+       selected data: numpy array of shape (number of frequency steps, 4)
+       data normalized to range 0-1: numpy array of shape (number of frequency steps, 4)
+       central frequency for each detector: numpy array of shape (4,)
+       bandwidth for each detector: numpy array of shape (4,)
+    """
+
     metadata, datafile = load_timestream(file_name)
     nu = datafile[-1]
     data = datafile[-3]
@@ -323,6 +311,65 @@ def AnalyzeBandTest(polarimeter_name, file_name, output_path):
     return duration, pss, new_nu, new_data, norm_data, central_nu_det, bandwidth_det
 
 
+def build_dict_from_results(pol_name, duration, PSStatus, central_nu_det, bandwidth_det,
+                            new_nu, final_band,
+                            final_central_nu, final_central_nu_err,
+                            final_bandwidth, final_bandwidth_err):
+    results = {
+        'polarimeter_name': pol_name,
+        'title': 'Bandwidth test for polarimeter {0}'.format(pol_name),
+        'sampling_frequency': SAMPLING_FREQUENCY_HZ,
+        'test_duration': duration / 60 / 60,
+        'final_central_nu': final_central_nu,
+        'final_central_nu_err': final_central_nu_err,
+        'final_bandwidth': final_bandwidth,
+        'final_bandwidth_err': final_bandwidth_err,
+    }
+
+    detailed_results = []
+
+    for j, pss in enumerate(PSStatus):
+        cur_results = {}
+        results['PSStatus' + '_' + str(j)] = pss
+        cur_results['PSStatus'] = pss
+        for i, nam in enumerate(NAMING_CONVENTION):
+            nam = nam.replace("/", "")
+            if(pss == '0101' and i == 3 or pss == '0110' and i == 0):
+                central_nu_det[j, i] = 0
+                bandwidth_det[j, i] = 0
+            cur_results[nam] = {'central_nu': central_nu_det[j, i],
+                                'bandwidth': bandwidth_det[j, i]}
+        detailed_results.append(cur_results)
+
+    polarimeter_band = {}
+    for nu, data in zip(new_nu, final_band):
+        polarimeter_band[nu] = data
+
+    results['detailed_results'] = detailed_results
+    results['final_band'] = polarimeter_band
+    return results
+
+
+def parse_arguments():
+    '''Return a class containing the values of the command-line arguments.
+
+    The field accessible from the object returned by this function are the following:
+
+    - ``polarimeter_name``
+    - ``list of files to analize``
+    - ``output_path``
+    '''
+    parser = ArgumentParser(description=__doc__)
+    parser.add_argument('polarimeter_name', type=str,
+                        help='''Name of the polarimeter''')
+    parser.add_argument('-FILE', action='append', dest='file_list', default=[],
+                        help='Add all the files you want to analyze. USAGE: -FILE "file1.txt" -FILE "file2.txt" -FILE "file3.txt"')
+    parser.add_argument('output_path', type=str,
+                        help='''Path to the directory that will contain the
+                        report. If the directory does not exist, it will be created''')
+    return parser.parse_args()
+
+
 def main():
     log.basicConfig(format='[%(asctime)s %(levelname)s] %(message)s',
                     level=log.DEBUG)
@@ -342,7 +389,7 @@ def main():
         # Loading file
         log.info('Loading file "{0}"'.format(file_name))
 
-        # Analyzing band test for this file
+        # Analyzing bandpass test for this file
         duration, pss, new_nu, new_data, norm_data, cf_det, bw_det = AnalyzeBandTest(
             args.polarimeter_name, file_name, args.output_path)
 
@@ -391,6 +438,7 @@ def main():
     # Creating the report
     params = build_dict_from_results(
         args.polarimeter_name, duration, PSStatus, central_nu_det, bandwidth_det,
+        new_nu, final_band,
         final_central_nu, final_central_nu_err,
         final_bandwidth, final_bandwidth_err)
 
