@@ -320,10 +320,10 @@ def build_dict_from_results(pol_name, duration, PSStatus, central_nu_det, bandwi
         'title': 'Bandwidth test for polarimeter {0}'.format(pol_name),
         'sampling_frequency': SAMPLING_FREQUENCY_HZ,
         'test_duration': duration / 60 / 60,
-        'final_central_nu': final_central_nu,
-        'final_central_nu_err': final_central_nu_err,
-        'final_bandwidth': final_bandwidth,
-        'final_bandwidth_err': final_bandwidth_err,
+        'central_nu_ghz': final_central_nu,
+        'central_nu_err': final_central_nu_err,
+        'bandwidth_ghz': final_bandwidth,
+        'bandwidth_err': final_bandwidth_err,
     }
 
     detailed_results = []

@@ -334,6 +334,7 @@ def assemble_results(polarimeter_name: str, log_ln: LogLikelihood, popt, pcov):
                   .format(polarimeter_name)),
         'analysis_method': 'non-linear fit',
         'phsw_state': log_ln.phsw_state,
+        'parameters': PARAMETER_NAMES,
         'steps': [{
             't_load_a_K': log_ln.temperatures_a[idx],
             't_load_b_K': log_ln.temperatures_b[idx],
