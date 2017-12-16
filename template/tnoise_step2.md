@@ -85,6 +85,8 @@ ${ '{0:.0f}'.format(cur_step['pwr3_adu']) } ± ${ '{0:.0f}'.format(cur_step['pwr
 ![](tnoise_linear_correlation.svg){: class="plot"}
 
 
+% if y_factor_estimates:
+
 <h2>Y-factor analysis</h2>
 
 In this section we investigate the result of the classical Y-factor analysis, done on all the
@@ -112,3 +114,5 @@ ${loop.index + 1} | \
   ${ '{0:.0f}'.format(cur_y_estimate['output_2']) } | \
   ${ '{0:.1f}'.format(cur_y_estimate['tnoise']) }
 % endfor
+
+% endif
