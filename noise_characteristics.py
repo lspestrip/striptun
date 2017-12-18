@@ -4,7 +4,7 @@
 '''Estimates the noise characteristics of a given polarimeter.'''
 
 from argparse import ArgumentParser
-from file_access import load_timestream
+from file_access import load_timestream, download_json_from_url
 from json_save import save_parameters_to_json
 from reports import create_report, get_code_version_params
 from scipy import signal
@@ -24,6 +24,27 @@ PWR = ['PWR0/Q1', 'PWR1/U1', 'PWR2/U2', 'PWR3/Q2']
 STOKES = ['I', 'Q', 'U']
 
 FIGSIZE = (10, 7)
+
+
+def get_duration(dataDEM, dataPWR, SAMPLING_FREQUENCY_HZ):
+    """Compute the test duration. 
+
+    Parameters
+    ----------
+    dataDEM               : numpy array of shape (time*sampling_rate, 4),
+                            The demodulated signal of the 4 detectors.
+    dataPWR               : numpy array of shape (time*sampling_rate, 4),
+                            The total power signal of the 4 detectors.
+    SAMPLING_FREQUENCY_HZ : float,
+                            The sampling frequency of the data sample.
+
+    """
+    def duration(data, sampling_freq):
+        return len(data) / sampling_freq
+    durationDEM = duration(dataDEM, SAMPLING_FREQUENCY_HZ) # sec
+    durationPWR = duration(dataPWR, SAMPLING_FREQUENCY_HZ) # sec 
+    assert durationPWR == durationDEM
+    return durationDEM
 
 
 def get_stokes(pwr_data, dem_data):
@@ -56,8 +77,8 @@ def get_fft(sampling_frequency, data, n_chunks, detrend='linear', **kwargs):
 
     Parameters
     ----------
-    sampling_frequency : numpy array of shape (time*sampling_rate, ),
-                         The temporal data sample.
+    sampling_frequency : float,
+                         The sampling frequency of the data sample.
     data               : numpy array of shape (time*sampling_rate, 4),
                          It is the demodulated output power of the 4 detectors.
     n_chunks           : integer, 
@@ -204,14 +225,20 @@ def create_plots(polarimeter_name, freq, fftDEM, fit_parDEM, labelsDEM, fftPWR, 
                        It is the power spectrum of the combined data to form I, Q, U. 
     fit_parIQU       : numpy array of shape (3, 3),
                        The parameters for the fit of the combined data to form I, Q, U.
-    labelsIQU        : list of string of len(3),
+    labelsSTOKES     : list of string of len(3),
                        The labels of the combined data to form I, Q, U that will be shown.
+    spectrogramDEM   : tuple,
+                       The spectrogram of the demodulated data.
+    spectrogramPWR   : tuple,
+                       The spectrogram of the total power data.
+    spectrogramIQU   : tuple,
+                       The spectrogram of the combined data to form I, Q, U.
     output_path      : string,
                        Path to the directory that will contain the report.
     """
 
     def axis_labels():
-        plt.ylabel('Power Spectrum ' + r'$[ADU^2 / Hz]$', fontsize=20)
+        plt.ylabel('Power Spectrum ' + r'$[mK^2 / Hz]$', fontsize=20)
         plt.xlabel('Frequency [Hz]', fontsize=20)
         plt.xlim(freq[0], freq[-1])
         plt.xticks(fontsize=16)
@@ -233,7 +260,7 @@ def create_plots(polarimeter_name, freq, fftDEM, fit_parDEM, labelsDEM, fftPWR, 
     def comulative_plots(title, freq, fft, legend_labels, output_path):
         plt.figure(figsize=FIGSIZE)
         plt.title(title, fontsize=22)
-        data = plt.loglog(freq, fft, **kwargs)
+        data = plt.loglog(freq, fft * 1e6, **kwargs)
         plt.legend(data, legend_labels, loc='best', fontsize=16)
         axis_labels()
         save_plot(replace(title), output_path)
@@ -243,11 +270,11 @@ def create_plots(polarimeter_name, freq, fftDEM, fit_parDEM, labelsDEM, fftPWR, 
             plt.figure(figsize=FIGSIZE)
             title = polarimeter_name + ' PSD - ' + title_[i]
             plt.title(title, fontsize=22)
-            plt.loglog(freq, fft[:, i], **kwargs)
+            plt.loglog(freq, fft[:, i] * 1e6, **kwargs)
             a, b, c = fit_par[:, i]
-            plt.loglog(freq, freq**a * np.e**b, 'r', lw=2)
-            plt.loglog(freq, np.full_like(freq, 2*np.exp(c)), 'r--', lw=2)
-            plt.loglog(freq, np.full_like(freq, np.exp(c)), 'r', lw=2)
+            plt.loglog(freq, freq**a * np.e**b * 1e6, 'r', lw=2)
+            plt.loglog(freq, np.full_like(freq, 2*np.exp(c) * 1e6), 'r--', lw=2)
+            plt.loglog(freq, np.full_like(freq, np.exp(c) * 1e6), 'r', lw=2)
             axis_labels()
             save_plot(replace(title), output_path)
 
@@ -337,6 +364,7 @@ def parse_arguments():
 
     - ``polarimeter_name``
     - ``input_file_path``
+    - ``gains_file_path``
     - ``output_path``
     '''
     parser = ArgumentParser(description=__doc__)
@@ -361,21 +389,25 @@ def parse_arguments():
                         is ok, it is used in the reports)''')
     parser.add_argument('input_file_path', type=str,
                         help='''Name of the file containing the data being saved''')
+    parser.add_argument('gains_file_path', type=str,
+                        help='''Name of the file containing the four  detector gains''')
     parser.add_argument('output_path', type=str,
                         help='''Path to the directory that will contain the
                         report. If the path does not exist, it will be created''')
     return parser.parse_args()
 
 
-def build_dict_from_results(pol_name, duration, left_freq, right_freq, n_chuncks, detrend,
-                            reduction1_f, fkneeDEM, delta_fkneeDEM, alphaDEM, delta_alphaDEM,
-                            WN_levelDEM, delta_WN_levelDEM, fkneePWR, delta_fkneePWR, alphaPWR,
-                            delta_alphaPWR, WN_levelPWR, delta_WN_levelPWR, fkneeIQU,
-                            delta_fkneeIQU, alphaIQU, delta_alphaIQU, WN_levelIQU,
-                            delta_WN_levelIQU):
+def build_dict_from_results(pol_name, input_file_path, gains_file_path, duration, left_freq,
+                            right_freq, n_chuncks, detrend, reduction1_f, fkneeDEM, delta_fkneeDEM,
+                            alphaDEM, delta_alphaDEM, WN_levelDEM, delta_WN_levelDEM, fkneePWR,
+                            delta_fkneePWR, alphaPWR, delta_alphaPWR, WN_levelPWR,
+                            delta_WN_levelPWR, fkneeIQU, delta_fkneeIQU, alphaIQU, delta_alphaIQU,
+                            WN_levelIQU, delta_WN_levelIQU):
     results = {
         'polarimeter_name': pol_name,
-        'title': 'Noise characteristics of polarimeter {0}'.format(pol_name),
+        'input_file_path': input_file_path,
+        'gains_file_path': gains_file_path,
+        'title': 'Noise characteristics of polarimeter {}'.format(pol_name),
         'sampling_frequency_hz': SAMPLING_FREQUENCY_HZ,
         'test_duration_hz': duration / 60 / 60,
         'left_freq_hz': left_freq,
@@ -390,8 +422,8 @@ def build_dict_from_results(pol_name, duration, left_freq, right_freq, n_chuncks
                         'delta_f_knee_hz' : delta_fkneeDEM[i],
                         'slope' : alphaDEM[i],
                         'delta_slope' : delta_alphaDEM[i],
-                        'WN_level_adu2_hz' : WN_levelDEM[i],
-                        'delta_WN_level_adu2_hz' : delta_WN_levelDEM[i]}
+                        'WN_level_K2_hz' : WN_levelDEM[i],
+                        'delta_WN_level_K2_hz' : delta_WN_levelDEM[i]}
 
     for i, pwr in enumerate(PWR):
         pwr = pwr.replace("/", "")
@@ -399,19 +431,46 @@ def build_dict_from_results(pol_name, duration, left_freq, right_freq, n_chuncks
                         'delta_f_knee_hz' : delta_fkneePWR[i],
                         'slope' : alphaPWR[i],
                         'delta_slope' : delta_alphaPWR[i],
-                        'WN_level_adu2_hz' : WN_levelPWR[i],
-                        'delta_WN_level_adu2_hz' : delta_WN_levelPWR[i]}
+                        'WN_level_K2_hz' : WN_levelPWR[i],
+                        'delta_WN_level_K2_hz' : delta_WN_levelPWR[i]}
 
     for i, stokes in enumerate(STOKES):
         results[stokes] = {'f_knee_hz' : fkneeIQU[i],
                         'delta_f_knee_hz' : delta_fkneeIQU[i],
                         'slope' : alphaIQU[i],
                         'delta_slope' : delta_alphaIQU[i],
-                        'WN_level_adu2_hz' : WN_levelIQU[i],
-                        'delta_WN_level_adu2_hz' : delta_WN_levelIQU[i]}
+                        'WN_level_K2_hz' : WN_levelIQU[i],
+                        'delta_WN_level_K2_hz' : delta_WN_levelIQU[i]}
     return results
 
-            
+
+def calibrate_data(metadata, gains_estimation, data):
+    '''Convert the data from ADU to K.
+    
+    Parameters
+    ----------
+    metadata         : dictionary,
+                       A dictionary containing the metadata of the test.
+    gains_estimation : dictionary,
+                       A dictionary containing the gains of the four detector outputs.
+    data             : dictionary,
+                       A dictionary containing the data of the four detector outputs.
+    '''
+    def get_error(gains, data):
+        return 1 / gains * np.sqrt(1 + (data / gains)**2 * delta_gains**2)
+    offsets = np.array([metadata['detector_outputs'][0]['q1_adu'],
+                        metadata['detector_outputs'][0]['u1_adu'],
+                        metadata['detector_outputs'][0]['u2_adu'],
+                        metadata['detector_outputs'][0]['q2_adu']])
+    gains = np.array([gains_estimation['gain_q1']['mean'], gains_estimation['gain_u1']['mean'],
+                      gains_estimation['gain_u2']['mean'], gains_estimation['gain_q2']['mean']])
+    delta_gains = np.array([gains_estimation['gain_q1']['std'], gains_estimation['gain_u1']['std'],
+                            gains_estimation['gain_u2']['std'], gains_estimation['gain_q2']['std']])
+    dataDEM, dataPWR = data.demodulated / gains, (data.power - offsets)/ gains
+    delta_dataDEM, delta_dataPWR = get_error(gains, dataDEM), get_error(gains, dataPWR)
+    return dataDEM, delta_dataDEM, dataPWR, delta_dataPWR
+
+
 def main():
 
     log.basicConfig(format='[%(asctime)s %(levelname)s] %(message)s',
@@ -425,25 +484,26 @@ def main():
     # Create the directory that will contain the report
     os.makedirs(args.output_path, exist_ok=True)
 
-    # Load from the text file only the columns containing the output of the four detectors
-    log.info('Loading file "{0}"'.format(args.input_file_path))
+    # Load the output of the four detectors [ADU]
+    log.info('Loading file from "{}"'.format(args.input_file_path))
     metadata, data = load_timestream(args.input_file_path)
-    dataDEM, dataPWR = data.demodulated, data.power
-    durationDEM = len(dataDEM) / SAMPLING_FREQUENCY_HZ # sec
-    durationPWR = len(dataPWR) / SAMPLING_FREQUENCY_HZ # sec
-
-    assert durationPWR == durationDEM
-    duration = durationDEM
+    # Load the gains of the four detectors [ADU/K]
+    log.info('Loading gains from "{}"'.format(args.gains_file_path))
+    gains_estimation = download_json_from_url(args.gains_file_path)
+    dataDEM, delta_dataDEM, dataPWR, delta_dataPWR = calibrate_data(
+        metadata, gains_estimation, data)
+    duration = get_duration(dataDEM, dataPWR, SAMPLING_FREQUENCY_HZ)
 
     if args.n_chunks is None:
         args.n_chunks = np.int(duration / 60 / 60 * 12) # each chunk lasts 5 minutes by default
 
-    log.info('File loaded, {0} samples found'.format(duration * SAMPLING_FREQUENCY_HZ))
+    log.info('File loaded, {} samples found'.format(duration * SAMPLING_FREQUENCY_HZ))
 
     # Calculate the PSD
     log.info(
-        'Computing PSD with number-of-chunks {0}, 1/f-upper-frequency {1}, WN-lower-frequency{2}' +
-        ', detrend {3}'.format(args.n_chunks, args.left_freq, args.right_freq, args.detrend))
+        'Computing PSD with number-of-chunks={}, 1/f-upper-frequency={},'.
+        format(args.n_chunks,args.left_freq) + ' WN-lower-frequency={}, detrend={}'.
+        format(args.right_freq, args.detrend))
     
     freq, fftDEM, spectrogramDEM = get_fft(SAMPLING_FREQUENCY_HZ, dataDEM, args.n_chunks,
                                           detrend=args.detrend)   
@@ -476,7 +536,8 @@ def main():
                  fftIQU, fit_parIQU, STOKES, spectrogramDEM, spectrogramPWR, spectrogramIQU,
                  args.output_path)
         
-    params = build_dict_from_results(args.polarimeter_name, duration, args.left_freq,
+    params = build_dict_from_results(args.polarimeter_name, args.input_file_path,
+                                     args.gains_file_path, duration, args.left_freq,
                                      args.right_freq, args.n_chunks, args.detrend, reduction1_f,
                                      fkneeDEM, delta_fkneeDEM, alphaDEM, delta_alphaDEM,
                                      WN_levelDEM, delta_WN_levelDEM, fkneePWR, delta_fkneePWR,
