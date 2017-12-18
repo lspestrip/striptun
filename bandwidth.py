@@ -346,12 +346,11 @@ def build_dict_from_results(pol_name, duration, low_nu, high_nu, PSStatus, centr
                                 'bandwidth': bandwidth_det[j, i]}
         detailed_results.append(cur_results)
 
-    polarimeter_band = {}
-    for nu, data in zip(new_nu, final_band):
-        polarimeter_band[nu] = data
-
     results['detailed_results'] = detailed_results
-    results['final_band'] = polarimeter_band
+    results['bandshape'] = {
+        'frequency_ghz': list(new_nu),
+        'response': list(final_band),
+    }
     return results
 
 
