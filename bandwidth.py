@@ -263,6 +263,7 @@ def AnalyzeBandTest(polarimeter_name, file_name, output_path):
        -------
        out :
        test duration [s]
+       frequency range
        phase-switch status
        frequencies: numpy array of shape (number of frequency steps, )
        selected data: numpy array of shape (number of frequency steps, 4)
@@ -324,10 +325,10 @@ def build_dict_from_results(pol_name, duration, low_nu, high_nu, PSStatus, centr
         'high_frequency': high_nu,
         'sampling_frequency': SAMPLING_FREQUENCY_HZ,
         'test_duration': duration / 60 / 60,
-        'final_central_nu': final_central_nu,
-        'final_central_nu_err': final_central_nu_err,
-        'final_bandwidth': final_bandwidth,
-        'final_bandwidth_err': final_bandwidth_err,
+        'central_nu_ghz': final_central_nu,
+        'central_nu_err': final_central_nu_err,
+        'bandwidth_ghz': final_bandwidth,
+        'bandwidth_err': final_bandwidth_err,
     }
 
     detailed_results = []

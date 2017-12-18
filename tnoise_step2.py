@@ -19,11 +19,13 @@ from json_save import save_parameters_to_json
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pylab as plt
+import matplotlib.patheffects as PathEffects
 
 from file_access import load_timestream
 from reports import create_report, get_code_version_params
 
 SAMPLING_FREQUENCY_HZ = 25.0
+MIN_TEMPERATURE_STEP_K = 2.5  # Any temperature variation below this will be considered zero
 
 NUM_OF_PARAMS = 3
 PARAMETER_NAMES = ('gain_q1', 'gain_u1', 'gain_u2',
@@ -281,8 +283,8 @@ def y_factor_pairs(num_of_steps):
 def estimate_tnoise_and_gain(temp_a, temp_b, out_a, out_b):
     'Compute the noise temperature and gain from two temperature steps'
 
-    if np.abs(temp_a - temp_b) < 1.0:
-        return 0.0, 0.0
+    if np.abs(temp_a - temp_b) < MIN_TEMPERATURE_STEP_K:
+        return np.nan, np.nan
 
     # The equation of the line is given by: y == out_a + gain * (x - temp_a)
     gain = (out_a - out_b) / (temp_a - temp_b)
@@ -302,7 +304,7 @@ def y_factor_estimates(log_ln, unbalance):
                                                     temp_b=temperatures[idx2],
                                                     out_a=log_ln.voltages[pwr_idx][idx1],
                                                     out_b=log_ln.voltages[pwr_idx][idx2])
-            if tnoise > 0.0:
+            if np.isfinite(tnoise) and np.isfinite(gain):
                 result.append({
                     'detector_idx': pwr_idx,
                     'detector_name': detector_name(pwr_idx),
@@ -334,6 +336,7 @@ def assemble_results(polarimeter_name: str, log_ln: LogLikelihood, popt, pcov):
                   .format(polarimeter_name)),
         'analysis_method': 'non-linear fit',
         'phsw_state': log_ln.phsw_state,
+        'parameters': PARAMETER_NAMES,
         'steps': [{
             't_load_a_K': log_ln.temperatures_a[idx],
             't_load_b_K': log_ln.temperatures_b[idx],
@@ -375,22 +378,45 @@ def save_plot(output_dir, file_name):
 
 
 def create_timestream_plot(log_ln, params, output_path):
-    _ = plt.figure()
+    _ = plt.figure(figsize=(8, 8))
+
     temperatures_a = np.array([x['t_load_a_K'] for x in params['steps']])
     temperatures_b = np.array([x['t_load_b_K'] for x in params['steps']])
 
+    best_fit = Parameters(*[params[x]['mean'] for x in PARAMETER_NAMES])
+    model_estimates = log_ln(None, *best_fit).reshape(4, -1)
+
     if np.var(temperatures_a) > np.var(temperatures_b):
         varying_t = temperatures_a
+        load_name = 'A'
     else:
         varying_t = temperatures_b
+        load_name = 'B'
 
-    for pwr in (0, 1, 2, 3):
-        plt.plot(varying_t, [log_ln.voltages[pwr][i] for i in range(len(log_ln.temperatures_a))],
-                 '-o', label=detector_name(pwr))
+    plt.subplot(211)
+    pwr = []
+    for pwr_idx in (0, 1, 2, 3):
+        cur_pwr = np.array([log_ln.voltages[pwr_idx][i]
+                            for i in range(len(log_ln.temperatures_a))])
+        base_line, = plt.plot(varying_t, cur_pwr, '-o',
+                              label=detector_name(pwr_idx))
+        plt.plot(varying_t, model_estimates[pwr_idx],
+                 alpha=0.5, color=base_line.get_color())
+        pwr.append(cur_pwr)
 
     plt.legend()
-    plt.xlabel('Temperature of the load [K]')
     plt.ylabel('Output [ADU]')
+
+    plt.subplot(212)
+    for pwr_idx, gain in enumerate((best_fit.gain_q1,
+                                    best_fit.gain_u1,
+                                    best_fit.gain_u2,
+                                    best_fit.gain_q2)):
+        plt.plot(varying_t, (pwr[pwr_idx] - model_estimates[pwr_idx]) / gain,
+                 '-o', linestyle='--')
+
+    plt.ylabel('Measure \u2212 model [K]')
+    plt.xlabel('$T_{0}$ [K]'.format(load_name))
     save_plot(output_path, 'temperature_timestream.svg')
 
 
@@ -401,7 +427,7 @@ def create_model_match_plot(log_ln, params, output_path):
 
     # These two variables are used to draw the y=x blue line
     min_volt, max_volt = None, None
-    model_estimates = log_ln(None, *best_fit).reshape(-1, 4)
+    model_estimates = log_ln(None, *best_fit).reshape(4, -1)
     for pwr_idx in (0, 1, 2, 3):
         label = 'pwr{0}_adu'.format(pwr_idx)
         voltages = np.array([x[label] for x in params['steps']])
@@ -441,7 +467,7 @@ def create_tnoise_plot(log_ln, params, output_path):
         temperature = log_ln.load_temp_at_detector(
             pwr_idx=pwr_idx, unbalance=best_fit.unbalance)
         plt.scatter(
-            temperature, log_ln.voltages[pwr_idx], label=detector_name(pwr_idx))
+            temperature, log_ln.voltages[pwr_idx], label=detector_name(pwr_idx), zorder=3)
 
     pwr_colors = {
         0: '#202020',
@@ -452,13 +478,13 @@ def create_tnoise_plot(log_ln, params, output_path):
     for y_estimate in params['y_factor_estimates']:
         tnoise, gain, temp1, temp2, out1 = [y_estimate[x] for x in (
             'tnoise', 'gain', 'temperature_1', 'temperature_2', 'output_1')]
-        if np.abs(temp2 - temp1) < 1.0:
+        if np.abs(temp2 - temp1) < MIN_TEMPERATURE_STEP_K:
             continue
 
         x = np.linspace(-tnoise, np.max([temp1, temp2]), 2)
         pwr_col = pwr_colors[y_estimate['detector_idx']]
-        plt.plot(x, out1 + gain * (x - temp1), color=pwr_col)
-        plt.scatter(-tnoise, 0.0, color=pwr_col)
+        plt.plot(x, out1 + gain * (x - temp1), color=pwr_col, zorder=2)
+        plt.scatter(-tnoise, 0.0, color=pwr_col, zorder=1)
 
     plt.xlabel('Temperature of the load [K]')
     plt.ylabel('Output [ADU]')
@@ -470,14 +496,18 @@ def create_tnoise_plot(log_ln, params, output_path):
 def create_tnoise_matrix_plot(log_ln, params, output_path):
 
     y_factor_estimates = params['y_factor_estimates']
+    if not y_factor_estimates:
+        log.warning('no Y-factor estimates')
+        return
+
     min_tnoise = np.min([x['tnoise'] for x in y_factor_estimates])
     max_tnoise = np.max([x['tnoise'] for x in y_factor_estimates])
     detectors = set([x['detector_name'] for x in y_factor_estimates])
 
-    fig = plt.figure(figsize=(9, 3))
+    fig = plt.figure(figsize=(10, 4))
 
     for cur_idx, cur_det in enumerate(sorted(detectors)):
-        ax = plt.subplot(1, 3, 1 + cur_idx)
+        ax = plt.subplot(1, len(detectors), 1 + cur_idx)
 
         cur_estimates = [x for x in y_factor_estimates
                          if x['detector_name'] == cur_det]
@@ -491,16 +521,27 @@ def create_tnoise_matrix_plot(log_ln, params, output_path):
             bunch = [x['temperature_1'] for x in cur_estimates if x['step_1_idx'] == i] \
                 + [x['temperature_2']
                     for x in cur_estimates if x['step_2_idx'] == i]
-            assert bunch
+            assert bunch, ("unable to find temperature with index {0} for detector {1}:\n"
+                           "{2}"
+                           .format(i, cur_det, cur_estimates))
             step_label.append('{0:.1f} K'.format(bunch[0]))
 
-        tnoise_matr = np.zeros((matr_size, matr_size))
+        tnoise_matr = np.zeros((matr_size, matr_size)) * np.nan
         for est in cur_estimates:
             tnoise_matr[est['step_1_idx'], est['step_2_idx']] = est['tnoise']
 
-        im = ax.matshow(np.ma.masked_equal(tnoise_matr, 0),
+        im = ax.matshow(np.ma.masked_invalid(tnoise_matr),
                         cmap=plt.cm.plasma,
                         vmin=min_tnoise, vmax=max_tnoise)
+
+        # Text labels over each square in the grid
+        for (i, j), z in np.ndenumerate(tnoise_matr):
+            if z > 0.0:
+                ax.text(j, i, '${:0.1f}\,K$'.format(z),
+                color="w",
+                        ha='center', va='center',
+                        path_effects=[PathEffects.withStroke(linewidth=1,
+                                                             foreground="b")])
 
         # Add an empty string at the beginning in order to skip the
         # first tick, since this is invisible (it's outside the axes)

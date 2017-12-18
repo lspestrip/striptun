@@ -28,8 +28,8 @@ import numpy as np
 import simplejson as json
 
 
-def download_test_info(url):
-    'Return a dictionary containing information about the test at URL'
+def download_json_from_url(url):
+    'Return a dictionary containing the data loaded from a JSON link'
 
     response = urlreq.urlopen(url)
     json_text = response.read().decode('utf-8')
