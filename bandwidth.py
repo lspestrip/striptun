@@ -21,7 +21,7 @@ NAMING_CONVENTION = ['PW0/Q1', 'PW1/U1', 'PW2/U2', 'PW3/Q2']
 
 def remove_offset(nu, data):
     """
-    This function compute the electronic offset and removes it from data.
+    This function computes the electronic offset and removes it from data.
     The offset is computed in the following way:
     - we compute the mean value of the data taken before switching on the RF generator: first_offset
     - we compute the mean value of the data taken after switching off the RF generator: second_offset
@@ -263,6 +263,7 @@ def AnalyzeBandTest(polarimeter_name, file_name, output_path):
        -------
        out :
        test duration [s]
+       frequency range
        phase-switch status
        frequencies: numpy array of shape (number of frequency steps, )
        selected data: numpy array of shape (number of frequency steps, 4)
@@ -278,6 +279,8 @@ def AnalyzeBandTest(polarimeter_name, file_name, output_path):
     log.info('File loaded, {0} samples found'.format(len(data[:, 0])))
 
     duration = len(data) / SAMPLING_FREQUENCY_HZ  # sec
+    low_nu = np.min(nu[nu > 0])
+    high_nu = np.max(nu)
 
     # Selecting data and removing the electronic offset
 
@@ -308,16 +311,18 @@ def AnalyzeBandTest(polarimeter_name, file_name, output_path):
     norm_data = new_data[:, mask] / \
         np.absolute(new_data[:, mask].min(axis=0))
 
-    return duration, pss, new_nu, new_data, norm_data, central_nu_det, bandwidth_det
+    return duration, low_nu, high_nu, pss, new_nu, new_data, norm_data, central_nu_det, bandwidth_det
 
 
-def build_dict_from_results(pol_name, duration, PSStatus, central_nu_det, bandwidth_det,
+def build_dict_from_results(pol_name, duration, low_nu, high_nu, PSStatus, central_nu_det, bandwidth_det,
                             new_nu, final_band,
                             final_central_nu, final_central_nu_err,
                             final_bandwidth, final_bandwidth_err):
     results = {
         'polarimeter_name': pol_name,
         'title': 'Bandwidth test for polarimeter {0}'.format(pol_name),
+        'low_frequency': low_nu,
+        'high_frequency': high_nu,
         'sampling_frequency': SAMPLING_FREQUENCY_HZ,
         'test_duration': duration / 60 / 60,
         'central_nu_ghz': final_central_nu,
@@ -341,12 +346,11 @@ def build_dict_from_results(pol_name, duration, PSStatus, central_nu_det, bandwi
                                 'bandwidth': bandwidth_det[j, i]}
         detailed_results.append(cur_results)
 
-    polarimeter_band = {}
-    for nu, data in zip(new_nu, final_band):
-        polarimeter_band[nu] = data
-
     results['detailed_results'] = detailed_results
-    results['final_band'] = polarimeter_band
+    results['bandshape'] = {
+        'frequency_ghz': list(new_nu),
+        'response': list(final_band),
+    }
     return results
 
 
@@ -382,7 +386,8 @@ def main():
     # Creating the directory that will contain the report
     os.makedirs(args.output_path, exist_ok=True)
 
-    norm_data_list, central_nu_det, bandwidth_det,  PSStatus = list(), list(), list(), list()
+    norm_data_list, central_nu_det, bandwidth_det, PSStatus = list(), list(), list(), list()
+    low_nu, high_nu = np.zeros(1), np.zeros(1)
 
     for i, file_name in enumerate(args.file_list):
 
@@ -390,7 +395,7 @@ def main():
         log.info('Loading file "{0}"'.format(file_name))
 
         # Analyzing bandpass test for this file
-        duration, pss, new_nu, new_data, norm_data, cf_det, bw_det = AnalyzeBandTest(
+        duration, low_nu, high_nu, pss, new_nu, new_data, norm_data, cf_det, bw_det = AnalyzeBandTest(
             args.polarimeter_name, file_name, args.output_path)
 
         # Producing preliminary plots
@@ -437,7 +442,7 @@ def main():
 
     # Creating the report
     params = build_dict_from_results(
-        args.polarimeter_name, duration, PSStatus, central_nu_det, bandwidth_det,
+        args.polarimeter_name, duration, low_nu, high_nu, PSStatus, central_nu_det, bandwidth_det,
         new_nu, final_band,
         final_central_nu, final_central_nu_err,
         final_bandwidth, final_bandwidth_err)
