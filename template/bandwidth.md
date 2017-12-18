@@ -8,11 +8,8 @@ The report has been generated on ${analysis_date} using striptun v${striptun_ver
 [${latest_git_commit[0:6]}](https://github.com/lspestrip/striptun/commit/${latest_git_commit})).
 
 We measured the bandpasses for each detector of the polarimeter.
-<<<<<<< HEAD
 In particular, we used a signal generator to inject a signal at frequencies in the range ${low_frequency} - ${high_frequency} GHz (steps of 0.1 GHz) into the receiver and measure the output signal as a function of frequency.
-=======
-In particular, we used a signal generator to inject a signal at frequencies in the range 38-50 GHz (steps of 0.1 GHz) into the receiver and measure the output signal as a function of frequency.
->>>>>>> 3f651519101d2329f621d3c9ce4e57dcc836d1ae
+
 
 <h2>Results</h2>
 
@@ -49,8 +46,8 @@ In the following figures we plot:
 ![](${polarimeter_name}_RFtest_AllDetNorm.svg){: class="plot", width=70%}
 ![](${polarimeter_name}_RFtest_FinalBand.svg){: class="plot", width=70%}
 
-<div style="text-align:center; color:red; font-size: 1.2em;">Final Bandwidth: ${'{0:.2f}'.format(final_bandwidth)} ± ${'{0:.2f}'.format(final_bandwidth_err)} GHz (95% C.L.)</div>
-<div style="text-align:center; color:red; font-size: 1.2em;">Central Frequency: ${'{0:.2f}'.format(final_central_nu)} ± ${'{0:.2f}'.format(final_central_nu_err)} GHz (95% C.L.)</div>
+<div style="text-align:center; color:red; font-size: 1.2em;">Final Bandwidth: ${'{0:.2f}'.format(bandwidth_ghz)} ± ${'{0:.2f}'.format(bandwidth_err)} GHz (95% C.L.)</div>
+<div style="text-align:center; color:red; font-size: 1.2em;">Central Frequency: ${'{0:.2f}'.format(central_nu_ghz)} ± ${'{0:.2f}'.format(central_nu_err)} GHz (95% C.L.)</div>
 
 
 
