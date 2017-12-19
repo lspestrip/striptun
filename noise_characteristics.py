@@ -199,7 +199,7 @@ def get_noise_characteristics(freq, fft, left_freq, right_freq, totalPWR=False):
 
 def create_plots(polarimeter_name, freq, fftDEM, fit_parDEM, labelsDEM, fftPWR, fit_parPWR,
                  labelsPWR, fftIQU, fit_parIQU, labelsSTOKES, spectrogramDEM, spectrogramPWR,
-                 spectrogramIQU, output_path, **kwargs):
+                 spectrogramIQU, output_path, g, **kwargs):
     """
     This function shows the fft data.
 
@@ -236,10 +236,15 @@ def create_plots(polarimeter_name, freq, fftDEM, fit_parDEM, labelsDEM, fftPWR, 
                        The spectrogram of the combined data to form I, Q, U.
     output_path      : string,
                        Path to the directory that will contain the report.
+    g                : integer,
+                       if 0 plot units are ADU. Otherwise, K.
     """
 
-    def axis_labels():
-        plt.ylabel('Power Spectrum ' + r'$[mK^2 / Hz]$', fontsize=20)
+    def axis_labels(g):
+        if g == 0:
+            plt.ylabel('Power Spectrum ' + r'$[ADU^2 / Hz]$', fontsize=20)
+        else:
+            plt.ylabel('Power Spectrum ' + r'$[mK^2 / Hz]$', fontsize=20)
         plt.xlabel('Frequency [Hz]', fontsize=20)
         plt.xlim(freq[0], freq[-1])
         plt.xticks(fontsize=16)
@@ -258,35 +263,48 @@ def create_plots(polarimeter_name, freq, fftDEM, fit_parDEM, labelsDEM, fftPWR, 
         title = title.replace("/", "_")
         return title
     
-    def comulative_plots(title, freq, fft, legend_labels, output_path):
+    def comulative_plots(title, freq, fft, legend_labels, output_path, g):
         plt.figure(figsize=FIGSIZE)
         plt.title(title, fontsize=22)
-        data = plt.loglog(freq, fft * 1e6, **kwargs)
+        if g == 0:
+            data = plt.loglog(freq, fft, **kwargs)
+        else:
+            data = plt.loglog(freq, fft * 1e6, **kwargs)
         plt.legend(data, legend_labels, loc='best', fontsize=16)
-        axis_labels()
+        axis_labels(g)
         save_plot(replace(title), output_path)
         
-    def single_plots(title_, freq, fft, fit_par, output_path):
+    def single_plots(title_, freq, fft, fit_par, output_path, g):
         for i in range(fft.shape[-1]):
             plt.figure(figsize=FIGSIZE)
             title = polarimeter_name + ' PSD - ' + title_[i]
             plt.title(title, fontsize=22)
-            plt.loglog(freq, fft[:, i] * 1e6, **kwargs)
-            a, b, c = fit_par[:, i]
-            plt.loglog(freq, freq**a * np.e**b * 1e6, 'r', lw=2)
-            plt.loglog(freq, np.full_like(freq, 2*np.exp(c) * 1e6), 'r--', lw=2)
-            plt.loglog(freq, np.full_like(freq, np.exp(c) * 1e6), 'r', lw=2)
-            axis_labels()
+            if g == 0:
+                plt.loglog(freq, fft[:, i], **kwargs)
+                a, b, c = fit_par[:, i]
+                plt.loglog(freq, freq**a * np.e**b, 'r', lw=2)
+                plt.loglog(freq, np.full_like(freq, 2*np.exp(c)), 'r--', lw=2)
+                plt.loglog(freq, np.full_like(freq, np.exp(c)), 'r', lw=2)
+            else:
+                plt.loglog(freq, fft[:, i] * 1e6, **kwargs)
+                a, b, c = fit_par[:, i]
+                plt.loglog(freq, freq**a * np.e**b * 1e6, 'r', lw=2)
+                plt.loglog(freq, np.full_like(freq, 2*np.exp(c) * 1e6), 'r--', lw=2)
+                plt.loglog(freq, np.full_like(freq, np.exp(c) * 1e6), 'r', lw=2)
+            axis_labels(g)
             save_plot(replace(title), output_path)
 
-    def plot_spectrogram(title, spectrogram, labels, output_path):
+    def plot_spectrogram(title, spectrogram, labels, output_path, g):
         f, t, Sxx = spectrogram
         Sxx_all = (Sxx[:, i, :] for i in range(Sxx.shape[-2]))
         fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(2, 2, figsize=FIGSIZE)
         fig.suptitle(title, fontsize=22)
         axis = (ax0, ax1, ax2, ax3)
         for ax, sxx, tit in zip(axis, Sxx_all, labels):
-            pcm = ax.pcolormesh(t, f, np.log10(sxx * 1e6), norm=colors.LogNorm())
+            if g == 0:
+                pcm = ax.pcolormesh(t, f, np.log10(sxx), norm=colors.LogNorm())
+            else:
+                pcm = ax.pcolormesh(t, f, np.log10(sxx * 1e6), norm=colors.LogNorm())
             cbar = fig.colorbar(pcm, ax=ax, extend='max')
             cbar.set_label(r'$[mK^2 / Hz]$')
             ax.set_title(tit)
@@ -298,49 +316,49 @@ def create_plots(polarimeter_name, freq, fftDEM, fit_parDEM, labelsDEM, fftPWR, 
 
         
     # Plot DEM outputs separately        
-    single_plots(labelsDEM, freq, fftDEM, fit_parDEM, output_path)
+    single_plots(labelsDEM, freq, fftDEM, fit_parDEM, output_path, g)
 
     # Plot I, Q, U separately 
-    single_plots(labelsSTOKES, freq, fftIQU, fit_parIQU, output_path)
+    single_plots(labelsSTOKES, freq, fftIQU, fit_parIQU, output_path, g)
 
     # Plot DEM and PWR outputs together        
     title = polarimeter_name + ' PSD - all detector outputs'
     legend_labels = labelsDEM + labelsPWR
-    comulative_plots(title, freq, np.column_stack((fftDEM, fftPWR)), legend_labels, output_path)
+    comulative_plots(title, freq, np.column_stack((fftDEM, fftPWR)), legend_labels, output_path, g)
 
     # Plot I, Q, U together
     title = polarimeter_name + ' PSD - I Q U'
-    comulative_plots(title, freq, fftIQU, labelsSTOKES, output_path)
+    comulative_plots(title, freq, fftIQU, labelsSTOKES, output_path, g)
 
     # Plot PWR and I
     title = polarimeter_name + ' PSD - ' + ' '.join(labelsPWR) + ' ' + labelsSTOKES[0]
     fftQ1Q2Q = np.column_stack((fftPWR, fftIQU[:, 0]))
     legend_labels = labelsPWR + [labelsSTOKES[0]]
-    comulative_plots(title, freq, fftQ1Q2Q, legend_labels, output_path)
+    comulative_plots(title, freq, fftQ1Q2Q, legend_labels, output_path, g)
     
     # Plot Q1, Q2 and Q
     title = polarimeter_name + ' PSD - ' + ' '.join(labelsDEM[0::3]) + ' ' + labelsSTOKES[1]
     fftQ1Q2Q = np.column_stack((fftDEM[:, 0], fftDEM[:, 3], fftIQU[:, 1]))
     legend_labels = labelsDEM[0::3] + [labelsSTOKES[1]]
-    comulative_plots(title, freq, fftQ1Q2Q, legend_labels, output_path)
+    comulative_plots(title, freq, fftQ1Q2Q, legend_labels, output_path, g)
 
     # Plot U1, U2 and U
     title = polarimeter_name + ' PSD - ' + ' '.join(labelsDEM[1:3]) + ' ' + labelsSTOKES[2]
     fftU1U2U = np.column_stack((fftDEM[:, 1], fftDEM[:, 2], fftIQU[:, 2]))
     legend_labels = labelsDEM[1:3] + [labelsSTOKES[2]]
-    comulative_plots(title, freq, fftU1U2U, legend_labels, output_path)
+    comulative_plots(title, freq, fftU1U2U, legend_labels, output_path, g)
 
     # Plot spectrogram DEM
     title = polarimeter_name + ' spectrogram DEM'
-    plot_spectrogram(title, spectrogramDEM, labelsDEM, output_path)
+    plot_spectrogram(title, spectrogramDEM, labelsDEM, output_path, g)
     
     # Plot spectrogram PWR
     title = polarimeter_name + ' spectrogram PWR'
-    plot_spectrogram(title, spectrogramPWR, labelsPWR, output_path)
+    plot_spectrogram(title, spectrogramPWR, labelsPWR, output_path, g)
     
     # Plot spectrogram IQU
     title = polarimeter_name + ' spectrogram IQU'
-    plot_spectrogram(title, spectrogramIQU, labelsSTOKES, output_path)
+    plot_spectrogram(title, spectrogramIQU, labelsSTOKES, output_path, g)
 
     
 def get_y_intercept_1_f_reduction(freq, fit_par):
@@ -349,11 +367,11 @@ def get_y_intercept_1_f_reduction(freq, fit_par):
 
     Parameters
     ----------
-    freq       : numpy array of shape (time*sampling_rate // 2, ),
-                 The frequency domain ranging from 1 / (total duration of the test) to (sampling 
-                 rate / 2) Hz.
-    fit_parDEM : numpy array of shape (3, 4),
-                 The parameters for the fit of the DEM outputs.
+    freq    : numpy array of shape (time*sampling_rate // 2, ),
+              The frequency domain ranging from 1 / (total duration of the test) to (sampling 
+              rate / 2) Hz.
+    fit_par : numpy array of shape (3, 4),
+              The parameters for the fit of the DEM outputs.
 
     '''
     y_intercepts = np.exp(fit_par[0] * np.log(freq.min()) + fit_par[1])
@@ -384,24 +402,23 @@ def parse_arguments():
                         type=float, default=DEFAULT_RIGHT_FREQ,
                         help='''Lower frequency for white noise estimation
                         (default: {0})'''.format(DEFAULT_RIGHT_FREQ))
-    parser.add_argument('--number-of-chunks', dest='n_chunks',
-                        type=int,
+    parser.add_argument('--number-of-chunks', dest='n_chunks', type=int,
                         help='''Number of chunks used for the estimation of the PSD 
                         (default: duration [hours] * 12)''')
+    parser.add_argument('--gains_file_path', type=str, action='append', default=[],
+                        help='''Name of the file containing the four  detector gains''')
     parser.add_argument('polarimeter_name', type=str,
                         help='''Name of the polarimeter (any text string
                         is ok, it is used in the reports)''')
     parser.add_argument('input_file_path', type=str,
                         help='''Name of the file containing the data being saved''')
-    parser.add_argument('gains_file_path', type=str,
-                        help='''Name of the file containing the four  detector gains''')
     parser.add_argument('output_path', type=str,
                         help='''Path to the directory that will contain the
                         report. If the path does not exist, it will be created''')
     return parser.parse_args()
 
 
-def build_dict_from_results(pol_name, input_file_path, gains_file_path, duration, left_freq,
+def build_dict_from_results(pol_name, input_file_path, gains_file_path, g, duration, left_freq,
                             right_freq, n_chuncks, detrend, reduction1_f, fkneeDEM, delta_fkneeDEM,
                             alphaDEM, delta_alphaDEM, WN_levelDEM, delta_WN_levelDEM, fkneePWR,
                             delta_fkneePWR, alphaPWR, delta_alphaPWR, WN_levelPWR,
@@ -411,6 +428,7 @@ def build_dict_from_results(pol_name, input_file_path, gains_file_path, duration
         'polarimeter_name': pol_name,
         'input_file_path': input_file_path,
         'gains_file_path': gains_file_path,
+        'number_of_gains': g,
         'title': 'Noise characteristics of polarimeter {}'.format(pol_name),
         'sampling_frequency_hz': SAMPLING_FREQUENCY_HZ,
         'test_duration_hz': duration / 60 / 60,
@@ -448,31 +466,43 @@ def build_dict_from_results(pol_name, input_file_path, gains_file_path, duration
     return results
 
 
-def calibrate_data(metadata, gains_estimation, data):
+def get_data(metadata, gains_file_path, data):
     '''Convert the data from ADU to K.
     
     Parameters
     ----------
-    metadata         : dictionary,
-                       A dictionary containing the metadata of the test.
-    gains_estimation : dictionary,
-                       A dictionary containing the gains of the four detector outputs.
-    data             : dictionary,
-                       A dictionary containing the data of the four detector outputs.
+    metadata        : dictionary,
+                      A dictionary containing the metadata of the test.
+    gains_file_path : list of strings,
+                      A list containing the paths to the Strip Database containing the gains.
+    data            : dictionary,
+                      A dictionary containing the data of the four detector outputs.
     '''
-    def get_error(gains, data):
-        return 1 / gains * np.sqrt(1 + (data / gains)**2 * delta_gains**2)
+
+    if len(gains_file_path) == 0:
+        # We do not use gains information
+        log.info('Default gains are all equal to 1 [ADU/K]')
+        return len(gains_file_path), data.demodulated, data.power
+    
     offsets = np.array([metadata['detector_outputs'][0]['q1_adu'],
                         metadata['detector_outputs'][0]['u1_adu'],
                         metadata['detector_outputs'][0]['u2_adu'],
                         metadata['detector_outputs'][0]['q2_adu']])
-    gains = np.array([gains_estimation['gain_q1']['mean'], gains_estimation['gain_u1']['mean'],
-                      gains_estimation['gain_u2']['mean'], gains_estimation['gain_q2']['mean']])
-    delta_gains = np.array([gains_estimation['gain_q1']['std'], gains_estimation['gain_u1']['std'],
-                            gains_estimation['gain_u2']['std'], gains_estimation['gain_q2']['std']])
-    dataDEM, dataPWR = data.demodulated / gains, (data.power - offsets)/ gains
-    delta_dataDEM, delta_dataPWR = get_error(gains, dataDEM), get_error(gains, dataPWR)
-    return dataDEM, delta_dataDEM, dataPWR, delta_dataPWR
+    all_gains = np.zeros((len(gains_file_path), 4))
+    all_delta_gains = np.zeros((len(gains_file_path), 4))
+    for i, gain_file_path in enumerate(gains_file_path):
+        # Load the gains of the four detectors [ADU/K]
+        log.info('Loading gains from "{}"'.format(gain_file_path))
+        gain = download_json_from_url(gain_file_path)
+        all_gains[i, :] = np.array([gain['gain_q1']['mean'], gain['gain_u1']['mean'],
+                                    gain['gain_u2']['mean'], gain['gain_q2']['mean']])
+        all_delta_gains[i, :] = np.array([gain['gain_q1']['std'], gain['gain_u1']['std'],
+                                          gain['gain_u2']['std'], gain['gain_q2']['std']])
+        
+    gains = np.average(all_gains, axis=0, weights=all_delta_gains)
+    dataDEM, dataPWR = data.demodulated / gains, (data.power - offsets) / gains
+    
+    return len(gains_file_path), dataDEM, dataPWR
 
 
 def main():
@@ -491,11 +521,7 @@ def main():
     # Load the output of the four detectors [ADU]
     log.info('Loading file from "{}"'.format(args.input_file_path))
     metadata, data = load_timestream(args.input_file_path)
-    # Load the gains of the four detectors [ADU/K]
-    log.info('Loading gains from "{}"'.format(args.gains_file_path))
-    gains_estimation = download_json_from_url(args.gains_file_path)
-    dataDEM, delta_dataDEM, dataPWR, delta_dataPWR = calibrate_data(
-        metadata, gains_estimation, data)
+    g, dataDEM, dataPWR = get_data(metadata, args.gains_file_path, data)
     duration = get_duration(dataDEM, dataPWR, SAMPLING_FREQUENCY_HZ)
 
     if args.n_chunks is None:
@@ -538,10 +564,10 @@ def main():
     # Produce the plots
     create_plots(args.polarimeter_name, freq, fftDEM, fit_parDEM, DEM, fftPWR, fit_parPWR, PWR,
                  fftIQU, fit_parIQU, STOKES, spectrogramDEM, spectrogramPWR, spectrogramIQU,
-                 args.output_path)
+                 args.output_path, g)
         
     params = build_dict_from_results(args.polarimeter_name, args.input_file_path,
-                                     args.gains_file_path, duration, args.left_freq,
+                                     args.gains_file_path, g, duration, args.left_freq,
                                      args.right_freq, args.n_chunks, args.detrend, reduction1_f,
                                      fkneeDEM, delta_fkneeDEM, alphaDEM, delta_alphaDEM,
                                      WN_levelDEM, delta_WN_levelDEM, fkneePWR, delta_fkneePWR,

@@ -3,7 +3,7 @@
 <h1>${title}</h1>
 
 This document contains a preliminary analysis of the noise characteristics for
-the Strip polarimeter **${polarimeter_name}** and refers to the test ["${input_file_path}"](${input_file_path}).
+the Strip polarimeter **${polarimeter_name}**. In particular, it refers to the test ["${input_file_path}"](${input_file_path}).
 
 The report has been generated on ${analysis_date} using striptun
 v${striptun_version} (commit
@@ -20,8 +20,17 @@ thier opportune combinations I, Q, U have been estimated using Welch's method as
 , pp.652-662. The function `signal.welch` of the Python library `scipy` has been used to 
 implement it in the code.
 
-The raw data [ADU] have been divided by the detector gain obtained from ["${gains_file_path}"](${input_file_path}) to obtain calibrated data [K]. For the total power data the detector offsets have been subtracted before dividing.
-
+% if number_of_gains == 0:
+**The noise analysis has been performed on raw (uncalibrated) data [ADU].**
+% elif number_of_gains == 1:
+The raw data [ADU] have been divided by the detector gains obtained from ["${gains_file_path}"](${gains_file_path}) to obtain calibrated data [K]. For the total power data the detector offsets have been subtracted before dividing.
+% else:
+To obtain calibrated data [K], the raw data [ADU] have been divided by the detector gains obtained by doing the weighted average of the gains taken from:  
+% for gainss in gains_file_path:
+["${gainss}"](${gainss})  
+% endfor
+For the total power data the detector offsets have been subtracted before dividing. 
+% endif
 
 
 The original data samples have been divided into **${n_chunks} segments** of equal length. 
@@ -47,7 +56,16 @@ outputs.
 ![](${polarimeter_name}_PSD_DEM2_U2.svg){: class="plot"} 
 ![](${polarimeter_name}_PSD_DEM3_Q2.svg){: class="plot"} 
 
+% if number_of_gains == 0:
 
+DETECTOR  | f knee [mHz]         | alpha [#]           | white noise level [ADU<sup>2</sup>/Hz]*
+--------- |:--------------------:|:-------------------:|:----------------------:
+DEM0/Q1   | ${'{:0.0f}'.format(DEM0Q1['f_knee_hz'] * 1000)} &#177; ${'{:0.0f}'.format(DEM0Q1['delta_f_knee_hz'] * 1000)} | ${DEM0Q1['slope']} &#177; ${DEM0Q1['delta_slope']} | ${DEM0Q1['WN_level_K2_hz']} &#177; ${DEM0Q1['delta_WN_level_K2_hz']}
+DEM1/U1   | ${'{:0.0f}'.format(DEM1U1['f_knee_hz'] * 1000)} &#177; ${'{:0.0f}'.format(DEM1U1['delta_f_knee_hz'] * 1000)} | ${DEM1U1['slope']} &#177; ${DEM1U1['delta_slope']} | ${DEM1U1['WN_level_K2_hz']} &#177; ${DEM1U1['delta_WN_level_K2_hz']}
+DEM2/U2   | ${'{:0.0f}'.format(DEM2U2['f_knee_hz'] * 1000)} &#177; ${'{:0.0f}'.format(DEM2U2['delta_f_knee_hz'] * 1000)} | ${DEM2U2['slope']} &#177; ${DEM2U2['delta_slope']} | ${DEM2U2['WN_level_K2_hz']} &#177; ${DEM2U2['delta_WN_level_K2_hz']}
+DEM3/Q2   | ${'{:0.0f}'.format(DEM3Q2['f_knee_hz'] * 1000)} &#177; ${'{:0.0f}'.format(DEM3Q2['delta_f_knee_hz'] * 1000)} | ${DEM3Q2['slope']} &#177; ${DEM3Q2['delta_slope']} | ${DEM3Q2['WN_level_K2_hz']} &#177; ${DEM3Q2['delta_WN_level_K2_hz']}
+
+% else:
 DETECTOR  | f knee [mHz]         | alpha [#]           | white noise level [mK<sup>2</sup>/Hz]*
 --------- |:--------------------:|:-------------------:|:----------------------:
 DEM0/Q1   | ${'{:0.0f}'.format(DEM0Q1['f_knee_hz'] * 1000)} &#177; ${'{:0.0f}'.format(DEM0Q1['delta_f_knee_hz'] * 1000)} | ${DEM0Q1['slope']} &#177; ${DEM0Q1['delta_slope']} | ${DEM0Q1['WN_level_K2_hz'] * 1000000} &#177; ${DEM0Q1['delta_WN_level_K2_hz'] * 1000000}
@@ -55,6 +73,7 @@ DEM1/U1   | ${'{:0.0f}'.format(DEM1U1['f_knee_hz'] * 1000)} &#177; ${'{:0.0f}'.f
 DEM2/U2   | ${'{:0.0f}'.format(DEM2U2['f_knee_hz'] * 1000)} &#177; ${'{:0.0f}'.format(DEM2U2['delta_f_knee_hz'] * 1000)} | ${DEM2U2['slope']} &#177; ${DEM2U2['delta_slope']} | ${DEM2U2['WN_level_K2_hz'] * 1000000} &#177; ${DEM2U2['delta_WN_level_K2_hz'] * 1000000}
 DEM3/Q2   | ${'{:0.0f}'.format(DEM3Q2['f_knee_hz'] * 1000)} &#177; ${'{:0.0f}'.format(DEM3Q2['delta_f_knee_hz'] * 1000)} | ${DEM3Q2['slope']} &#177; ${DEM3Q2['delta_slope']} | ${DEM3Q2['WN_level_K2_hz'] * 1000000} &#177; ${DEM3Q2['delta_WN_level_K2_hz'] * 1000000}
 
+% endif
 
 *To estimate the uncertainty on the white noise level has been used the median deviation.
 
@@ -65,21 +84,31 @@ detector outputs, which provides the Stokes parameters.
 
 The following combinations of the detector outputs have been used:
 
-$$ \begin{align} I &= \frac{PWR0/Q1 + PWR1/U1 + PWR2/U2 + PWR3/Q2}4, \newline
-Q &= \frac{DEM0/Q1 - DEM3/Q2}2,  \newline
-U &= \frac{DEM1/U1 - DEM2/U2}2. \end{align} 
+$$ \begin{align} I &= \frac{\mathrm{PWR0/Q1} + \mathrm{PWR1/U1} + \mathrm{PWR2/U2} + \mathrm{PWR3/Q2}}4, \newline
+Q &= \frac{\mathrm{DEM0/Q1} - \mathrm{DEM3/Q2}}2,  \newline
+U &= \frac{\mathrm{DEM1/U1} - \mathrm{DEM2/U2}}2. \end{align} 
 $$
 
 ![](${polarimeter_name}_PSD_I.svg){: class="plot"}
 ![](${polarimeter_name}_PSD_Q.svg){: class="plot"}
 ![](${polarimeter_name}_PSD_U.svg){: class="plot"}
 
+% if number_of_gains == 0:
+
+SIGNAL  | f knee [mHz]   | alpha [#]     | white noise level [ADU<sup>2</sup>/Hz]* 
+------- |:--------------:|:-------------:|:----------------------:
+I       | ${'{:0.0f}'.format(I['f_knee_hz']* 1000)} &#177; ${'{:0.0f}'.format(I['delta_f_knee_hz'] * 1000)} | ${I['slope']} &#177; ${I['delta_slope']} | ${I['WN_level_K2_hz']} &#177; ${I['delta_WN_level_K2_hz']}
+Q       | ${'{:0.0f}'.format(Q['f_knee_hz']* 1000)} &#177; ${'{:0.0f}'.format(Q['delta_f_knee_hz'] * 1000)} | ${Q['slope']} &#177; ${Q['delta_slope']} | ${Q['WN_level_K2_hz']} &#177; ${Q['delta_WN_level_K2_hz']}
+U       | ${'{:0.0f}'.format(U['f_knee_hz']* 1000)} &#177; ${'{:0.0f}'.format(U['delta_f_knee_hz'] * 1000)} | ${U['slope']} &#177; ${U['delta_slope']} | ${U['WN_level_K2_hz']} &#177; ${U['delta_WN_level_K2_hz']}
+
+% else:
 SIGNAL  | f knee [mHz]   | alpha [#]     | white noise level [mK<sup>2</sup>/Hz]* 
 ------- |:--------------:|:-------------:|:----------------------:
 I       | ${'{:0.0f}'.format(I['f_knee_hz']* 1000)} &#177; ${'{:0.0f}'.format(I['delta_f_knee_hz'] * 1000)} | ${I['slope']} &#177; ${I['delta_slope']} | ${I['WN_level_K2_hz'] * 1000000} &#177; ${I['delta_WN_level_K2_hz'] * 1000000}
 Q       | ${'{:0.0f}'.format(Q['f_knee_hz']* 1000)} &#177; ${'{:0.0f}'.format(Q['delta_f_knee_hz'] * 1000)} | ${Q['slope']} &#177; ${Q['delta_slope']} | ${Q['WN_level_K2_hz'] * 1000000} &#177; ${Q['delta_WN_level_K2_hz'] * 1000000}
 U       | ${'{:0.0f}'.format(U['f_knee_hz']* 1000)} &#177; ${'{:0.0f}'.format(U['delta_f_knee_hz'] * 1000)} | ${U['slope']} &#177; ${U['delta_slope']} | ${U['WN_level_K2_hz'] * 1000000} &#177; ${U['delta_WN_level_K2_hz'] * 1000000}
 
+% endif
 
 The 1/f noise is *reduced* of a factor about 10<sup>${reduction_factor_1f}</sup>.
 
