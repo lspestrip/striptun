@@ -10,6 +10,7 @@ from reports import create_report, get_code_version_params
 from scipy import signal
 import logging as log
 import matplotlib.pyplot as plt
+import matplotlib.colors as colors
 import numpy as np
 import os
 
@@ -281,13 +282,16 @@ def create_plots(polarimeter_name, freq, fftDEM, fit_parDEM, labelsDEM, fftPWR, 
     def plot_spectrogram(title, spectrogram, labels, output_path):
         f, t, Sxx = spectrogram
         Sxx_all = (Sxx[:, i, :] for i in range(Sxx.shape[-2]))
-        fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(2, 2, sharex='col', sharey='row',
-                                                     figsize=FIGSIZE)
+        fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(2, 2, figsize=FIGSIZE)
         fig.suptitle(title, fontsize=22)
         axis = (ax0, ax1, ax2, ax3)
         for ax, sxx, tit in zip(axis, Sxx_all, labels):
-            ax.pcolormesh(t, f, np.log10(sxx))
+            pcm = ax.pcolormesh(t, f, np.log10(sxx * 1e6), norm=colors.LogNorm())
+            cbar = fig.colorbar(pcm, ax=ax, extend='max')
+            cbar.set_label(r'$[mK^2 / Hz]$')
             ax.set_title(tit)
+        if Sxx.shape[-2] == 3:
+            ax3.axis('off')
         fig.text(0.5, 0.04, 'Time [sec]', ha='center', fontsize=20)
         fig.text(0.04, 0.5, 'Frequency [Hz]', va='center', rotation='vertical', fontsize=20)
         save_plot(replace(title), output_path, spectrogram=True) 
@@ -506,7 +510,7 @@ def main():
         format(args.right_freq, args.detrend))
     
     freq, fftDEM, spectrogramDEM = get_fft(SAMPLING_FREQUENCY_HZ, dataDEM, args.n_chunks,
-                                          detrend=args.detrend)   
+                                           detrend=args.detrend)   
     (fit_parDEM, fkneeDEM, delta_fkneeDEM, alphaDEM, delta_alphaDEM, WN_levelDEM,
      delta_WN_levelDEM) = get_noise_characteristics(
         freq, fftDEM, args.left_freq, args.right_freq)
