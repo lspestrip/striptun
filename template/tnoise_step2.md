@@ -20,15 +20,16 @@ have been balanced, although the level of unbalance should be small. The
 mathematical model used is the following (assuming PHSW state to be
 `${phsw_state}`):
 % if phsw_state in ('0101', '1010'):
-$$ \begin{align} Q_1 & = G_{Q1} \left(T_a + \frac{T_a + T_b}2 \varepsilon + N\right), \\ U_1 & = G_{U1} \left(\frac{T_a + T_b}2 + N\right), \\ U_2 & = G_{U2} \left(\frac{T_a  + T_b}2 + N\right), \\ Q_2 & = G_{Q2} \left(T_b + \frac{T_a + T_b}2 \varepsilon + N\right), \end{align} $$
+$$ \begin{align} Q_1 & = G_{Q1} \left(T_a + \frac{T_a + T_b}2 \varepsilon + N\right) + \Delta_{Q1}, \\ U_1 & = G_{U1} \left(\frac{T_a + T_b}2 + N\right) + \Delta_{U1}, \\ U_2 & = G_{U2} \left(\frac{T_a  + T_b}2 + N\right) + \Delta_{U2}, \\ Q_2 & = G_{Q2} \left(T_b + \frac{T_a + T_b}2 \varepsilon + N\right) + \Delta_{Q2}, \end{align} $$
 % else:
-$$ \begin{align} Q_1 & = G_{Q1} \left(T_b + \frac{T_a + T_b}2 \varepsilon + N\right), \\ U_1 & = G_{U1} \left(\frac{T_a + T_b}2 + N\right), \\ U_2 & = G_{U2} \left(\frac{T_a  
-+ T_b}2 + N\right), \\ Q_2 & = G_{Q2} \left(T_a + \frac{T_a + T_b}2 \varepsilon + N\right), \end{align} $$
+$$ \begin{align} Q_1 & = G_{Q1} \left(T_b + \frac{T_a + T_b}2 \varepsilon + N\right) + \Delta_{Q1}, \\ U_1 & = G_{U1} \left(\frac{T_a + T_b}2 + N\right) + \Delta_{U1}, \\ U_2 & = G_{U2} \left(\frac{T_a + T_b}2 + N\right) + \Delta_{U2}, \\ Q_2 & = G_{Q2} \left(T_a + \frac{T_a + T_b}2 \varepsilon + N\right) + \Delta_{Q2}, \end{align} $$
 % endif
 where $T_a$ and $T_b$ are the overall temperature signals entering the ports A
 and B of the magic-tee, $\varepsilon$ is the unbalance between the two legs of
 the polarimeter,$G_{Q1}$, $G_{Q2}$, $G_{U1}$ and $G_{U2}$ are the gains (in
-ADU/K) of the four outputs, and $N$ is the noise temperature.
+ADU/K) of the four outputs, and $N$ is the noise temperature. The model computes
+$G_{U1}$ and $G_{U2}$ with a polynomial fit, and then it runs a full
+non-linear optimization to find all the other parameters.
 
 <h2>Test data</h2>
 
@@ -65,6 +66,14 @@ Q2 gain (PWR3) [ADU/K] | \
    ${ '{0:.0f}'.format(gain_q2['mean']) } &pm; ${ '{0:.0f}'.format(gain_q2['std']) }
 Unbalance [%] | \
    ${ '{0:.1f}'.format(unbalance['mean'] * 100.0) } &pm; ${ '{0:.1f}'.format(unbalance['std'] * 100.0) }
+Q1 ofs (PWR0) [ADU] | \
+   ${ '{0:.0f}'.format(ofs_q1['mean']) } &pm; ${ '{0:.0f}'.format(ofs_q1['std']) }
+U1 ofs (PWR1) [ADU] | \
+   ${ '{0:.0f}'.format(ofs_u1['mean']) } &pm; ${ '{0:.0f}'.format(ofs_u1['std']) }
+U2 ofs (PWR2) [ADU] | \
+   ${ '{0:.0f}'.format(ofs_u2['mean']) } &pm; ${ '{0:.0f}'.format(ofs_u2['std']) }
+Q2 ofs (PWR3) [ADU] | \
+   ${ '{0:.0f}'.format(ofs_q2['mean']) } &pm; ${ '{0:.0f}'.format(ofs_q2['std']) }
   
 The analysis has been done using data for ${len(steps)} temperature steps. Here are the details:
 

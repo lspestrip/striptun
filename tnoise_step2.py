@@ -25,12 +25,28 @@ from file_access import load_timestream
 from reports import create_report, get_code_version_params
 
 SAMPLING_FREQUENCY_HZ = 25.0
-MIN_TEMPERATURE_STEP_K = 2.5  # Any temperature variation below this will be considered zero
+# Any temperature variation below this will be considered zero
+MIN_TEMPERATURE_STEP_K = 2.5
 
 NUM_OF_PARAMS = 3
-PARAMETER_NAMES = ('gain_q1', 'gain_u1', 'gain_u2',
-                   'gain_q2', 'unbalance', 'tnoise')
+PARAMETER_NAMES = ('ofs_q1', 'ofs_u1', 'ofs_u2', 'ofs_q2',
+                   'gain_q1', 'gain_u1', 'gain_u2',  'gain_q2',
+                   'unbalance', 'tnoise')
 Parameters = namedtuple('Parameters', PARAMETER_NAMES)
+
+
+def param_gain_and_ofs(params, pwr_idx):
+    if pwr_idx == 0:
+        return params.gain_q1, params.ofs_q1
+    elif pwr_idx == 1:
+        return params.gain_u1, params.ofs_u1
+    elif pwr_idx == 2:
+        return params.gain_u2, params.ofs_u2
+    elif pwr_idx == 3:
+        return params.gain_q2, params.ofs_q2
+    else:
+        raise ValueError('Invalid PWR index {0}'.format(pwr_idx))
+
 
 # List of housekeeping temperatures used to estimate the temperature of the two
 # loads. They are usually load from the test database
@@ -163,6 +179,8 @@ class LogLikelihood:
                 (1.0, 0.0, 1.0),
             ]
 
+        self.pre_estimated_gains = None
+
     def load_temp_at_detector(self, pwr_idx, unbalance):
         ta_weight, tb_weight, cross_weight = self.ta_tb_weights[pwr_idx]
         return (
@@ -172,16 +190,62 @@ class LogLikelihood:
                             self.temperatures_b) / 2 * unbalance
         )
 
-    def __call__(self, xdata, gain_q1, gain_u1, gain_u2, gain_q2, unbalance, tnoise):
-        del xdata  # We're not going to use it
+    def __call__(self, *args):
+        if len(args) == 7:
+            _, ofs_q1, ofs_u1, ofs_u2, ofs_q2, unbalance, tnoise = args
+            gain_q1, gain_u1, gain_u2, gain_q2 = self.pre_estimated_gains[1]
+        elif len(args) == 9:
+            _, ofs_q1, ofs_u1, ofs_u2, ofs_q2, gain_q1, gain_q2, unbalance, tnoise = args
+            gain_u1 = self.pre_estimated_gains[1]
+            gain_u2 = self.pre_estimated_gains[2]
+        elif len(args) == 11:
+            _, ofs_q1, ofs_u1, ofs_u2, ofs_q2, gain_q1, gain_u1, gain_u2, gain_q2, unbalance, tnoise = args
+        else:
+            raise TypeError(
+                'Wrong number of arguments ({0}) in call to LogLikelihood.__call__'.format(len(args)))
 
         result = np.array([])
-        for pwr_idx, gain in enumerate((gain_q1, gain_u1, gain_u2, gain_q2)):
+        for pwr_idx, ofs_and_gain in enumerate([(ofs_q1, gain_q1),
+                                                (ofs_u1, gain_u1),
+                                                (ofs_u2, gain_u2),
+                                                (ofs_q2, gain_q2)]):
+            ofs, gain = ofs_and_gain
             temperature = self.load_temp_at_detector(pwr_idx, unbalance)
-            estimates = -gain * (temperature + tnoise)
+            estimates = -gain * (temperature + tnoise) + ofs
             result = np.concatenate((result, estimates))
 
         return result
+
+    def _pre_estimate_gains(self):
+        temp = (self.temperatures_a + self.temperatures_b) * 0.5
+
+        self.pre_estimated_gains = np.empty(4)
+        # One of these estimates will be surely ill-conditioned, as there is always
+        # a "blind" detector
+        for pwr_idx in (0, 1, 2, 3):
+            temp = self.load_temp_at_detector(pwr_idx, 0.0)
+            fit_result = np.polyfit(temp, -self.voltages[pwr_idx], 1)
+            self.pre_estimated_gains[pwr_idx] = fit_result[0]
+
+    def estimate_parameters(self):
+        self._pre_estimate_gains()
+
+        popt, pcov = opt.curve_fit(
+            self, None, np.array(self.voltages).flatten(),
+            p0=np.array([0.0, 0.0, 0.0, 0.0, self.pre_estimated_gains[0],
+                         self.pre_estimated_gains[3], 0.0, 30.0]),
+            sigma=np.array(self.voltage_std).flatten(),
+            method='trf')
+
+        popt = Parameters(ofs_q1=popt[0], ofs_u1=popt[1], ofs_u2=popt[2], ofs_q2=popt[3],
+                          gain_q1=popt[4], gain_u1=self.pre_estimated_gains[1],
+                          gain_u2=self.pre_estimated_gains[2], gain_q2=popt[5],
+                          unbalance=popt[6], tnoise=popt[7])
+
+        errbars = list(np.diag(pcov))
+        # [FIXME] Turn the errors equal to zero until we discover what's wrong with
+        # the computation of the covariance matrix
+        return popt, np.array(errbars[0:5] + [0.0, 0.0] + errbars[5:]) * 0.0
 
 
 def calc_wn_level(values):
@@ -280,30 +344,35 @@ def y_factor_pairs(num_of_steps):
             if x[0] < x[1]]
 
 
-def estimate_tnoise_and_gain(temp_a, temp_b, out_a, out_b):
+def estimate_tnoise_and_gain(temp1, temp2, out1, out2):
     'Compute the noise temperature and gain from two temperature steps'
 
-    if np.abs(temp_a - temp_b) < MIN_TEMPERATURE_STEP_K:
+    if np.abs(temp1 - temp2) < MIN_TEMPERATURE_STEP_K:
         return np.nan, np.nan
 
-    # The equation of the line is given by: y == out_a + gain * (x - temp_a)
-    gain = (out_a - out_b) / (temp_a - temp_b)
-    noise_temp = out_a / gain - temp_a
+    # The equation of the line is given by: y == out1 + gain * (x - temp1)
+    gain = (out1 - out2) / (temp1 - temp2)
+    noise_temp = out1 / gain - temp1
 
     return noise_temp, gain
 
 
-def y_factor_estimates(log_ln, unbalance):
+def y_factor_estimates(log_ln, best_fit):
     result = []
 
     for idx1, idx2 in y_factor_pairs(len(log_ln.temperatures_a)):
         for pwr_idx in (0, 1, 2, 3):
             temperatures = log_ln.load_temp_at_detector(
-                pwr_idx=pwr_idx, unbalance=unbalance)
-            tnoise, gain = estimate_tnoise_and_gain(temp_a=temperatures[idx1],
-                                                    temp_b=temperatures[idx2],
-                                                    out_a=log_ln.voltages[pwr_idx][idx1],
-                                                    out_b=log_ln.voltages[pwr_idx][idx2])
+                pwr_idx=pwr_idx, unbalance=best_fit.unbalance)
+
+            _, ofs = param_gain_and_ofs(best_fit, pwr_idx)
+            voltages = log_ln.voltages[pwr_idx] - ofs
+
+            tnoise, gain = estimate_tnoise_and_gain(temp1=temperatures[idx1],
+                                                    temp2=temperatures[idx2],
+                                                    out1=voltages[idx1],
+                                                    out2=voltages[idx2])
+
             if np.isfinite(tnoise) and np.isfinite(gain):
                 result.append({
                     'detector_idx': pwr_idx,
@@ -312,8 +381,8 @@ def y_factor_estimates(log_ln, unbalance):
                     'step_2_idx': idx2,
                     'temperature_1': temperatures[idx1],
                     'temperature_2': temperatures[idx2],
-                    'output_1': log_ln.voltages[pwr_idx][idx1],
-                    'output_2': log_ln.voltages[pwr_idx][idx2],
+                    'output_1': voltages[idx1],
+                    'output_2': voltages[idx2],
                     'tnoise': tnoise,
                     'gain': gain,
                 })
@@ -355,18 +424,19 @@ def assemble_results(polarimeter_name: str, log_ln: LogLikelihood, popt, pcov):
         } for idx in range(len(log_ln.temperatures_a))],
     }
 
+    result['y_factor_estimates'] = y_factor_estimates(log_ln, popt)
+
+    # [FIXME] until we are not able to spot the problem with the insane error bars
+    # in scipy.curvefit, use the scatter of the noise temperature as a measurement
+    # of the error on Tnoise.
+    pcov[-1] = np.std([x['tnoise'] for x in result['y_factor_estimates']])
+
     # Save the average and RMS of the fitting parameters
     for param_idx, param_name in enumerate(PARAMETER_NAMES):
         result[param_name] = {
             'mean': popt[param_idx],
-            'std': np.sqrt(pcov[param_idx, param_idx])
+            'std': np.sqrt(pcov[param_idx])
         }
-
-    result['y_factor_estimates'] = y_factor_estimates(log_ln, popt.unbalance)
-
-    # Since NumPy matrices cannot be saved in JSON files, we convert it into a
-    # straight list of floats
-    result['covariance_matrix'] = [float(x) for x in pcov.flatten()]
 
     return result
 
@@ -464,10 +534,11 @@ def create_tnoise_plot(log_ln, params, output_path):
     best_fit = Parameters(*[params[x]['mean'] for x in PARAMETER_NAMES])
 
     for pwr_idx in (0, 1, 2, 3):
+        _, ofs = param_gain_and_ofs(best_fit, pwr_idx)
         temperature = log_ln.load_temp_at_detector(
             pwr_idx=pwr_idx, unbalance=best_fit.unbalance)
         plt.scatter(
-            temperature, log_ln.voltages[pwr_idx], label=detector_name(pwr_idx), zorder=3)
+            temperature, log_ln.voltages[pwr_idx] - ofs, label=detector_name(pwr_idx), zorder=3)
 
     pwr_colors = {
         0: '#202020',
@@ -487,7 +558,7 @@ def create_tnoise_plot(log_ln, params, output_path):
         plt.scatter(-tnoise, 0.0, color=pwr_col, zorder=1)
 
     plt.xlabel('Temperature of the load [K]')
-    plt.ylabel('Output [ADU]')
+    plt.ylabel('$\Delta$-corrected output [ADU]')
     plt.legend()
 
     save_plot(output_path, 'tnoise_estimates_from_y_factor.svg')
@@ -538,7 +609,7 @@ def create_tnoise_matrix_plot(log_ln, params, output_path):
         for (i, j), z in np.ndenumerate(tnoise_matr):
             if z > 0.0:
                 ax.text(j, i, '${:0.1f}\,K$'.format(z),
-                color="w",
+                        color="w",
                         ha='center', va='center',
                         path_effects=[PathEffects.withStroke(linewidth=1,
                                                              foreground="b")])
@@ -629,14 +700,13 @@ def main():
                            temperatures_b=temperatures_b,
                            phsw_state=phsw_state)
 
-    popt, pcov = opt.curve_fit(
-        log_ln, None, np.array(voltages).flatten(),
-        p0=np.array([1e4, 1e4, 1e4, 1e4, 0.0, 30.0]),
-        sigma=np.array(voltage_std).flatten())
+    # Gains for U1 and U2 are really easy to estimate, so we do it first
+    popt, pcov = log_ln.estimate_parameters()
+
     popt = Parameters(*popt)
     log.info('results of the fit: %s',
              ', '.join(['{0} = {1:.2f} ± {2:.2f}'
-                        .format(n, popt[i], np.sqrt(pcov[i, i]))
+                        .format(n, popt[i], np.sqrt(pcov[i]))
                         for i, n in enumerate(PARAMETER_NAMES)]))
 
     params = assemble_results(args.polarimeter_name,
