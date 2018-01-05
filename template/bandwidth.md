@@ -19,7 +19,7 @@ In the following figures we report the frequency response of the four detectors:
 ![](${polarimeter_name}_RFtest_${cur_results['PSStatus']}_${loop.index}.svg){: class="plot", width=70% }
 % endfor
 
-<h2>Bandwidth and central frequency estimation for the four detectors:</h2>
+<h2>Bandwidth and central frequency estimation for the four detectors in different phase-switch configurations:</h2>
 
 % for cur_results in detailed_results:
 
@@ -39,7 +39,7 @@ In the following figures we plot:
 
 - The frequency response of the 3 "non-blind" detectors for all the analyzed files together with the final bandwidth. 
   All the courves are normalized to range 0-1.
-  The final band is also plotted. We estimate it as the median of the different measurements at each frequency.
+  The final band is also plotted. We estimate it as the median of the different measurementes at each frequency.
 
 - The final band alone together with its error bar (95% C.L.)
 
@@ -47,7 +47,7 @@ In the following figures we plot:
 ![](${polarimeter_name}_RFtest_FinalBand.svg){: class="plot", width=70%}
 
 <div style="text-align:center; color:red; font-size: 1.2em;">Final Bandwidth: ${'{0:.2f}'.format(bandwidth_ghz)} ± ${'{0:.2f}'.format(bandwidth_err)} GHz (95% C.L.)</div>
-<div style="text-align:center; color:red; font-size: 1.2em;">Final central Frequency: ${'{0:.2f}'.format(central_nu_ghz)} ± ${'{0:.2f}'.format(central_nu_err)} GHz (95% C.L.)</div>
+<div style="text-align:center; color:red; font-size: 1.2em;">Central Frequency: ${'{0:.2f}'.format(central_nu_ghz)} ± ${'{0:.2f}'.format(central_nu_err)} GHz (95% C.L.)</div>
 
 
 

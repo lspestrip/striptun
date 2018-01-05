@@ -315,7 +315,7 @@ def AnalyzeBandTest(polarimeter_name, file_name, output_path):
 
 
 def build_dict_from_results(pol_name, duration, low_nu, high_nu, PSStatus, central_nu_det, bandwidth_det,
-                            new_nu, final_band, final_band_err,
+                            new_nu, final_band,
                             final_central_nu, final_central_nu_err,
                             final_bandwidth, final_bandwidth_err):
     results = {
@@ -350,7 +350,6 @@ def build_dict_from_results(pol_name, duration, low_nu, high_nu, PSStatus, centr
     results['bandshape'] = {
         'frequency_ghz': list(new_nu),
         'response': list(final_band),
-        'response_err': list(final_band_err)
     }
     return results
 
@@ -444,7 +443,7 @@ def main():
     # Creating the report
     params = build_dict_from_results(
         args.polarimeter_name, duration, low_nu, high_nu, PSStatus, central_nu_det, bandwidth_det,
-        new_nu, final_band, final_band_err,
+        new_nu, final_band,
         final_central_nu, final_central_nu_err,
         final_bandwidth, final_bandwidth_err)
 
