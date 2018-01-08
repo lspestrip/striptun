@@ -26,7 +26,8 @@ This detector was blind because of the PH/SW settings used during the test.
 The following table lists the region where the signal is stable enough to
 run an analysis of the noise temperature. The «index» is the zero-based index
 of the sample in the file. The average output and the RMS of the output are
-reported as well.
+reported as well. You can force the code to re-use these intervals with the
+flag `--regions ${region_str[idx]}`.
 
   # | Start index | End index | Start time [s] | End time [s] | Length [s] | Average [ADU] | RMS [ADU]
 :--:| -----------:| ---------:| --------------:| -----------: | ---------: | -------------:| --------:
