@@ -101,7 +101,11 @@ def find_stable_regions(slopes: List[SlopeInformation],
                         slope_threshold_adu_s: float,
                         duration_threshold_s: float,
                         clipping_s: float = 5.0,
-                        first_region_length: float = None) -> List[Region]:
+                        first_region_length: float = None,
+                        regions: List[Tuple[float, float]] = None) -> List[Region]:
+
+    if regions:
+        return [Region(time0_s=x[0], time1_s=x[1]) for x in regions]
 
     mask = np.array([x.abs_slope_adu_s
                      for x in slopes]) < slope_threshold_adu_s
@@ -209,6 +213,17 @@ def parse_arguments():
                         time before the user changed the temperature of the load, and
                         the code is not able to detect that the instrument was stable at
                         the beginning.''')
+    parser.add_argument('--regions', type=str, default=None,
+                        help='''Specify the time intervals where the signal was stable
+                        enough to be used for the characterization of the noise temperature.
+                        Normally the code is able to detect such intervals, but there are
+                        a few cases where unwanted features in the signal (e.g., spikes,
+                        high white noise...) might make the code fail. Intervals are to be
+                        specified as a comma-separated list, where each element contains
+                        the start and end times in seconds, separated by an hyphen. For
+                        example, "10-20,60-120" specifies two intervals: the first one starts
+                        at time 10 s and ends at time 20 s, the second one starts at
+                        60 s and ends at 120 s.''')
     return parser.parse_args()
 
 
@@ -258,6 +273,25 @@ def build_dict_from_results(pol_name: str,
     }
 
 
+def parse_region_list_str(s: str) -> List[Tuple[float, float]]:
+    '''Parse a string passed to the --regions command line parameter.
+
+    Example:
+    > parse_region_list_str('10-20,60-120')
+    [(10.0, 20.0), (60.0, 120.0)]
+    '''
+
+    if not s:
+        return []
+
+    result = []
+    for interval in s.split(','):
+        t0, t1 = interval.split('-')
+        result.append((float(t0), float(t1)))
+
+    return result
+
+
 def main():
 
     log.basicConfig(format='[%(asctime)s %(levelname)s] %(message)s',
@@ -300,7 +334,8 @@ def main():
                                 slope_threshold_adu_s=1.5 * slope_threshold,
                                 duration_threshold_s=60.0,
                                 clipping_s=15.0,
-                                first_region_length=args.first_region_length)
+                                first_region_length=args.first_region_length,
+                                regions=parse_region_list_str(args.regions))
         if not num_of_regions:
             num_of_regions = len(regions[curve_idx])
         else:
@@ -327,6 +362,16 @@ def main():
                                      data=power,
                                      regions=regions)
     params['data_url'] = args.input_url
+
+    region_str = []
+    for curve_idx in range(4):
+        if curve_idx in regions and regions[curve_idx]:
+            region_str.append(','.join(['{0:.0f}-{1:.0f}'.format(x.time0_s, x.time1_s)
+                                        for x in regions[curve_idx]]))
+        else:
+            region_str.append('')
+    params['region_str'] = region_str
+
     save_parameters_to_json(params=dict(params, **get_code_version_params()),
                             output_file_name=os.path.join(args.output_path,
                                                           'tnoise_step1_results.json'))
