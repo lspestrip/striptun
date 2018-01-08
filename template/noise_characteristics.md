@@ -27,8 +27,17 @@ The raw data [ADU] have been divided by the detector gains obtained from ["${gai
 % else:
 To obtain calibrated data [K], the raw data [ADU] have been divided by the detector gains obtained by doing the weighted average of the gains taken from:  
 % for gainss in gains_file_path:
-["${gainss}"](${gainss})  
+["${gainss}"](${gainss})
+
 % endfor
+
+The following gains have been obtained:
+$$ \begin{align} \mathrm{G_{Q1}} &= ${'{:0.0f}'.format(PWR0Q1['detector_gain_ADU_K'])} \pm ${'{:0.0f}'.format(PWR0Q1['delta_detector_gain_ADU_K'])}\;ADU/K \newline
+\mathrm{G_{U1}} &= ${'{:0.0f}'.format(PWR1U1['detector_gain_ADU_K'])} \pm ${'{:0.0f}'.format(PWR1U1['delta_detector_gain_ADU_K'])}\;ADU/K \newline
+\mathrm{G_{U2}} &= ${'{:0.0f}'.format(PWR2U2['detector_gain_ADU_K'])} \pm ${'{:0.0f}'.format(PWR2U2['delta_detector_gain_ADU_K'])}\;ADU/K \newline
+\mathrm{G_{Q2}} &= ${'{:0.0f}'.format(PWR3Q2['detector_gain_ADU_K'])} \pm ${'{:0.0f}'.format(PWR3Q2['delta_detector_gain_ADU_K'])}\;ADU/K \end{align} 
+$$
+
 For the total power data the detector offsets have been subtracted before dividing. 
 % endif
 

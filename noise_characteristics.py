@@ -423,7 +423,7 @@ def build_dict_from_results(pol_name, input_file_path, gains_file_path, g, durat
                             alphaDEM, delta_alphaDEM, WN_levelDEM, delta_WN_levelDEM, fkneePWR,
                             delta_fkneePWR, alphaPWR, delta_alphaPWR, WN_levelPWR,
                             delta_WN_levelPWR, fkneeIQU, delta_fkneeIQU, alphaIQU, delta_alphaIQU,
-                            WN_levelIQU, delta_WN_levelIQU):
+                            WN_levelIQU, delta_WN_levelIQU, gains, delta_gains):
     results = {
         'polarimeter_name': pol_name,
         'input_file_path': input_file_path,
@@ -437,7 +437,8 @@ def build_dict_from_results(pol_name, input_file_path, gains_file_path, g, durat
         'n_chunks': n_chuncks,
         'detrend': detrend,
         'reduction_factor_1f': reduction1_f}
-    
+
+
     for i, nam in enumerate(DEM):
         nam = nam.replace("/", "")
         results[nam] = {'f_knee_hz' : fkneeDEM[i],
@@ -449,7 +450,9 @@ def build_dict_from_results(pol_name, input_file_path, gains_file_path, g, durat
 
     for i, pwr in enumerate(PWR):
         pwr = pwr.replace("/", "")
-        results[pwr] = {'f_knee_hz' : fkneePWR[i],
+        results[pwr] = {'detector_gain_ADU_K' : gains[i],
+                        'delta_detector_gain_ADU_K' : delta_gains[i],
+                        'f_knee_hz' : fkneePWR[i],
                         'delta_f_knee_hz' : delta_fkneePWR[i],
                         'slope' : alphaPWR[i],
                         'delta_slope' : delta_alphaPWR[i],
@@ -499,10 +502,12 @@ def get_data(metadata, gains_file_path, data):
         all_delta_gains[i, :] = np.array([gain['gain_q1']['std'], gain['gain_u1']['std'],
                                           gain['gain_u2']['std'], gain['gain_q2']['std']])
         
-    gains = np.average(all_gains, axis=0, weights=1/all_delta_gains**2)
+    gains = np.around(np.average(all_gains, axis=0, weights=1/all_delta_gains**2))
+    delta_gains = np.around(np.sqrt(1 / np.sum(1/all_delta_gains**2, axis=0)))
+    
     dataDEM, dataPWR = data.demodulated / gains, (data.power - offsets) / gains
     
-    return len(gains_file_path), dataDEM, dataPWR
+    return len(gains_file_path), dataDEM, dataPWR, gains, delta_gains
 
 
 def main():
@@ -521,7 +526,7 @@ def main():
     # Load the output of the four detectors [ADU]
     log.info('Loading file from "{}"'.format(args.input_file_path))
     metadata, data = load_timestream(args.input_file_path)
-    g, dataDEM, dataPWR = get_data(metadata, args.gains_file_path, data)
+    g, dataDEM, dataPWR, gains, delta_gains = get_data(metadata, args.gains_file_path, data)
     duration = get_duration(dataDEM, dataPWR, SAMPLING_FREQUENCY_HZ)
 
     if args.n_chunks is None:
@@ -573,7 +578,7 @@ def main():
                                      WN_levelDEM, delta_WN_levelDEM, fkneePWR, delta_fkneePWR,
                                      alphaPWR, delta_alphaPWR, WN_levelPWR, delta_WN_levelPWR,
                                      fkneeIQU, delta_fkneeIQU, alphaIQU, delta_alphaIQU,
-                                     WN_levelIQU, delta_WN_levelIQU)
+                                     WN_levelIQU, delta_WN_levelIQU, gains, delta_gains)
 
     save_parameters_to_json(params=dict(params, **get_code_version_params()),
                             output_file_name=os.path.join(args.output_path,
