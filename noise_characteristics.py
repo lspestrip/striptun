@@ -499,7 +499,7 @@ def get_data(metadata, gains_file_path, data):
         all_delta_gains[i, :] = np.array([gain['gain_q1']['std'], gain['gain_u1']['std'],
                                           gain['gain_u2']['std'], gain['gain_q2']['std']])
         
-    gains = np.average(all_gains, axis=0, weights=all_delta_gains)
+    gains = np.average(all_gains, axis=0, weights=1/all_delta_gains**2)
     dataDEM, dataPWR = data.demodulated / gains, (data.power - offsets) / gains
     
     return len(gains_file_path), dataDEM, dataPWR
