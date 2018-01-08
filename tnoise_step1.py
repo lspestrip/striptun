@@ -21,7 +21,7 @@ import matplotlib.transforms as transforms
 from file_access import load_timestream
 
 SAMPLING_FREQUENCY_HZ = 25.0
-
+MAX_REGION_LENGTH_S = 30.0
 
 SlopeInformation = namedtuple('SlopeInformation', [
     'time0_s',
@@ -135,10 +135,11 @@ def find_stable_regions(slopes: List[SlopeInformation],
                 # Yes, it does: remove the last one and append a new
                 # region that covers both the old and the current one
                 result.pop()
-                result.append(Region(time0_s=last_region.time0_s,
+                result.append(Region(time0_s=max(last_region.time0_s, time1_s - MAX_REGION_LENGTH_S),
                                      time1_s=time1_s))
                 continue
 
+        time0_s = max(time0_s, time1_s - MAX_REGION_LENGTH_S)
         result.append(Region(time0_s=time0_s, time1_s=time1_s))
 
     log.info('%d regions found:', len(result))
