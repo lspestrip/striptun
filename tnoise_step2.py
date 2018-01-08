@@ -130,7 +130,7 @@ class LogLikelihood:
     for the best estimate of the gain and noise temperature. It can be passed
     as a parameter to scipy.optimize.curve_fit.'''
 
-    def __init__(self, voltages, voltage_std, wn_level,
+    def __init__(self, voltages, voltage_std, wn_level, wn_error, nsamples,
                  temperatures_a, temperatures_b, phsw_state):
         assert len(voltages) == 4, '''
             "voltages" must be an array of 4 elements, one for each PWR output'''
@@ -138,6 +138,8 @@ class LogLikelihood:
         self.voltages = voltages
         self.voltage_std = voltage_std
         self.wn_level = wn_level
+        self.wn_error = wn_error
+        self.nsamples = nsamples
         self.temperatures_a = temperatures_a
         self.temperatures_b = temperatures_b
         self.phsw_state = phsw_state
@@ -191,7 +193,9 @@ def calc_wn_level(values):
                    window='hann', nperseg=2.0 * SAMPLING_FREQUENCY_HZ,
                    detrend='linear')
 
-    return float(np.median(psd))
+    wn_level = np.mean(psd)
+    err = np.std(psd) / np.sqrt(len(psd))
+    return float(wn_level), float(err)
 
 
 def extract_average_values(power_data, dem_data, metadata, tnoise1_results, num):
@@ -200,9 +204,12 @@ def extract_average_values(power_data, dem_data, metadata, tnoise1_results, num)
     Tries to find `num` temperature steps by cycling over the statistics of the
     three non-blind PWR outputs produced by the tnoise1 analysis step.
 
-    Return a pair (VOLT, STD). Both VOLT and STD are 4-element lists of NumPy
-    arrays (one per each PWR output), each containing the voltages (VOLT) and
-    standard deviations (STD) for each temperature step.'''
+    Return a pair (VOLT, STD, WN, WN_ERR, SAMP). All the elements of the tuple
+    but SAMP are 4-element lists of NumPy arrays (one per each PWR output), each
+    containing the voltages (VOLT), standard deviations (STD), white noise
+    levels (WN) and white noise error (WN_ERR) for each temperature step. SAMP
+    is a 1-D NumPy array containing the number of samples used in each of the
+    four PWR outputs.'''
 
     # ID of the PWR output which will be used as "reference" (i.e., we are
     # going to use the regions detected using this PWR output)
@@ -226,16 +233,19 @@ def extract_average_values(power_data, dem_data, metadata, tnoise1_results, num)
     voltages = [np.empty(len(regions)) for i in range(4)]
     voltage_std = [np.empty(len(regions)) for i in range(4)]
     wn_level = [np.empty(len(regions)) for i in range(4)]
+    wn_err = [np.empty(len(regions)) for i in range(4)]
+    nsamples = np.empty(len(regions))
     for idx, cur_region in enumerate(regions):
         start, stop = [cur_region[x] for x in ('index0', 'index1')]
+        nsamples[idx] = stop - start + 1
 
         for i in range(4):
             arr = power_data[start:stop, i]
             voltages[i][idx] = np.mean(arr) - offsets[i]
             voltage_std[i][idx] = np.std(arr)
-            wn_level[i][idx] = calc_wn_level(dem_data[start:stop, i])
+            wn_level[i][idx], wn_err[i][idx] = calc_wn_level(dem_data[start:stop, i])
 
-    return voltages, voltage_std, wn_level
+    return voltages, voltage_std, wn_level, wn_err, nsamples
 
 
 def extract_temperatures(test_metadata):
@@ -340,18 +350,23 @@ def assemble_results(polarimeter_name: str, log_ln: LogLikelihood, popt, pcov):
         'steps': [{
             't_load_a_K': log_ln.temperatures_a[idx],
             't_load_b_K': log_ln.temperatures_b[idx],
+            'nsamples': log_ln.nsamples[idx],
             'pwr0_adu': log_ln.voltages[0][idx],
             'pwr0_rms_adu': log_ln.voltage_std[0][idx],
             'pwr0_wn_level': log_ln.wn_level[0][idx],
+            'pwr0_wn_error': log_ln.wn_error[0][idx],
             'pwr1_adu': log_ln.voltages[1][idx],
             'pwr1_rms_adu': log_ln.voltage_std[1][idx],
             'pwr1_wn_level': log_ln.wn_level[1][idx],
+            'pwr1_wn_error': log_ln.wn_error[1][idx],
             'pwr2_adu': log_ln.voltages[2][idx],
             'pwr2_rms_adu': log_ln.voltage_std[2][idx],
             'pwr2_wn_level': log_ln.wn_level[2][idx],
+            'pwr2_wn_error': log_ln.wn_error[2][idx],
             'pwr3_adu': log_ln.voltages[3][idx],
             'pwr3_rms_adu': log_ln.voltage_std[3][idx],
             'pwr3_wn_level': log_ln.wn_level[3][idx],
+            'pwr3_wn_error': log_ln.wn_error[3][idx],
         } for idx in range(len(log_ln.temperatures_a))],
     }
 
@@ -521,10 +536,8 @@ def create_tnoise_matrix_plot(log_ln, params, output_path):
             bunch = [x['temperature_1'] for x in cur_estimates if x['step_1_idx'] == i] \
                 + [x['temperature_2']
                     for x in cur_estimates if x['step_2_idx'] == i]
-            assert bunch, ("unable to find temperature with index {0} for detector {1}:\n"
-                           "{2}"
-                           .format(i, cur_det, cur_estimates))
-            step_label.append('{0:.1f} K'.format(bunch[0]))
+            if bunch:
+                step_label.append('{0:.1f} K'.format(bunch[0]))
 
         tnoise_matr = np.zeros((matr_size, matr_size)) * np.nan
         for est in cur_estimates:
@@ -612,7 +625,8 @@ def main():
     log.info('temperatures for load B: %s',
              str(temperatures_b))
 
-    voltages, voltage_std, wn_level = extract_average_values(data.power, data.demodulated, metadata, tnoise1_results,
+    voltages, voltage_std, wn_level, wn_err, nsamples = \
+        extract_average_values(data.power, data.demodulated, metadata, tnoise1_results,
                                                              num=len(temperatures_a))
     for idx, arr in enumerate(voltages):
         log.info('voltages for PWR%d: %s',
@@ -625,6 +639,8 @@ def main():
     log_ln = LogLikelihood(voltages=voltages,
                            voltage_std=voltage_std,
                            wn_level=wn_level,
+                           wn_error=wn_err,
+                           nsamples=nsamples,
                            temperatures_a=temperatures_a,
                            temperatures_b=temperatures_b,
                            phsw_state=phsw_state)
