@@ -140,7 +140,8 @@ def load_timestream(file_path):
 
     4. An URL pointing to an HDF5 file.
 
-    Return a Timestream object.'''
+    Return a pair consisting of a dictionary containing the medatada and a
+    Timestream object.'''
 
     if not urlreq.splittype(file_path)[0]:
         # Local path
