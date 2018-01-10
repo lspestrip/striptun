@@ -42,6 +42,15 @@ four lines comparable.
 
 ![](temperature_timestream.svg){: class="plot"}
 
+The following offsets have been applied to the four outputs:
+
+# Detector | Offset
+:---------:| ----------:
+PWR0 (Q1)  | ${ offsets[0] }
+PWR1 (U1)  | ${ offsets[1] }
+PWR2 (U2)  | ${ offsets[2] }
+PWR3 (Q2)  | ${ offsets[3] }
+
 
 <h2>Results of the analysis</h2>
 
