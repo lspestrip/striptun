@@ -23,7 +23,7 @@ implement it in the code.
 % if number_of_gains == 0:
 **The noise analysis has been performed on raw (uncalibrated) data [ADU].**
 % elif number_of_gains == 1:
-The raw data [ADU] have been divided by the detector gains obtained from ["${gains_file_path}"](${gains_file_path}) to obtain calibrated data [K]. For the total power data the detector offsets have been subtracted before dividing.
+The raw data [ADU] have been divided by the detector gains obtained from ["${gains_file_path[0]}"](${gains_file_path[0]}) to obtain calibrated data [K]. For the total power data the detector offsets have been subtracted before dividing.
 % else:
 To obtain calibrated data [K], the raw data [ADU] have been divided by the detector gains obtained by doing the weighted average of the gains taken from:  
 % for gainss in gains_file_path:

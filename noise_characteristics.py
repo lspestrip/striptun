@@ -155,13 +155,22 @@ def get_noise_characteristics(freq, fft, left_freq, right_freq, totalPWR=False):
             c = np.median(np.log(fft[f_idx_right:]), axis=0)
             fknee_ = np.exp((c - b) / a)
         fit_par = np.row_stack([a, b, c])
-
+       
+        # uncertainty estimation of the median c (logarithmic)
         delta_c = np.sum(np.abs(np.log(fft[f_idx_right:]) - c), axis=0) / len(fft[f_idx_right:])
+
+        # uncertainty estimation of fknee (linear)
         delta_fknee_ = fknee_ / np.abs(a) * np.sqrt(((c - b) / a)**2 * delta_a**2 + delta_b**2 +
                                                     delta_c**2)
-        delta_median_ = np.exp(c) * delta_c
+ 
+        # come back to linear and propagate the error to obtain the WNL and its uncertainty 
+        WNL_ = np.exp(c)
+        delta_WNL_ = np.exp(c) * delta_c
 
-        # uncertanties estimation
+        # get the slope and its uncertainties
+        slope_, delta_slope_ = -a, delta_a
+    
+        # get the right number of decimals
         def get_right_number_of_decimals(x, delta_x):
             def get_new_x(x, new_num_dec):
                 new_x = np.array([np.around(x[i], decimals=dec) for i, dec in
@@ -173,14 +182,14 @@ def get_noise_characteristics(freq, fft, left_freq, right_freq, totalPWR=False):
 
         if totalPWR:
             fknee, delta_fknee = (np.full_like(fknee_, np.NaN), np.full_like(delta_fknee_, np.NaN))
-            median, delta_median = (np.full_like(c, np.NaN), np.full_like(delta_median_, np.NaN))
+            WNL, delta_WNL = (np.full_like(WNL_, np.NaN), np.full_like(delta_WNL_, np.NaN))
         else:
             fknee, delta_fknee = get_right_number_of_decimals(fknee_, delta_fknee_)
             delta_fknee[fknee < freq.min()], fknee[fknee < freq.min()] = np.NaN, np.NaN
-            median, delta_median = get_right_number_of_decimals(np.exp(c), delta_median_)
-        slope, delta_slope = get_right_number_of_decimals(-a, delta_a)
+            WNL, delta_WNL = get_right_number_of_decimals(WNL_, delta_WNL_)
+        slope, delta_slope = get_right_number_of_decimals(slope_, delta_slope_)
             
-        return fit_par, fknee, delta_fknee, slope, delta_slope, median, delta_median
+        return fit_par, fknee, delta_fknee, slope, delta_slope, WNL, delta_WNL
                 
     
     if totalPWR == 'stokes':
