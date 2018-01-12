@@ -185,10 +185,11 @@ def get_noise_characteristics(freq, fft, left_freq, right_freq, totalPWR=False):
             WNL, delta_WNL = (np.full_like(WNL_, np.NaN), np.full_like(delta_WNL_, np.NaN))
         else:
             fknee, delta_fknee = get_right_number_of_decimals(fknee_, delta_fknee_)
-            delta_fknee[fknee < freq.min()], fknee[fknee < freq.min()] = np.NaN, np.NaN
+            fknee[fknee < freq.min()], delta_fknee[np.isnan(fknee)] = np.NaN, np.NaN
             WNL, delta_WNL = get_right_number_of_decimals(WNL_, delta_WNL_)
         slope, delta_slope = get_right_number_of_decimals(slope_, delta_slope_)
-            
+        slope[slope < 0], delta_slope[np.isnan(slope)] = np.NaN, np.NaN
+
         return fit_par, fknee, delta_fknee, slope, delta_slope, WNL, delta_WNL
                 
     
