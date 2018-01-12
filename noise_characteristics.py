@@ -495,7 +495,7 @@ def get_data(metadata, gains_file_path, data):
     if len(gains_file_path) == 0:
         # We do not use gains information
         log.info('Default gains are all equal to 1 [ADU/K]')
-        return len(gains_file_path), data.demodulated, data.power
+        return len(gains_file_path), data.demodulated, data.power, np.ones(4), np.zeros(4)
     
     offsets = np.array([metadata['detector_outputs'][0]['q1_adu'],
                         metadata['detector_outputs'][0]['u1_adu'],
