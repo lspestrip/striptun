@@ -150,7 +150,7 @@ def get_noise_characteristics(freq, fft, left_freq, right_freq, totalPWR=False):
         
         # calculate median value of the right part of the spectrum and the knee frequency
         if totalPWR:
-            c, fknee_ = (np.full_like(a, np.NaN), np.full_like(a, np.NaN))
+            c, fknee_ = (np.zeros_like(a), np.zeros_like(a))
         else:
             c = np.median(np.log(fft[f_idx_right:]), axis=0)
             fknee_ = np.exp((c - b) / a)
@@ -181,14 +181,14 @@ def get_noise_characteristics(freq, fft, left_freq, right_freq, totalPWR=False):
             return get_new_x(x, new_num_dec), get_new_x(delta_x, new_num_dec)
 
         if totalPWR:
-            fknee, delta_fknee = (np.full_like(fknee_, np.NaN), np.full_like(delta_fknee_, np.NaN))
-            WNL, delta_WNL = (np.full_like(WNL_, np.NaN), np.full_like(delta_WNL_, np.NaN))
+            fknee, delta_fknee = (np.zeros_like(fknee_), np.zeros_like(delta_fknee_))
+            WNL, delta_WNL = (np.zeros_like(WNL_), np.zeros_like(delta_WNL_))
         else:
             fknee, delta_fknee = get_right_number_of_decimals(fknee_, delta_fknee_)
-            fknee[fknee < freq.min()], delta_fknee[np.isnan(fknee)] = np.NaN, np.NaN
+            fknee[fknee < freq.min()], delta_fknee[fknee==0] = 0, 0
             WNL, delta_WNL = get_right_number_of_decimals(WNL_, delta_WNL_)
         slope, delta_slope = get_right_number_of_decimals(slope_, delta_slope_)
-        slope[slope < 0], delta_slope[np.isnan(slope)] = np.NaN, np.NaN
+        slope[slope < 0], delta_slope[slope==0] = 0, 0
 
         return fit_par, fknee, delta_fknee, slope, delta_slope, WNL, delta_WNL
                 
