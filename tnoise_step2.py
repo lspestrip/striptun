@@ -591,9 +591,9 @@ def parse_offsets(s: Union[str, None]):
 
     with open(s, 'rt') as f:
         data = json.load(f)
-        assert('detector_offsets' in data)
-        return [data['detector_offsets'][x]
-                for x in ('PWR0_adu', 'PWR1_adu', 'PWR2_adu', 'PWR3_adu')]
+        assert('detector_outputs' in data)
+        return [data['detector_outputs'][x]
+                for x in ('q1_adu', 'u1_adu', 'u2_adu', 'q2_adu')]
 
 
 def parse_arguments():
