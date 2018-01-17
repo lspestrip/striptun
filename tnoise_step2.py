@@ -2,7 +2,7 @@
 # -*- encoding: utf-8 -*-
 
 from argparse import ArgumentParser
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 import logging as log
 import os
 import sys
@@ -25,10 +25,16 @@ SAMPLING_FREQUENCY_HZ = 25.0
 # Any temperature variation below this will be considered zero
 MIN_TEMPERATURE_STEP_K = 2.5
 
-NUM_OF_PARAMS = 3
-PARAMETER_NAMES = ('gain_q1', 'gain_u1', 'gain_u2',
-                   'gain_q2', 'unbalance', 'tnoise')
-Parameters = namedtuple('Parameters', PARAMETER_NAMES)
+NONLINEAR_PARAM_NAMES = ('gain_q1', 'gain_u1', 'gain_u2',
+                         'gain_q2', 'unbalance', 'tnoise')
+Parameters = namedtuple('Parameters', NONLINEAR_PARAM_NAMES)
+
+ONLYQ_PARAM_NAMES = {
+    0: ('gain_q1', 'tnoise_q1'),
+    1: ('gain_u1', 'tnoise_u1'),
+    2: ('gain_u2', 'tnoise_u2'),
+    3: ('gain_q2', 'tnoise_q2'),
+}
 
 # List of housekeeping temperatures used to estimate the temperature of the two
 # loads. They are usually load from the test database
@@ -163,7 +169,7 @@ class LogLikelihood:
                 (1.0, 0.0, 1.0),
             ]
 
-    def load_temp_at_detector(self, pwr_idx, unbalance):
+    def load_temp_at_detector(self, pwr_idx, unbalance=0.0):
         ta_weight, tb_weight, cross_weight = self.ta_tb_weights[pwr_idx]
         return (
             ta_weight * self.temperatures_a +
@@ -334,19 +340,12 @@ def y_factor_estimates(log_ln, unbalance):
     return result
 
 
-def assemble_results(polarimeter_name: str, log_ln: LogLikelihood, popt, pcov):
-    '''Build a dictionary containing all the relevant results of the analysis
-
-    The dictionary is meant to be saved in a JSON file, and used as input to
-    produce the Markdown/HTML report.'''
-
-    result = {
+def assemble_results(polarimeter_name: str, log_ln: LogLikelihood):
+    return {
         'polarimeter_name': polarimeter_name,
         'title': ('Noise temperature analysis for polarimeter {0}'
                   .format(polarimeter_name)),
-        'analysis_method': 'non-linear fit',
         'phsw_state': log_ln.phsw_state,
-        'parameters': PARAMETER_NAMES,
         'steps': [{
             't_load_a_K': log_ln.temperatures_a[idx],
             't_load_b_K': log_ln.temperatures_b[idx],
@@ -370,20 +369,30 @@ def assemble_results(polarimeter_name: str, log_ln: LogLikelihood, popt, pcov):
         } for idx in range(len(log_ln.temperatures_a))],
     }
 
+
+def assemble_nonlinear_fit_results(polarimeter_name: str, log_ln: LogLikelihood, popt, pcov):
+    '''Build a dictionary containing all the relevant results of the analysis
+
+    The dictionary is meant to be saved in a JSON file, and used as input to
+    produce the Markdown/HTML report.'''
+
+    results = assemble_results(polarimeter_name, log_ln)
+    results['parameters'] = NONLINEAR_PARAM_NAMES
+
     # Save the average and RMS of the fitting parameters
-    for param_idx, param_name in enumerate(PARAMETER_NAMES):
-        result[param_name] = {
+    for param_idx, param_name in enumerate(NONLINEAR_PARAM_NAMES):
+        results[param_name] = {
             'mean': popt[param_idx],
             'std': np.sqrt(pcov[param_idx, param_idx])
         }
 
-    result['y_factor_estimates'] = y_factor_estimates(log_ln, popt.unbalance)
+    results['y_factor_estimates'] = y_factor_estimates(log_ln, popt.unbalance)
 
     # Since NumPy matrices cannot be saved in JSON files, we convert it into a
     # straight list of floats
-    result['covariance_matrix'] = [float(x) for x in pcov.flatten()]
+    results['covariance_matrix'] = [float(x) for x in pcov.flatten()]
 
-    return result
+    return results
 
 
 def save_plot(output_dir, file_name):
@@ -398,8 +407,7 @@ def create_timestream_plot(log_ln, params, output_path):
     temperatures_a = np.array([x['t_load_a_K'] for x in params['steps']])
     temperatures_b = np.array([x['t_load_b_K'] for x in params['steps']])
 
-    best_fit = Parameters(*[params[x]['mean'] for x in PARAMETER_NAMES])
-    model_estimates = log_ln(None, *best_fit).reshape(4, -1)
+    best_fit = Parameters(*[params[x]['mean'] for x in NONLINEAR_PARAM_NAMES])
 
     if np.var(temperatures_a) > np.var(temperatures_b):
         varying_t = temperatures_a
@@ -408,6 +416,22 @@ def create_timestream_plot(log_ln, params, output_path):
         varying_t = temperatures_b
         load_name = 'B'
 
+    if params['analysis_method'] == 'non-linear fit':
+        model_estimates = log_ln(None, *best_fit).reshape(4, -1)
+    elif params['analysis_method'] == 'only_q':
+        model_estimates = np.empty((4, len(temperatures_a)))
+        for i in range(4):
+            gain, tnoise = [params[x]['mean'] for x in ONLYQ_PARAM_NAMES[i]]
+
+            if i in (1, 2):
+                temp = (temperatures_a + temperatures_b) / 2
+            else:
+                temp = varying_t
+
+            model_estimates[i, :] = -gain * (temp + tnoise)
+    else:
+        model_estimates = None
+
     plt.subplot(211)
     pwr = []
     for pwr_idx in (0, 1, 2, 3):
@@ -415,8 +439,10 @@ def create_timestream_plot(log_ln, params, output_path):
                             for i in range(len(log_ln.temperatures_a))])
         base_line, = plt.plot(varying_t, cur_pwr, '-o',
                               label=detector_name(pwr_idx))
-        plt.plot(varying_t, model_estimates[pwr_idx],
-                 alpha=0.5, color=base_line.get_color())
+
+        if not np.all(model_estimates[pwr_idx] == 0.0):
+            plt.plot(varying_t, model_estimates[pwr_idx],
+                     alpha=0.5, color=base_line.get_color())
         pwr.append(cur_pwr)
 
     plt.legend()
@@ -438,7 +464,7 @@ def create_timestream_plot(log_ln, params, output_path):
 def create_model_match_plot(log_ln, params, output_path):
     fig = plt.figure()
 
-    best_fit = [params[x]['mean'] for x in PARAMETER_NAMES]
+    best_fit = [params[x]['mean'] for x in NONLINEAR_PARAM_NAMES]
 
     # These two variables are used to draw the y=x blue line
     min_volt, max_volt = None, None
@@ -476,7 +502,7 @@ def create_model_match_plot(log_ln, params, output_path):
 def create_tnoise_plot(log_ln, params, output_path):
     _ = plt.figure(figsize=(8, 5))
 
-    best_fit = Parameters(*[params[x]['mean'] for x in PARAMETER_NAMES])
+    best_fit = Parameters(*[params[x]['mean'] for x in NONLINEAR_PARAM_NAMES])
 
     for pwr_idx in (0, 1, 2, 3):
         temperature = log_ln.load_temp_at_detector(
@@ -568,11 +594,115 @@ def create_tnoise_matrix_plot(log_ln, params, output_path):
     save_plot(output_path, 'tnoise_matrix.svg')
 
 
-def create_plots(*args, **kwargs):
+def create_nonlinear_plots(*args, **kwargs):
     create_timestream_plot(*args, **kwargs)
     create_model_match_plot(*args, **kwargs)
     create_tnoise_plot(*args, **kwargs)
     create_tnoise_matrix_plot(*args, **kwargs)
+
+
+def nonlinear_fit_analysis(args, log_ln):
+    popt, pcov = opt.curve_fit(
+        log_ln, None, np.array(log_ln.voltages).flatten(),
+        p0=np.array([1e4, 1e4, 1e4, 1e4, 0.0, 30.0]),
+        sigma=np.array(log_ln.voltage_std).flatten())
+    popt = Parameters(*popt)
+    log.info('results of the fit: %s',
+             ', '.join(['{0} = {1:.2f} ± {2:.2f}'
+                        .format(n, popt[i], np.sqrt(pcov[i, i]))
+                        for i, n in enumerate(NONLINEAR_PARAM_NAMES)]))
+
+    return assemble_nonlinear_fit_results(args.polarimeter_name,
+                                          log_ln, popt, pcov)
+
+
+def nonlinear_fit_report(log_ln, params, output_path):
+    create_nonlinear_plots(log_ln, params, output_path)
+    create_report(params=params,
+                  md_template_file='tnoise_step2_nonlinear.md',
+                  md_report_file='tnoise_step2_report.md',
+                  html_report_file='tnoise_step2_report.html',
+                  output_path=output_path)
+
+
+def create_only_q_plots(*args, **kwargs):
+    create_timestream_plot(*args, **kwargs)
+    create_tnoise_plot(*args, **kwargs)
+    create_tnoise_matrix_plot(*args, **kwargs)
+
+
+def only_q_analysis(args, log_ln):
+
+    result = assemble_results(args.polarimeter_name, log_ln)
+
+    for pwr_idx in range(4):
+        gain_param_name, tnoise_param_name = ONLYQ_PARAM_NAMES[pwr_idx]
+
+        temp = log_ln.load_temp_at_detector(pwr_idx)
+        if np.std(temp) < 1.0:
+            log.info(
+                'skipping PWR{0}, as it seems to be the blind channel'.format(pwr_idx))
+            # This is the blind channel, we can do nothing about it!
+            result[gain_param_name] = {
+                'mean': 0.0,
+                'std': 0.0,
+            }
+            result[tnoise_param_name] = {
+                'mean': 0.0,
+                'std': 0.0,
+            }
+            continue
+
+        if len(temp) < 4:
+            # It's impossible to get reliable estimates of the fitting error
+            # when there are too few points
+            best_fit = np.polyfit(temp, log_ln.voltages[pwr_idx], 1, cov=False)
+            pcov = np.zeros((2, 2))
+        else:
+            best_fit, pcov = np.polyfit(
+                temp, log_ln.voltages[pwr_idx], 1, cov=True)
+
+        result[gain_param_name] = {
+            'mean': -best_fit[0],
+            'std': np.sqrt(pcov[0, 0]),
+        }
+        result[tnoise_param_name] = {
+            'mean': best_fit[1] / best_fit[0],
+            'std': np.sqrt(pcov[1, 1] / (best_fit[1]**2) + pcov[0, 0] / (best_fit[0]**2)),
+        }
+
+        log.info('best gain for PWR{0}: {1:.0f} pm {2:.0f} ADU/K, best Tnoise: {3:.1f} pm {4:.1f} K'
+                 .format(pwr_idx,
+                         result[gain_param_name]['mean'],
+                         result[gain_param_name]['std'],
+                         result[tnoise_param_name]['mean'],
+                         result[tnoise_param_name]['std']))
+
+        if pwr_idx in (0, 3):
+            # This is a Q detector, so we take the estimate of Tnoise as a reference
+            result['tnoise'] = result[tnoise_param_name]
+
+    result['unbalance'] = {'mean': 0.0, 'std': 0.0}
+
+    result['y_factor_estimates'] = y_factor_estimates(log_ln, 0.0)
+
+    return result
+
+
+def only_q_report(log_ln, params, output_path):
+    create_only_q_plots(log_ln, params, output_path)
+    create_report(params=params,
+                  md_template_file='tnoise_step2_onlyq.md',
+                  md_report_file='tnoise_step2_report.md',
+                  html_report_file='tnoise_step2_report.html',
+                  output_path=output_path)
+
+
+# OrderedDict is needed here, because the first element is the default
+ANALYSIS_METHODS = OrderedDict([
+    ('non-linear fit', (nonlinear_fit_analysis, nonlinear_fit_report)),
+    ('only_q', (only_q_analysis, only_q_report)),
+])
 
 
 def parse_offsets(s: Union[str, None]):
@@ -617,6 +747,10 @@ def parse_arguments():
                         floating-point numbers specifying the offset of the four
                         outputs PWR0, PWR1, PWR2, and PWR3. If they are not
                         specified, they will be read from the test database.''')
+    parser.add_argument('--analysis-method', type=str, default=list(ANALYSIS_METHODS.keys())[0],
+                        help='''Tell what kind of analysis should be done on the data.
+                        Possible alternatives are: {0} (first one is the default).'''
+                        .format(', '.join(['"{0}"'.format(x) for x in ANALYSIS_METHODS.keys()])))
     parser.add_argument('polarimeter_name', type=str,
                         help='''Name of the polarimeter (must match the name
                         in the test database)''')
@@ -629,6 +763,7 @@ def parse_arguments():
     parser.add_argument('output_path', type=str,
                         help='''Path to the directory that will contain the
                         report. If the path does not exist, it will be created''')
+
     return parser.parse_args()
 
 
@@ -636,6 +771,13 @@ def main():
     log.basicConfig(format='[%(asctime)s %(levelname)s] %(message)s',
                     level=log.DEBUG)
     args = parse_arguments()
+    if args.analysis_method not in ANALYSIS_METHODS.keys():
+        log.fatal('unknown analysis method "{0}", available options are: {1}'
+                  .format(args.analysis_method,
+                          format(', '.join(['"{0}"'.format(x) for x in ANALYSIS_METHODS.keys()]))))
+        sys.exit(1)
+
+    do_analysis_fn, make_report_fn = ANALYSIS_METHODS[args.analysis_method]
 
     log.info('reading file "%s"', args.tnoise1_results)
     with open(args.tnoise1_results, 'rt') as json_file:
@@ -677,18 +819,8 @@ def main():
                            temperatures_b=temperatures_b,
                            phsw_state=phsw_state)
 
-    popt, pcov = opt.curve_fit(
-        log_ln, None, np.array(voltages).flatten(),
-        p0=np.array([1e4, 1e4, 1e4, 1e4, 0.0, 30.0]),
-        sigma=np.array(voltage_std).flatten())
-    popt = Parameters(*popt)
-    log.info('results of the fit: %s',
-             ', '.join(['{0} = {1:.2f} ± {2:.2f}'
-                        .format(n, popt[i], np.sqrt(pcov[i, i]))
-                        for i, n in enumerate(PARAMETER_NAMES)]))
-
-    params = assemble_results(args.polarimeter_name,
-                              log_ln, popt, pcov)
+    params = do_analysis_fn(args, log_ln)
+    params['analysis_method'] = args.analysis_method
     params['test_file_name'] = args.raw_file
     params['offsets'] = offsets
 
@@ -696,12 +828,7 @@ def main():
                             output_file_name=os.path.join(args.output_path,
                                                           'tnoise_step2_results.json'))
 
-    create_plots(log_ln, params, args.output_path)
-    create_report(params=params,
-                  md_template_file='tnoise_step2.md',
-                  md_report_file='tnoise_step2_report.md',
-                  html_report_file='tnoise_step2_report.html',
-                  output_path=args.output_path)
+    make_report_fn(log_ln, params, args.output_path)
 
 
 if __name__ == '__main__':
