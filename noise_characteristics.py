@@ -102,8 +102,8 @@ def get_fft(sampling_frequency, data, n_chunks, detrend='linear', **kwargs):
     nperseg = np.int(N/n_chunks)
     freq, fft = signal.welch(cdata, sampling_frequency, nperseg=nperseg, axis=0, detrend=detrend,
                              **kwargs)
-    spectrogram = signal.spectrogram(cdata, sampling_frequency, window='hanning', nperseg=nperseg,
-                                     axis=0, detrend=detrend, **kwargs)
+    spectrogram = signal.spectrogram(cdata, sampling_frequency, window='hanning', axis=0,
+                                     detrend=detrend, **kwargs)
     return freq[1:], fft[1:], spectrogram
 
 
