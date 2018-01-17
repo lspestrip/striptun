@@ -102,8 +102,8 @@ def get_fft(sampling_frequency, data, n_chunks, detrend='linear', **kwargs):
     nperseg = np.int(N/n_chunks)
     freq, fft = signal.welch(cdata, sampling_frequency, nperseg=nperseg, axis=0, detrend=detrend,
                              **kwargs)
-    spectrogram = signal.spectrogram(cdata, sampling_frequency, window='hanning', nperseg=nperseg,
-                                     axis=0, detrend=detrend, **kwargs)
+    spectrogram = signal.spectrogram(cdata, sampling_frequency, window='hanning', axis=0,
+                                     detrend=detrend, **kwargs)
     return freq[1:], fft[1:], spectrogram
 
 
@@ -150,18 +150,27 @@ def get_noise_characteristics(freq, fft, left_freq, right_freq, totalPWR=False):
         
         # calculate median value of the right part of the spectrum and the knee frequency
         if totalPWR:
-            c, fknee_ = (np.full_like(a, np.NaN), np.full_like(a, np.NaN))
+            c, fknee_ = (np.zeros_like(a), np.zeros_like(a))
         else:
             c = np.median(np.log(fft[f_idx_right:]), axis=0)
             fknee_ = np.exp((c - b) / a)
         fit_par = np.row_stack([a, b, c])
-
+       
+        # uncertainty estimation of the median c (logarithmic)
         delta_c = np.sum(np.abs(np.log(fft[f_idx_right:]) - c), axis=0) / len(fft[f_idx_right:])
+
+        # uncertainty estimation of fknee (linear)
         delta_fknee_ = fknee_ / np.abs(a) * np.sqrt(((c - b) / a)**2 * delta_a**2 + delta_b**2 +
                                                     delta_c**2)
-        delta_median_ = np.exp(c) * delta_c
+ 
+        # come back to linear and propagate the error to obtain the WNL and its uncertainty 
+        WNL_ = np.exp(c)
+        delta_WNL_ = np.exp(c) * delta_c
 
-        # uncertanties estimation
+        # get the slope and its uncertainties
+        slope_, delta_slope_ = -a, delta_a
+    
+        # get the right number of decimals
         def get_right_number_of_decimals(x, delta_x):
             def get_new_x(x, new_num_dec):
                 new_x = np.array([np.around(x[i], decimals=dec) for i, dec in
@@ -172,15 +181,16 @@ def get_noise_characteristics(freq, fft, left_freq, right_freq, totalPWR=False):
             return get_new_x(x, new_num_dec), get_new_x(delta_x, new_num_dec)
 
         if totalPWR:
-            fknee, delta_fknee = (np.full_like(fknee_, np.NaN), np.full_like(delta_fknee_, np.NaN))
-            median, delta_median = (np.full_like(c, np.NaN), np.full_like(delta_median_, np.NaN))
+            fknee, delta_fknee = (np.zeros_like(fknee_), np.zeros_like(delta_fknee_))
+            WNL, delta_WNL = (np.zeros_like(WNL_), np.zeros_like(delta_WNL_))
         else:
             fknee, delta_fknee = get_right_number_of_decimals(fknee_, delta_fknee_)
-            delta_fknee[fknee < freq.min()], fknee[fknee < freq.min()] = np.NaN, np.NaN
-            median, delta_median = get_right_number_of_decimals(np.exp(c), delta_median_)
-        slope, delta_slope = get_right_number_of_decimals(-a, delta_a)
-            
-        return fit_par, fknee, delta_fknee, slope, delta_slope, median, delta_median
+            fknee[fknee < freq.min()], delta_fknee[fknee==0] = 0, 0
+            WNL, delta_WNL = get_right_number_of_decimals(WNL_, delta_WNL_)
+        slope, delta_slope = get_right_number_of_decimals(slope_, delta_slope_)
+        slope[slope < 0], delta_slope[slope==0] = 0, 0
+
+        return fit_par, fknee, delta_fknee, slope, delta_slope, WNL, delta_WNL
                 
     
     if totalPWR == 'stokes':
@@ -431,7 +441,7 @@ def build_dict_from_results(pol_name, input_file_path, gains_file_path, g, durat
         'number_of_gains': g,
         'title': 'Noise characteristics of polarimeter {}'.format(pol_name),
         'sampling_frequency_hz': SAMPLING_FREQUENCY_HZ,
-        'test_duration_hz': duration / 60 / 60,
+        'test_duration_hr': duration / 60 / 60,
         'left_freq_hz': left_freq,
         'right_freq_hz': right_freq,
         'n_chunks': n_chuncks,
@@ -485,7 +495,7 @@ def get_data(metadata, gains_file_path, data):
     if len(gains_file_path) == 0:
         # We do not use gains information
         log.info('Default gains are all equal to 1 [ADU/K]')
-        return len(gains_file_path), data.demodulated, data.power
+        return len(gains_file_path), data.demodulated, data.power, np.ones(4), np.zeros(4)
     
     offsets = np.array([metadata['detector_outputs'][0]['q1_adu'],
                         metadata['detector_outputs'][0]['u1_adu'],
