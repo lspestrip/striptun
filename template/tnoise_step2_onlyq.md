@@ -62,8 +62,12 @@ noise temperature comes from the non-blind Q detector.
 
 # Parameter | Gaussian estimate
 :----------:| -----------------:
-Noise temperature [K] | \
-   ${ '{0:.1f}'.format(tnoise['mean']) } &pm; ${ '{0:.1f}'.format(tnoise['std']) }
+Q noise temperature (reference) [K] | \
+   ${ '{0:.2f}'.format(tnoise['mean']) } &pm; ${ '{0:.2f}'.format(tnoise['std']) }
+U1 noise temperature [K] | \
+   ${ '{0:.2f}'.format(tnoise_u1['mean']) } &pm; ${ '{0:.2f}'.format(tnoise_u1['std']) }
+U2 noise temperature [K] | \
+   ${ '{0:.2f}'.format(tnoise_u2['mean']) } &pm; ${ '{0:.2f}'.format(tnoise_u2['std']) }
 Q1 gain (PWR0) [ADU/K] | \
    ${ '{0:.0f}'.format(gain_q1['mean']) } &pm; ${ '{0:.0f}'.format(gain_q1['std']) }
 U1 gain (PWR1) [ADU/K] | \
