@@ -3,17 +3,14 @@
 
 from argparse import ArgumentParser
 from collections import namedtuple
-from datetime import datetime
 import logging as log
 import os
-from shutil import copyfile
 import sys
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 import simplejson as json
 import numpy as np
 import scipy.optimize as opt
-import yaml
 from json_save import save_parameters_to_json
 
 import matplotlib
@@ -25,7 +22,8 @@ from file_access import load_timestream
 from reports import create_report, get_code_version_params
 
 SAMPLING_FREQUENCY_HZ = 25.0
-MIN_TEMPERATURE_STEP_K = 2.5  # Any temperature variation below this will be considered zero
+# Any temperature variation below this will be considered zero
+MIN_TEMPERATURE_STEP_K = 2.5
 
 NUM_OF_PARAMS = 3
 PARAMETER_NAMES = ('gain_q1', 'gain_u1', 'gain_u2',
@@ -198,7 +196,7 @@ def calc_wn_level(values):
     return float(wn_level), float(err)
 
 
-def extract_average_values(power_data, dem_data, metadata, tnoise1_results, num):
+def extract_average_values(power_data, dem_data, metadata, tnoise1_results, num, offsets=None):
     '''Compute statistics of PWR output for each temperature step
 
     Tries to find `num` temperature steps by cycling over the statistics of the
@@ -227,8 +225,9 @@ def extract_average_values(power_data, dem_data, metadata, tnoise1_results, num)
         sys.exit(1)
 
     # These are the offsets acquired when the HEMTs were turned off
-    offsets = [metadata['detector_outputs'][-1]['{0}_adu'.format(det)]
-               for det in ('q1', 'u1', 'u2', 'q2')]
+    if offsets is None:
+        offsets = [metadata['detector_outputs'][-1]['{0}_adu'.format(det)]
+                   for det in ('q1', 'u1', 'u2', 'q2')]
 
     voltages = [np.empty(len(regions)) for i in range(4)]
     voltage_std = [np.empty(len(regions)) for i in range(4)]
@@ -243,9 +242,10 @@ def extract_average_values(power_data, dem_data, metadata, tnoise1_results, num)
             arr = power_data[start:stop, i]
             voltages[i][idx] = np.mean(arr) - offsets[i]
             voltage_std[i][idx] = np.std(arr)
-            wn_level[i][idx], wn_err[i][idx] = calc_wn_level(dem_data[start:stop, i])
+            wn_level[i][idx], wn_err[i][idx] = calc_wn_level(
+                dem_data[start:stop, i])
 
-    return voltages, voltage_std, wn_level, wn_err, nsamples
+    return voltages, voltage_std, wn_level, wn_err, nsamples, offsets
 
 
 def extract_temperatures(test_metadata):
@@ -551,7 +551,7 @@ def create_tnoise_matrix_plot(log_ln, params, output_path):
         for (i, j), z in np.ndenumerate(tnoise_matr):
             if z > 0.0:
                 ax.text(j, i, '${:0.1f}\,K$'.format(z),
-                color="w",
+                        color="w",
                         ha='center', va='center',
                         path_effects=[PathEffects.withStroke(linewidth=1,
                                                              foreground="b")])
@@ -575,6 +575,27 @@ def create_plots(*args, **kwargs):
     create_tnoise_matrix_plot(*args, **kwargs)
 
 
+def parse_offsets(s: Union[str, None]):
+    if s is None:
+        return None
+
+    numbers = s.split(',')
+    if len(numbers) == 4:
+        try:
+            return [float(x) for x in numbers]
+        except ValueError:
+            pass
+
+    # If we reach this line, "s" cannot be parsed as a list of floating-point
+    # numbers. So, let's assume is a file name
+
+    with open(s, 'rt') as f:
+        data = json.load(f)
+        assert('detector_outputs' in data)
+        return [data['detector_outputs'][x]
+                for x in ('q1_adu', 'u1_adu', 'u2_adu', 'q2_adu')]
+
+
 def parse_arguments():
     '''Return a class containing the values of the command-line arguments.
 
@@ -588,6 +609,14 @@ def parse_arguments():
     parser = ArgumentParser(description=__doc__)
     parser.add_argument('--phsw', type=str, default=None,
                         help='State of the PHSW (e.g., "0101")')
+    parser.add_argument('--offsets', type=str, default=None,
+                        help='''Specify the value of the offsets. It can either
+                        be a file name, in which case it will be assumed to be a
+                        JSON file containing the output of the program
+                        "output_average", or a comma-separated list of
+                        floating-point numbers specifying the offset of the four
+                        outputs PWR0, PWR1, PWR2, and PWR3. If they are not
+                        specified, they will be read from the test database.''')
     parser.add_argument('polarimeter_name', type=str,
                         help='''Name of the polarimeter (must match the name
                         in the test database)''')
@@ -619,15 +648,18 @@ def main():
     else:
         phsw_state = args.phsw_state
 
+    offsets = parse_offsets(args.offsets)
+
     temperatures_a, temperatures_b = extract_temperatures(metadata)
     log.info('temperatures for load A: %s',
              str(temperatures_a))
     log.info('temperatures for load B: %s',
              str(temperatures_b))
 
-    voltages, voltage_std, wn_level, wn_err, nsamples = \
+    voltages, voltage_std, wn_level, wn_err, nsamples, offsets = \
         extract_average_values(data.power, data.demodulated, metadata, tnoise1_results,
-                                                             num=len(temperatures_a))
+                               num=len(temperatures_a),
+                               offsets=offsets)
     for idx, arr in enumerate(voltages):
         log.info('voltages for PWR%d: %s',
                  idx, ', '.join(['{0:.1f}'.format(x) for x in arr]))
@@ -658,6 +690,7 @@ def main():
     params = assemble_results(args.polarimeter_name,
                               log_ln, popt, pcov)
     params['test_file_name'] = args.raw_file
+    params['offsets'] = offsets
 
     save_parameters_to_json(params=dict(params, **get_code_version_params()),
                             output_file_name=os.path.join(args.output_path,
