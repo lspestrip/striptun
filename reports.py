@@ -52,6 +52,9 @@ def create_report(params: Dict[str, Any],
     This function assumes that ``output_path`` points to a directory that already exists.
     '''
 
+    # Create the directory that will contain the report
+    os.makedirs(output_path, exist_ok=True)
+
     template_path = os.path.join(os.path.dirname(__file__), 'template')
 
     # Copy all the static files into the destination directory

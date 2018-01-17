@@ -777,6 +777,9 @@ def main():
                           format(', '.join(['"{0}"'.format(x) for x in ANALYSIS_METHODS.keys()]))))
         sys.exit(1)
 
+    # Create the directory that will contain the report
+    os.makedirs(args.output_path, exist_ok=True)
+
     do_analysis_fn, make_report_fn = ANALYSIS_METHODS[args.analysis_method]
 
     log.info('reading file "%s"', args.tnoise1_results)
