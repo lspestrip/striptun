@@ -441,7 +441,7 @@ def build_dict_from_results(pol_name, input_file_path, gains_file_path, g, durat
         'number_of_gains': g,
         'title': 'Noise characteristics of polarimeter {}'.format(pol_name),
         'sampling_frequency_hz': SAMPLING_FREQUENCY_HZ,
-        'test_duration_hz': duration / 60 / 60,
+        'test_duration_hr': duration / 60 / 60,
         'left_freq_hz': left_freq,
         'right_freq_hz': right_freq,
         'n_chunks': n_chuncks,
