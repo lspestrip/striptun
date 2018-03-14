@@ -10,7 +10,7 @@ v${striptun_version} (commit
 [${latest_git_commit[0:6]}](https://github.com/lspestrip/striptun/commit/${latest_git_commit})).
 
 This test has been performed with a **sampling frequency of ${sampling_frequency_hz} [Hz]**
- and **lasted ${'{0:.2f}'.format(test_duration_hz)} [hours]**.
+ and **lasted ${'{0:.2f}'.format(test_duration_hr)} [hours]**.
 
 <h2>Results</h2>
 
