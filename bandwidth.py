@@ -408,6 +408,10 @@ def main():
         norm_data_list.append(norm_data)
         PSStatus.append(pss)
 
+        # Saving bandpass data of all detectors to .txt file
+        np.savetxt(args.output_path + 'bandpass_data_' + pss + '_' + str(i) + '.txt',
+                   np.column_stack([new_nu, new_data]), header='\t\t'.join(['nu', 'PW0/Q1', 'PW1/U1', 'PW2/U2', 'PW3/Q2']))
+
     log.info(
         'Computed bandwidth and central frequency for each detector for both phase-switch status')
 
