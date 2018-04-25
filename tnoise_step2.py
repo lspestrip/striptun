@@ -602,10 +602,15 @@ def create_nonlinear_plots(*args, **kwargs):
 
 
 def nonlinear_fit_analysis(args, log_ln):
-    popt, pcov = opt.curve_fit(
-        log_ln, None, np.array(log_ln.voltages).flatten(),
-        p0=np.array([1e4, 1e4, 1e4, 1e4, 0.0, 30.0]),
-        sigma=np.array(log_ln.voltage_std).flatten())
+    try:
+        popt, pcov = opt.curve_fit(
+            log_ln, None, np.array(log_ln.voltages).flatten(),
+            p0=np.array([1e4, 1e4, 1e4, 1e4, 0.0, 30.0]),
+            sigma=np.array(log_ln.voltage_std).flatten())
+    except RuntimeError:
+        log.warning('non-linear fit has not converged')
+        popt = np.zeros(6)
+        pcov = np.zeros((6, 6))
     popt = Parameters(*popt)
     log.info('results of the fit: %s',
              ', '.join(['{0} = {1:.2f} ± {2:.2f}'
