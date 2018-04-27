@@ -116,7 +116,7 @@ def get_frequency_range_and_data(nu, data, std_dev=True, rej=1):
     return new_nu, new_data
 
 
-def find_blind_channel(data):
+def find_blind_channel(metadata):
     """
     This function identifies the blind detector and infers the phase-switch status.
 
@@ -132,16 +132,15 @@ def find_blind_channel(data):
     -  the phase-switch status
     """
 
-    var_range = np.percentile(data, 95, axis=0) - \
-        np.percentile(data, 5, axis=0)
-    idx_blind = np.argmin(var_range)
+    phsw_state = metadata['phsw_state']
+    if phsw_state in ('0101', '1010'):
+        idx_blind = 3
+    elif phsw_state in ('0110', '1001'):
+        idx_blind = 0
+    else:
+        raise ValueError('invalid phase switch state: {0}'.format(phsw_state))
 
-    if(idx_blind == 0):
-        pss = '0110'
-    if(idx_blind == 3):
-        pss = '0101'
-
-    return idx_blind, pss
+    return idx_blind, phsw_state
 
 
 def get_central_nu_bandwidth(nu, data):
@@ -300,7 +299,7 @@ def AnalyzeBandTest(polarimeter_name, file_name, output_path):
     # phase switch state '0110': PW0 is blind
 
     # Finding the "blind" detector
-    idx_blind, pss = find_blind_channel(new_data)
+    idx_blind, pss = find_blind_channel(metadata)
     mask = np.ones(4, dtype=bool)
     mask[idx_blind] = False
 
