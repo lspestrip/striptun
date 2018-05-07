@@ -25,6 +25,11 @@ SAMPLING_FREQUENCY_HZ = 25.0
 # Any temperature variation below this will be considered zero
 MIN_TEMPERATURE_STEP_K = 2.5
 
+WG_ATTENUATION = {
+    'Q': 0.110,
+    'W': 0.400,
+}
+
 NONLINEAR_PARAM_NAMES = ('gain_q1', 'gain_u1', 'gain_u2',
                          'gain_q2', 'unbalance', 'tnoise')
 Parameters = namedtuple('Parameters', NONLINEAR_PARAM_NAMES)
@@ -278,7 +283,8 @@ def extract_temperatures(test_metadata):
             t_polarimeter_1=cur_step['t_polarimeter_1_K'],
             t_polarimeter_2=cur_step['t_polarimeter_2_K'],
         )
-        t_estimates = compute_T_load_attenuations(hk)
+        t_estimates = compute_T_load_attenuations(
+            hk, wg_att=WG_ATTENUATION[test_metadata['band']])
         temperatures_a[idx] = t_estimates.t_bright_port_a
         temperatures_b[idx] = t_estimates.t_bright_from_b
 
