@@ -242,3 +242,10 @@ This small program does exactly what it says: it computes the average of the col
 ``PWR0``, ``PWR1``, ``PWR2``, and ``PWR3`` in the raw text files acquired in Bicocca.
 The name of the script is ``output_average.py``, use the ``--help`` flag to get the
 command-line help.
+
+
+Biases
+------
+
+This program produces a HTML report containing the configuration of the HEMT biases
+used during a test. Its usage is similar to the other scripts in the repository.
