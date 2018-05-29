@@ -19,7 +19,7 @@ SAMPLING_FREQUENCY_HZ = 25.0  # Hz
 NAMING_CONVENTION = ['PW0/Q1', 'PW1/U1', 'PW2/U2', 'PW3/Q2']
 
 
-def remove_offset(nu, data):
+def remove_offset(nu, data, metadata):
     """
     This function computes the electronic offset and removes it from data.
     The offset is computed in the following way:
@@ -39,6 +39,8 @@ def remove_offset(nu, data):
               The frequency data.
     data    : numpy array of shape (time*sampling_rate, 4),
               The output power of the 4 detectors.
+    metadata: dictionary containing the metadata of the test
+              as parsed from the JSON record in the database
 
     Returns
     -------
@@ -64,7 +66,15 @@ def remove_offset(nu, data):
     first_offset = np.median(firsthalf_data[firsthalf_nu == -1], axis=0)
     secondhalf_data = data[int(len(data) / 2):]
     secondhalf_nu = nu[int(len(nu) / 2):]
-    second_offset = np.median(secondhalf_data[secondhalf_nu == -1], axis=0)
+
+    if metadata['band'] == 'Q':
+        second_offset = np.median(secondhalf_data[secondhalf_nu == -1], axis=0)
+    elif metadata['band'] == 'W':
+        high_nu = np.max(nu)
+        second_offset = np.median(data[nu == high_nu], axis=0)
+    else:
+        raise ValueError('Unknown band {0} for test {1} (polarimeter STRIP{2:02d})'
+                         .format(metadata['band'], metadata['id'], metadata['polarimeter_number']))
 
     offset = np.zeros((len(nu), data.shape[-1]))
     x = [np.min(nu[nu > 0]), np.max(nu)]
@@ -283,7 +293,7 @@ def AnalyzeBandTest(polarimeter_name, file_name, output_path):
 
     # Selecting data and removing the electronic offset
 
-    nooffdata = remove_offset(nu, data)
+    nooffdata = remove_offset(nu, data, metadata)
     new_nu, new_data, new_std_dev = get_frequency_range_and_data(
         nu, nooffdata)
 
