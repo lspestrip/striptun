@@ -127,6 +127,18 @@ def load_hdf5_file(input_file):
             return None, None
 
 
+def load_metadata(url):
+    '''Return a dictionary containing the metadata for a test.
+
+    The "url" must point to the JSON record of the test.'''
+
+    req = urlreq.urlopen(url)
+    content_type = req.info().get_content_type()
+
+    assert content_type == 'application/json'
+    return json.loads(req.read().decode('utf-8'))
+
+
 def load_timestream(file_path):
     '''Load a time stream from either a text file, HDF5 file, or URL
 
