@@ -37,7 +37,21 @@ def download_json_from_url(url):
 
 
 def download_test(url, test_info, output_file):
-    'Copy the HDF5 file related to some test into file object "output_file"'
+    '''Copy the HDF5 file related to some test into file object "output_file"
+    
+    The argument *test_info* is a dictionary containing the metadata for
+    the test, and it is typically the return value of a call to
+    the function *download_json_from_url*. The parameter *output_file* is
+    a writable file object.
+    
+    Example:
+    
+    ```
+    metadata = download_json_from_url(MYURL + "/json")
+    with open("output.h5", "wb") as outf:
+        download_test(MYURL, metadata, outf)
+    ```
+    '''
 
     download_url = urlparse.urljoin(url, test_info['download_url'])
     response = urlreq.urlopen(download_url)
