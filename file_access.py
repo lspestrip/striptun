@@ -184,7 +184,7 @@ def load_timestream(file_path):
     Return a pair consisting of a dictionary containing the medatada and a
     Timestream object."""
 
-    if not urlreq.splittype(file_path)[0]:
+    if not urlparse.splittype(file_path)[0]:
         # Local path
         ext = os.path.splitext(file_path)[1]
         if ext.lower() == ".txt":
