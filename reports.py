@@ -112,7 +112,7 @@ def create_report(
                 "markdown.extensions.attr_list",
                 "markdown.extensions.tables",
                 "markdown.extensions.toc",
-                "mathjax",
+                # "mathjax",
             ],
         ),
     )
