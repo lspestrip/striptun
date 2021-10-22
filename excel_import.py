@@ -2,7 +2,7 @@
 # -*- encoding: utf-8 -*-
 
 from typing import Any, Dict
-from collections import namedtuple, OrderedDict
+from collections import OrderedDict
 import xlrd
 import numpy as np
 

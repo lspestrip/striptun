@@ -489,8 +489,8 @@ def parse_arguments():
         "--number-of-chunks",
         dest="n_chunks",
         type=int,
-        help="""Number of chunks used for the estimation of the PSD 
-                        (default: duration [hours] * 12)""",
+        help="""Number of chunks used for the estimation of the PSD (default:
+                        duration [hours] * 12)""",
     )
     parser.add_argument(
         "--gains_file_path",

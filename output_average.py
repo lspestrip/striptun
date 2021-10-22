@@ -28,7 +28,7 @@ def parse_command_line():
     parser.add_argument(
         "text_file",
         type=str,
-        help="""Name of the text file containing the data 
+        help="""Name of the text file containing the data
                         acquired during the test""",
     )
     return parser.parse_args()

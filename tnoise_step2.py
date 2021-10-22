@@ -6,7 +6,7 @@ from collections import namedtuple, OrderedDict
 import logging as log
 import os
 import sys
-from typing import Any, Dict, Union
+from typing import Union
 
 import simplejson as json
 import numpy as np
@@ -523,7 +523,7 @@ def create_timestream_plot(log_ln, params, output_path):
 
 
 def create_model_match_plot(log_ln, params, output_path):
-    fig = plt.figure()
+    plt.figure()
 
     best_fit = [params[x]["mean"] for x in NONLINEAR_PARAM_NAMES]
 
@@ -616,7 +616,7 @@ def create_tnoise_matrix_plot(log_ln, params, output_path):
     max_tnoise = np.max([x["tnoise"] for x in y_factor_estimates])
     detectors = set([x["detector_name"] for x in y_factor_estimates])
 
-    fig = plt.figure(figsize=(10, 4))
+    plt.figure(figsize=(10, 4))
 
     for cur_idx, cur_det in enumerate(sorted(detectors)):
         ax = plt.subplot(1, len(detectors), 1 + cur_idx)
@@ -645,7 +645,7 @@ def create_tnoise_matrix_plot(log_ln, params, output_path):
         for est in cur_estimates:
             tnoise_matr[est["step_1_idx"], est["step_2_idx"]] = est["tnoise"]
 
-        im = ax.matshow(
+        ax.matshow(
             np.ma.masked_invalid(tnoise_matr),
             cmap=plt.cm.plasma,
             vmin=min_tnoise,
@@ -658,7 +658,7 @@ def create_tnoise_matrix_plot(log_ln, params, output_path):
                 ax.text(
                     j,
                     i,
-                    "${:0.1f}\,K$".format(z),
+                    r"${:0.1f}\,K$".format(z),
                     color="w",
                     ha="center",
                     va="center",

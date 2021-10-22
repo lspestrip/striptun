@@ -2,16 +2,12 @@
 # -*- encoding: utf-8 -*-
 
 from argparse import ArgumentParser
-from collections import namedtuple
-from datetime import datetime
 import logging as log
 import os.path
-from shutil import copyfile
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict
 
 from json_save import save_parameters_to_json
 from reports import create_report, get_code_version_params
-import numpy as np
 
 from file_access import load_metadata
 
@@ -127,7 +123,7 @@ def build_dict_from_results(pol_name: str, metadata: Dict[str, Any]) -> Dict[str
             "u1_adu": outputs[0]["u1_adu"],
             "u2_adu": outputs[0]["u2_adu"],
         }
-    except:
+    except KeyError:
         pass
 
     return result

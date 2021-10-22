@@ -8,13 +8,9 @@ from argparse import ArgumentParser
 import logging as log
 import os
 from collections import namedtuple
-from datetime import datetime
-from shutil import copyfile
-from mako.template import Template
 from typing import Any, Dict, List, Tuple
 
 from json_save import save_parameters_to_json
-from markdown import markdown
 import matplotlib
 
 matplotlib.use("Agg")
@@ -265,12 +261,12 @@ class IdVdCurves(HemtCurves):
             hemt_name=hemt_name,
             num_of_curves=self.num_of_curves,
             vg_range_mV=self.get_vg_range(),
-            get_x="get_vd_mV",
-            get_y1="get_id_mA",
-            get_y2="get_ig_muA",
-            x_label="$V_d$ [mV]",
-            y1_label="$I_d$ [mA]",
-            y2_label="$I_g$ [$\mu$A]",
+            get_x=r"get_vd_mV",
+            get_y1=r"get_id_mA",
+            get_y2=r"get_ig_muA",
+            x_label=r"$V_d$ [mV]",
+            y1_label=r"$I_d$ [mA]",
+            y2_label=r"$I_g$ [$\mu$A]",
             point_x=point_x,
             point_y=point_y,
         )
@@ -335,23 +331,17 @@ class IdVgCurves(HemtCurves):
     def create_plot(
         self, plot_file_name: str, hemt_name: str, tuning_point: TuningPoint
     ):
-        if tuning_point:
-            point_x = tuning_point.vg
-            point_y = tuning_point.id
-        else:
-            point_x, point_y = None, None
-
         super(IdVgCurves, self).create_plot(
             plot_file_name=plot_file_name,
             hemt_name=hemt_name,
             num_of_curves=self.num_of_curves,
             vg_range_mV=self.get_vg_range(),
-            get_x="get_vg_mV",
-            get_y1="get_id_mA",
-            get_y2="get_ig_muA",
-            x_label="$V_g$ [mV]",
-            y1_label="$I_d$ [mA]",
-            y2_label="$I_g$ [$\mu$A]",
+            get_x=r"get_vg_mV",
+            get_y1=r"get_id_mA",
+            get_y2=r"get_ig_muA",
+            x_label=r"$V_g$ [mV]",
+            y1_label=r"$I_d$ [mA]",
+            y2_label=r"$I_g$ [$\mu$A]",
         )
 
 

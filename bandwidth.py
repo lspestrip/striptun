@@ -7,7 +7,6 @@
 
 from json_save import save_parameters_to_json
 from argparse import ArgumentParser
-from scipy import signal
 from reports import create_report, get_code_version_params
 from file_access import load_timestream
 import logging as log
