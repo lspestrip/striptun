@@ -7,7 +7,6 @@ import numpy as np
 
 
 class TestBWCFfunction(TestCase):
-
     def test_squaredband(self):
         bandwidth = 7.0
         central_frequency = 43.0
@@ -22,7 +21,9 @@ class TestBWCFfunction(TestCase):
         computed_cfreq, computed_bwidth = bw.get_central_nu_bandwidth(nu, band)
         self.assertAlmostEqual(computed_cfreq, central_frequency)
         self.assertTrue(
-            np.abs(computed_bwidth - bandwidth) < 2 * (max_freq - min_freq) / num_of_points)
+            np.abs(computed_bwidth - bandwidth)
+            < 2 * (max_freq - min_freq) / num_of_points
+        )
 
     def test_triangularband(self):
         min_freq = 38.0
@@ -34,5 +35,4 @@ class TestBWCFfunction(TestCase):
         band = (nu - min_freq) / (max_freq - min_freq)
         computed_cfreq, computed_bwidth = bw.get_central_nu_bandwidth(nu, band)
 
-        self.assertAlmostEqual(
-            computed_cfreq, (min_freq + 2 * max_freq) / 3,  places=1)
+        self.assertAlmostEqual(computed_cfreq, (min_freq + 2 * max_freq) / 3, places=1)

@@ -1,0 +1,9 @@
+xlrd
+matplotlib
+numpy
+mako
+h5py
+simplejson
+black
+flake8
+markdown

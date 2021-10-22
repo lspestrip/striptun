@@ -5,19 +5,18 @@ import os.path
 from unittest import TestCase
 import file_access as fa
 
-TEST_DATA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                              'testdata'))
+TEST_DATA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "testdata"))
 
 
 class TestTimestreamCreation(TestCase):
     def testHdf5Load(self):
-        metadata, data = fa.load_hdf5_file(os.path.join(
-            TEST_DATA_PATH, 'hdf5_timestream.h5'))
+        metadata, data = fa.load_hdf5_file(
+            os.path.join(TEST_DATA_PATH, "hdf5_timestream.h5")
+        )
         self.assertIsInstance(data, fa.Timestream)
 
     def testTextLoad(self):
-        data = fa.load_text_file(os.path.join(
-            TEST_DATA_PATH, 'text_file.txt'))
+        data = fa.load_text_file(os.path.join(TEST_DATA_PATH, "text_file.txt"))
         self.assertIsInstance(data, fa.Timestream)
 
 
@@ -79,11 +78,11 @@ class CheckContentsMixin:
 
 class TestHdf5TimestreamContents(TestCase, CheckContentsMixin):
     def setUp(self):
-        self.metadata, self.data = fa.load_hdf5_file(os.path.join(
-            TEST_DATA_PATH, 'hdf5_timestream.h5'))
+        self.metadata, self.data = fa.load_hdf5_file(
+            os.path.join(TEST_DATA_PATH, "hdf5_timestream.h5")
+        )
 
 
 class TestTextTimestreamContents(TestCase, CheckContentsMixin):
     def setUp(self):
-        self.data = fa.load_text_file(os.path.join(
-            TEST_DATA_PATH, 'text_file.txt'))
+        self.data = fa.load_text_file(os.path.join(TEST_DATA_PATH, "text_file.txt"))
