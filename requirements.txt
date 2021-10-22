@@ -6,4 +6,6 @@ h5py
 simplejson
 black
 flake8
+scipy
 markdown
+mathjax
