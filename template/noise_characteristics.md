@@ -9,8 +9,25 @@ The report has been generated on ${analysis_date} using striptun
 v${striptun_version} (commit
 [${latest_git_commit[0:6]}](https://github.com/lspestrip/striptun/commit/${latest_git_commit})).
 
-This test has been performed with a **sampling frequency of ${sampling_frequency_hz} [Hz]**
- and **lasted ${'{0:.2f}'.format(test_duration_hz)} [hours]**.
+This test has been performed with a **sampling frequency of ${sampling_frequency_hz} Hz**
+ and **lasted ${'{:.2f}'.format(test_duration_hr)} hours**.
+ 
+You can re-run this analysis using the following command:
+ 
+    python3 noise_characteristics.py \ 
+        --number-of-chunks=${n_chunks} \ 
+        --detrend=${detrend} \ 
+        --WN-lower-frequency=${right_freq_hz} \ 
+        --1/f-upper-frequency=${left_freq_hz} \ 
+% for gainss in gains_file_path:
+        --gains_file_path ${gainss} \ 
+% endfor
+        ${polarimeter_name} \ 
+        ${input_file_path} \ 
+        /storage/reports/${polarimeter_name}/
+
+where you must of course change the path
+`/storage/reports/${polarimeter_name}` according to your needs.
 
 <h2>Results</h2>
 
@@ -25,9 +42,9 @@ implement it in the code.
 % elif number_of_gains == 1:
 The raw data [ADU] have been divided by the detector gains obtained from ["${gains_file_path[0]}"](${gains_file_path[0]}) to obtain calibrated data [K]. For the total power data the detector offsets have been subtracted before dividing.
 % else:
-To obtain calibrated data [K], the raw data [ADU] have been divided by the detector gains obtained by doing the weighted average of the gains taken from:  
+To obtain calibrated data [K], the raw data [ADU] have been divided by the detector gains obtained by doing the weighted average of the gains taken from:
 % for gainss in gains_file_path:
-["${gainss}"](${gainss})
+- [${gainss}](${gainss})
 
 % endfor
 
@@ -50,15 +67,14 @@ frequency has been computed. Each segment has been **detrended** by subtracting 
 <h2>White noise and 1/f estimation</h2>
 
 The *white noise level* has been estimated calculating the median value of the spectrum starting 
-**from ${right_freq_hz} [Hz]** up to the higher frequency. 
-The *slope of the pink spectrum* has been extracted with a linear fit of the left part of the spectrum **until ${left_freq_hz} [Hz]**. 
+from **${right_freq_hz} Hz** up to the higher frequency. 
+The *slope of the pink spectrum* has been extracted with a linear fit of the left part of the spectrum until **${left_freq_hz} Hz**. 
 The *knee frequency* has been estimated by doing the intersection between the linear fit of the left part of the spectrum 
 and the median of the right part of the spectrum.
 
 <h3>Demodolated detector outputs</h3>
 
-In this section are reported the results of the analysis for the four demodulated detector 
-outputs.
+In this section we report the results of the analysis for the four demodulated detector outputs.
 
 ![](${polarimeter_name}_PSD_DEM0_Q1.svg){: class="plot"} 
 ![](${polarimeter_name}_PSD_DEM1_U1.svg){: class="plot"} 
@@ -156,6 +172,3 @@ In this section spectra are compared in order to highlight possible similarities
 ![](${polarimeter_name}_spectrogram_DEM.png){: class="plot"} 
 ![](${polarimeter_name}_spectrogram_PWR.png){: class="plot"}
 ![](${polarimeter_name}_spectrogram_IQU.png){: class="plot"}
-
-
-

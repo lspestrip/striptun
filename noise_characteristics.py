@@ -101,7 +101,7 @@ def get_fft(sampling_frequency, data, n_chunks, detrend="linear", **kwargs):
     cdata = data[0 : (len(data) // 2) * 2]
 
     N = len(cdata)
-    nperseg = np.int(N / n_chunks)
+    nperseg = int(N / n_chunks)
     freq, fft = signal.welch(
         cdata, sampling_frequency, nperseg=nperseg, axis=0, detrend=detrend, **kwargs
     )
@@ -191,7 +191,7 @@ def get_noise_characteristics(freq, fft, left_freq, right_freq, totalPWR=False):
                 new_x[new_num_dec == 1] = np.around(new_x[new_num_dec == 1], decimals=1)
                 return new_x
 
-            new_num_dec = np.int_(np.ceil(np.abs(np.log10(delta_x))))
+            new_num_dec = np.array(np.ceil(np.abs(np.log10(delta_x))), dtype=int)
             return get_new_x(x, new_num_dec), get_new_x(delta_x, new_num_dec)
 
         if totalPWR:
@@ -256,7 +256,7 @@ def create_plots(
     spectrogramIQU,
     output_path,
     g,
-    **kwargs
+    **kwargs,
 ):
     """
     This function shows the fft data.
@@ -340,15 +340,15 @@ def create_plots(
             if g == 0:
                 plt.loglog(freq, fft[:, i], **kwargs)
                 a, b, c = fit_par[:, i]
-                plt.loglog(freq, freq ** a * np.e ** b, "r", lw=2)
-                plt.loglog(freq, np.full_like(freq, 2 * np.exp(c)), "r--", lw=2)
-                plt.loglog(freq, np.full_like(freq, np.exp(c)), "r", lw=2)
+                plt.loglog(freq, freq ** a * np.e ** b, "r", lw=2, label="1/f")
+                plt.loglog(freq, np.full_like(freq, np.exp(c)), "g", lw=2, label="WN")
             else:
                 plt.loglog(freq, fft[:, i] * 1e6, **kwargs)
                 a, b, c = fit_par[:, i]
-                plt.loglog(freq, freq ** a * np.e ** b * 1e6, "r", lw=2)
-                plt.loglog(freq, np.full_like(freq, 2 * np.exp(c) * 1e6), "r--", lw=2)
-                plt.loglog(freq, np.full_like(freq, np.exp(c) * 1e6), "r", lw=2)
+                plt.loglog(freq, freq ** a * np.e ** b * 1e6, "r", lw=2, label="1/f")
+                plt.loglog(
+                    freq, np.full_like(freq, np.exp(c) * 1e6), "r", lw=2, label="WN"
+                )
             axis_labels(g)
             save_plot(replace(title), output_path)
 
@@ -443,7 +443,7 @@ def get_y_intercept_1_f_reduction(freq, fit_par):
     reduction1_f = np.mean(
         [y_intercepts[0] / y_intercepts[1], y_intercepts[0] / y_intercepts[2]]
     )
-    return np.int(np.log10(reduction1_f))
+    return int(np.log10(reduction1_f))
 
 
 def parse_arguments():
@@ -531,18 +531,21 @@ def build_dict_from_results(
     detrend,
     reduction1_f,
     fkneeDEM,
+    fit_parDEM,
     delta_fkneeDEM,
     alphaDEM,
     delta_alphaDEM,
     WN_levelDEM,
     delta_WN_levelDEM,
     fkneePWR,
+    fit_parPWR,
     delta_fkneePWR,
     alphaPWR,
     delta_alphaPWR,
     WN_levelPWR,
     delta_WN_levelPWR,
     fkneeIQU,
+    fit_parIQU,
     delta_fkneeIQU,
     alphaIQU,
     delta_alphaIQU,
@@ -575,6 +578,7 @@ def build_dict_from_results(
             "delta_slope": delta_alphaDEM[i],
             "WN_level_K2_hz": WN_levelDEM[i],
             "delta_WN_level_K2_hz": delta_WN_levelDEM[i],
+            "fit_parameters_K2_hz": [x for x in fit_parDEM[:, i]],
         }
 
     for i, pwr in enumerate(PWR):
@@ -588,6 +592,7 @@ def build_dict_from_results(
             "delta_slope": delta_alphaPWR[i],
             "WN_level_K2_hz": WN_levelPWR[i],
             "delta_WN_level_K2_hz": delta_WN_levelPWR[i],
+            "fit_parameters_K2_hz": [x for x in fit_parPWR[:, i]],
         }
 
     for i, stokes in enumerate(STOKES):
@@ -598,6 +603,7 @@ def build_dict_from_results(
             "delta_slope": delta_alphaIQU[i],
             "WN_level_K2_hz": WN_levelIQU[i],
             "delta_WN_level_K2_hz": delta_WN_levelIQU[i],
+            "fit_parameters_K2_hz": [x for x in fit_parIQU[:, i]],
         }
     return results
 
@@ -626,6 +632,7 @@ def get_data(metadata, gains_file_path, data):
             np.zeros(4),
         )
 
+    print(f"{metadata=}")
     offsets = np.array(
         [
             metadata["detector_outputs"][0]["q1_adu"],
@@ -665,9 +672,33 @@ def get_data(metadata, gains_file_path, data):
     return len(gains_file_path), dataDEM, dataPWR, gains, delta_gains
 
 
+def fix_I_fknee(fkneeIQU, fit_parIQU, WN_levelIQU):
+    if fkneeIQU[0] > 0:
+        return
+
+    old_fknee = fkneeIQU[0]
+    old_wn = WN_levelIQU[0]
+
+    a_i, b_i, c_i = fit_parIQU[:, 0]
+    a_q, b_q, c_q = fit_parIQU[:, 1]
+    a_u, b_u, c_u = fit_parIQU[:, 2]
+
+    average_c = (c_q + c_u) / 2
+
+    # Change the value of `c` in the formula, so that plots will
+    # be updated
+    fit_parIQU[2, 0] = average_c
+    
+    fkneeIQU[0] = np.exp((average_c - b_i) / a_i)
+    WN_levelIQU[0] = np.exp(average_c)
+
+    log.info("knee frequency for I changed from %f to %f Hz", old_fknee, fkneeIQU[0])
+    log.info("WN for I changed from %f K²/Hz to %f K²/Hz", old_wn, WN_levelIQU[0])
+
+
 def main():
 
-    log.basicConfig(format="[%(asctime)s %(levelname)s] %(message)s", level=log.DEBUG)
+    log.basicConfig(format="[%(asctime)s %(levelname)s] %(message)s", level=log.INFO)
     args = parse_arguments()
 
     log.info('Tuning radiometer "%s"', args.polarimeter_name)
@@ -686,7 +717,7 @@ def main():
     duration = get_duration(dataDEM, dataPWR, SAMPLING_FREQUENCY_HZ)
 
     if args.n_chunks is None:
-        args.n_chunks = np.int(
+        args.n_chunks = int(
             duration / 60 / 60 * 12
         )  # each chunk lasts 5 minutes by default
 
@@ -748,6 +779,8 @@ def main():
     )
     log.info("Computed fknee, alpha, WN_level for I, Q, U")
 
+    fix_I_fknee(fkneeIQU, fit_parIQU, WN_levelIQU)
+
     # Get an approximate estimation of the 1/f reduction factor
     reduction1_f = get_y_intercept_1_f_reduction(freq, fit_parIQU)
 
@@ -772,36 +805,39 @@ def main():
     )
 
     params = build_dict_from_results(
-        args.polarimeter_name,
-        args.input_file_path,
-        args.gains_file_path,
-        g,
-        duration,
-        args.left_freq,
-        args.right_freq,
-        args.n_chunks,
-        args.detrend,
-        reduction1_f,
-        fkneeDEM,
-        delta_fkneeDEM,
-        alphaDEM,
-        delta_alphaDEM,
-        WN_levelDEM,
-        delta_WN_levelDEM,
-        fkneePWR,
-        delta_fkneePWR,
-        alphaPWR,
-        delta_alphaPWR,
-        WN_levelPWR,
-        delta_WN_levelPWR,
-        fkneeIQU,
-        delta_fkneeIQU,
-        alphaIQU,
-        delta_alphaIQU,
-        WN_levelIQU,
-        delta_WN_levelIQU,
-        gains,
-        delta_gains,
+        pol_name=args.polarimeter_name,
+        input_file_path=args.input_file_path,
+        gains_file_path=args.gains_file_path,
+        g=g,
+        duration=duration,
+        left_freq=args.left_freq,
+        right_freq=args.right_freq,
+        n_chuncks=args.n_chunks,
+        detrend=args.detrend,
+        reduction1_f=reduction1_f,
+        fkneeDEM=fkneeDEM,
+        fit_parDEM=fit_parDEM,
+        delta_fkneeDEM=delta_fkneeDEM,
+        alphaDEM=alphaDEM,
+        delta_alphaDEM=delta_alphaDEM,
+        WN_levelDEM=WN_levelDEM,
+        delta_WN_levelDEM=delta_WN_levelDEM,
+        fkneePWR=fkneePWR,
+        fit_parPWR=fit_parPWR,
+        delta_fkneePWR=delta_fkneePWR,
+        alphaPWR=alphaPWR,
+        delta_alphaPWR=delta_alphaPWR,
+        WN_levelPWR=WN_levelPWR,
+        delta_WN_levelPWR=delta_WN_levelPWR,
+        fkneeIQU=fkneeIQU,
+        fit_parIQU=fit_parIQU,
+        delta_fkneeIQU=delta_fkneeIQU,
+        alphaIQU=alphaIQU,
+        delta_alphaIQU=delta_alphaIQU,
+        WN_levelIQU=WN_levelIQU,
+        delta_WN_levelIQU=delta_WN_levelIQU,
+        gains=gains,
+        delta_gains=delta_gains,
     )
 
     save_parameters_to_json(
