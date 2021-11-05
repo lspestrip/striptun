@@ -4,7 +4,7 @@
 import sys
 import yaml
 from file_access import load_metadata
-from tnoise_step2 import ChamberTemperatures, Housekeepings, extract_temperatures
+from tnoise_step2 import extract_temperatures
 
 
 def main(args):
