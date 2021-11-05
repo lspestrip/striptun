@@ -1,5 +1,11 @@
 ## -- coding: utf-8 --
 
+## Unfortunately, Mako considers lines starting with '##' as comments and
+## will strip them from the output. This means that the resulting
+## Markdown will be cleaned of all the section titles! (See
+## https://github.com/sqlalchemy/mako/issues/268). This is the reason why
+## we need to use these ugly <h1>, <h2>… tags
+
 <h1>${title}</h1>
 
 This document contains a preliminary analysis of the noise characteristics for
@@ -29,7 +35,7 @@ You can re-run this analysis using the following command:
 where you must of course change the path
 `/storage/reports/${polarimeter_name}` according to your needs.
 
-<h2>Results</h2>
+<h2>Overview of the results</h2>
 
 The Power Spectral Densities (PSD) of the four detector outputs and of 
 thier opportune combinations I, Q, U have been estimated using Welch's method as described in 
@@ -63,6 +69,35 @@ The original data samples have been divided into **${n_chunks} segments** of equ
 For each of them, the periodogram has been estimated and then the average at each 
 frequency has been computed. Each segment has been **detrended** by subtracting a *${detrend} fit* of the data.
 
+
+<h2>Correlation</h2>
+
+In this section we report Pearson's correlation coefficients (in the
+range $[−1, 1]$) for the PWR, DEM and I/Q/U outputs. The covariance
+matrix is saved in the [JSON
+file](noise_characteristics_results.json). The covariance coefficient
+$R_{ij}$ is related to the coefficients $C_{ij}$ of the covariance
+matrix by the following relation:
+
+$$
+R_{ij} = \frac{C_{ij}}{\sqrt{C_{ii}\cdot C_{jj}}}.
+$$
+
+The matrices have been computed on the *calibrated* signal, so the
+covariance matrix is expressed in K²; the correlation matrix is
+adimensional as usual.
+
+<h3>Correlation of the four PWR signals</h3>
+
+![](${polarimeter_name}_PWR_correlation_matrix.svg)
+
+<h3>Correlation of the four DEM signals</h3>
+
+![](${polarimeter_name}_DEM_correlation_matrix.svg)
+
+<h3>Correlation of the three Stokes parameters (I/Q/U)</h3>
+
+![](${polarimeter_name}_IQU_correlation_matrix.svg)
 
 <h2>White noise and 1/f estimation</h2>
 

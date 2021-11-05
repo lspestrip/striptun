@@ -11,6 +11,7 @@ from scipy import signal
 import logging as log
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
+import seaborn as sn
 import numpy as np
 import os
 
@@ -241,6 +242,9 @@ def get_noise_characteristics(freq, fft, left_freq, right_freq, totalPWR=False):
 
 def create_plots(
     polarimeter_name,
+    corr_matrix_pwr,
+    corr_matrix_dem,
+    corr_matrix_stokes,
     freq,
     fftDEM,
     fit_parDEM,
@@ -360,9 +364,13 @@ def create_plots(
         axis = (ax0, ax1, ax2, ax3)
         for ax, sxx, tit in zip(axis, Sxx_all, labels):
             if g == 0:
-                pcm = ax.pcolormesh(t, f, np.log10(sxx), norm=colors.LogNorm())
+                pcm = ax.pcolormesh(
+                    t, f, np.log10(sxx), norm=colors.LogNorm(), shading="auto"
+                )
             else:
-                pcm = ax.pcolormesh(t, f, np.log10(sxx * 1e6), norm=colors.LogNorm())
+                pcm = ax.pcolormesh(
+                    t, f, np.log10(sxx * 1e6), norm=colors.LogNorm(), shading="auto"
+                )
             cbar = fig.colorbar(pcm, ax=ax, extend="max")
             cbar.set_label(r"$[mK^2 / Hz]$")
             ax.set_title(tit)
@@ -373,6 +381,39 @@ def create_plots(
             0.04, 0.5, "Frequency [Hz]", va="center", rotation="vertical", fontsize=20
         )
         save_plot(replace(title), output_path, spectrogram=True)
+
+    def plot_corr_matrix(title, m, labels, output_path):
+        plt.figure(figsize=FIGSIZE)
+        sn.heatmap(
+            m,
+            annot=True,
+            fmt=".2f",
+            clim=(-1, 1),
+            cmap="seismic",
+            xticklabels=labels,
+            yticklabels=labels,
+        )
+        save_plot(replace(title), output_path)
+
+    # Plot correlation matrices
+    plot_corr_matrix(
+        title=f"{polarimeter_name} PWR correlation matrix",
+        m=corr_matrix_pwr,
+        labels=PWR,
+        output_path=output_path,
+    )
+    plot_corr_matrix(
+        title=f"{polarimeter_name} DEM correlation matrix",
+        m=corr_matrix_dem,
+        labels=DEM,
+        output_path=output_path,
+    )
+    plot_corr_matrix(
+        title=f"{polarimeter_name} IQU correlation matrix",
+        m=corr_matrix_stokes,
+        labels=STOKES,
+        output_path=output_path,
+    )
 
     # Plot DEM outputs separately
     single_plots(labelsDEM, freq, fftDEM, fit_parDEM, output_path, g)
@@ -523,6 +564,9 @@ def build_dict_from_results(
     pol_name,
     input_file_path,
     gains_file_path,
+    cov_matrix_pwr,
+    cov_matrix_dem,
+    cov_matrix_stokes,
     g,
     duration,
     left_freq,
@@ -567,6 +611,18 @@ def build_dict_from_results(
         "n_chunks": n_chuncks,
         "detrend": detrend,
         "reduction_factor_1f": reduction1_f,
+        "cov_matrix_pwr_k2": {
+            "labels": PWR,
+            "coefficients": cov_matrix_pwr.tolist(),
+        },
+        "cov_matrix_dem_k2": {
+            "labels": DEM,
+            "coefficients": cov_matrix_dem.tolist(),
+        },
+        "cov_matrix_iqu_k2": {
+            "labels": STOKES,
+            "coefficients": cov_matrix_stokes.tolist(),
+        },
     }
 
     for i, nam in enumerate(DEM):
@@ -632,7 +688,6 @@ def get_data(metadata, gains_file_path, data):
             np.zeros(4),
         )
 
-    print(f"{metadata=}")
     offsets = np.array(
         [
             metadata["detector_outputs"][0]["q1_adu"],
@@ -674,7 +729,7 @@ def get_data(metadata, gains_file_path, data):
 
 def fix_I_fknee(fkneeIQU, fit_parIQU, WN_levelIQU):
     if fkneeIQU[0] > 0:
-        return
+        return False
 
     old_fknee = fkneeIQU[0]
     old_wn = WN_levelIQU[0]
@@ -683,17 +738,23 @@ def fix_I_fknee(fkneeIQU, fit_parIQU, WN_levelIQU):
     a_q, b_q, c_q = fit_parIQU[:, 1]
     a_u, b_u, c_u = fit_parIQU[:, 2]
 
-    average_c = (c_q + c_u) / 2
+    # We assume that the WN level of the I timestream is √2 times
+    # smaller than that of Q and U, as I is the average of *four*
+    # timelines, while Q and U are the average of only *two*
+    # timelines. Since the WN level is exp(c), we need to subtract the
+    # term log(2)/2.
+    average_c = (c_q + c_u) / 2 - np.log(2) / 2
 
     # Change the value of `c` in the formula, so that plots will
-    # be updated
+    # be updated.
     fit_parIQU[2, 0] = average_c
-    
+
     fkneeIQU[0] = np.exp((average_c - b_i) / a_i)
     WN_levelIQU[0] = np.exp(average_c)
 
     log.info("knee frequency for I changed from %f to %f Hz", old_fknee, fkneeIQU[0])
     log.info("WN for I changed from %f K²/Hz to %f K²/Hz", old_wn, WN_levelIQU[0])
+    return True
 
 
 def main():
@@ -714,6 +775,7 @@ def main():
     g, dataDEM, dataPWR, gains, delta_gains = get_data(
         metadata, args.gains_file_path, data
     )
+    IQU = get_stokes(dataPWR, dataDEM)
     duration = get_duration(dataDEM, dataPWR, SAMPLING_FREQUENCY_HZ)
 
     if args.n_chunks is None:
@@ -722,6 +784,14 @@ def main():
         )  # each chunk lasts 5 minutes by default
 
     log.info("File loaded, {} samples found".format(duration * SAMPLING_FREQUENCY_HZ))
+
+    # Calculate the covariance matrix and Pearson's correlation matrix
+    cov_matrix_pwr = np.cov(dataPWR, rowvar=False)
+    corr_matrix_pwr = np.corrcoef(dataPWR, rowvar=False)
+    cov_matrix_dem = np.cov(dataDEM, rowvar=False)
+    corr_matrix_dem = np.corrcoef(dataDEM, rowvar=False)
+    cov_matrix_stokes = np.cov(IQU, rowvar=False)
+    corr_matrix_stokes = np.corrcoef(IQU, rowvar=False)
 
     # Calculate the PSD
     log.info(
@@ -762,7 +832,6 @@ def main():
     [log.info("Computed alpha for " + pwr + " outputs") for pwr in PWR]
 
     # Calculate the PSD for the combinations of the 4 detector outputs that returns I, Q, U
-    IQU = get_stokes(dataPWR, dataDEM)
     fftIQU, spectrogramIQU = get_fft(
         SAMPLING_FREQUENCY_HZ, IQU, args.n_chunks, detrend=args.detrend
     )[1:]
@@ -787,6 +856,9 @@ def main():
     # Produce the plots
     create_plots(
         args.polarimeter_name,
+        corr_matrix_pwr,
+        corr_matrix_dem,
+        corr_matrix_stokes,
         freq,
         fftDEM,
         fit_parDEM,
@@ -808,6 +880,9 @@ def main():
         pol_name=args.polarimeter_name,
         input_file_path=args.input_file_path,
         gains_file_path=args.gains_file_path,
+        cov_matrix_pwr=cov_matrix_pwr,
+        cov_matrix_dem=cov_matrix_dem,
+        cov_matrix_stokes=cov_matrix_stokes,
         g=g,
         duration=duration,
         left_freq=args.left_freq,
