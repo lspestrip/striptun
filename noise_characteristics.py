@@ -757,6 +757,32 @@ def fix_I_fknee(fkneeIQU, fit_parIQU, WN_levelIQU):
     return True
 
 
+def wn_cov(m, samples_per_chunk=250):
+    """Compute the covariance matrix of the white noise
+
+    This function is conceptually equivalent to `numpy.cov`, but it
+    does not suffer from the presence of 1/f noise.
+
+    """
+
+    # Make sure to consider an even number of samples
+    nsamples = (m.shape[0] // 2) * 2
+    diff_covmat = np.cov(m[0:nsamples:2, :] - m[1:nsamples:2, :], rowvar=False)
+
+    # The 2 factor accounts for the increased RMS in the even-odd difference
+    return diff_covmat / 2
+
+
+def cov_to_corrcoef(m):
+    "Convert a covariance matrix to a Pearson's correlation matrix"
+
+    sigma = np.sqrt(np.diag(m))
+    scale = np.outer(sigma, sigma)
+    corr = m / scale
+    corr[m == 0] = 0
+    return corr
+
+
 def main():
 
     log.basicConfig(format="[%(asctime)s %(levelname)s] %(message)s", level=log.INFO)
@@ -786,12 +812,13 @@ def main():
     log.info("File loaded, {} samples found".format(duration * SAMPLING_FREQUENCY_HZ))
 
     # Calculate the covariance matrix and Pearson's correlation matrix
-    cov_matrix_pwr = np.cov(dataPWR, rowvar=False)
-    corr_matrix_pwr = np.corrcoef(dataPWR, rowvar=False)
-    cov_matrix_dem = np.cov(dataDEM, rowvar=False)
-    corr_matrix_dem = np.corrcoef(dataDEM, rowvar=False)
-    cov_matrix_stokes = np.cov(IQU, rowvar=False)
-    corr_matrix_stokes = np.corrcoef(IQU, rowvar=False)
+    cov_matrix_pwr = wn_cov(dataPWR)
+    cov_matrix_dem = wn_cov(dataDEM)
+    cov_matrix_stokes = wn_cov(IQU)
+
+    corr_matrix_pwr = cov_to_corrcoef(cov_matrix_pwr)
+    corr_matrix_dem = cov_to_corrcoef(cov_matrix_dem)
+    corr_matrix_stokes = cov_to_corrcoef(cov_matrix_stokes)
 
     # Calculate the PSD
     log.info(
